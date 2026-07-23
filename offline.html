@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Ozon Game — Аптека</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="./assets/offline-BD3jbB8D.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-CvmH739a.js">
+    <link rel="modulepreload" crossorigin href="./assets/miss-BG7SONCb.js">
+    <link rel="modulepreload" crossorigin href="./assets/RushGame-vUt_CwES.js">
+    <link rel="modulepreload" crossorigin href="./assets/purr-BLB2FPTs.js">
+    <link rel="stylesheet" crossorigin href="./assets/RushGame-D6LrpU1z.css">
+    <link rel="stylesheet" crossorigin href="./assets/offline-C8Qa_GJs.css">
+  </head>
+  <body>
+    <!-- Сброс прогресса оставлен для тестировщиков (данные живут только в
+         localStorage этого браузера, начать заново иначе нельзя), но без
+         кричащего баннера «ТЕСТОВАЯ СБОРКА» — просто маленькая иконка в углу,
+         не бросается в глаза и не выглядит как тестовый экран. -->
+    <button id="resetProgressBtn" title="Сбросить прогресс и начать заново" style="position:fixed;top:8px;right:8px;z-index:99999;font:600 16px/1 Comfortaa,sans-serif;background:rgba(255,255,255,.85);color:#5a3d00;border:1px solid rgba(90,61,0,.25);border-radius:50%;width:30px;height:30px;cursor:pointer;">🔄</button>
+    <div id="app"></div>
+    <script>
+      // Сброс тестового прогресса «с нуля» — как будто новый пользователь.
+      // Чистит ВСЕ ключи localStorage этого проекта (коты, монеты, настройки
+      // индикатора/фона/пака/аватара). Работает только в этой оффлайн-сборке —
+      // на боевую (edudev.med-game.ru) не влияет, т.к. кнопка есть только в
+      // offline.html.
+      //
+      // ВАЖНО (баг №1, исправлено): не используем window.confirm() — в
+      // некоторых встроенных/сэндбоксных просмотрщиках (iframe без
+      // allow-modals) он тихо блокируется и сразу возвращает false БЕЗ показа
+      // диалога. Подтверждение — прямо в кнопке: 1-й клик — предупреждение,
+      // 2-й клик (в течение 4с) — сброс.
+      //
+      // ВАЖНО (баг №2, исправлено): раньше сразу чистили localStorage и звали
+      // location.reload(). Но reload() запускает событие 'beforeunload' СТАРОЙ
+      // страницы, а на него в CatsLayer.vue повешен saveState() — он тут же
+      // ЗАНОВО записывал старые (ещё не сброшенные во Vue-сторе) данные назад
+      // в localStorage поверх нашей очистки, и внешне казалось, что кнопка
+      // вообще ничего не делает. Теперь вместо немедленной очистки ставим
+      // флаг в sessionStorage и перезагружаемся; саму очистку выполняет
+      // отдельный скрипт НИЖЕ, который запускается на уже НОВОЙ странице
+      // раньше, чем монтируется Vue-приложение — то есть уже после того, как
+      // «постаревшее» состояние старой страницы успело дозаписаться.
+      const btn = document.getElementById('resetProgressBtn')
+      const DEFAULT_LABEL = btn.textContent
+      // кнопка — маленький кружок-иконка по умолчанию; при «взведении»
+      // временно расширяется под текст предупреждения, потом возвращается
+      // к исходному виду (тем же, что делал старый alarm-баннер, просто без
+      // самого баннера)
+      const roundStyle = { borderRadius: '50%', width: '30px', padding: '0' }
+      const wideStyle = { borderRadius: '12px', width: 'auto', padding: '3px 10px' }
+      function applyStyle(s) { Object.assign(btn.style, s) }
+      let armed = false
+      let armTimer = null
+      function doReset() {
+        sessionStorage.setItem('ozongame_pending_reset', '1')
+        btn.textContent = '✅ Сброшено…'
+        location.reload()
+      }
+      btn.addEventListener('click', () => {
+        if (armed) { clearTimeout(armTimer); doReset(); return }
+        armed = true
+        btn.textContent = '⚠️ Точно? Ещё раз'
+        applyStyle(wideStyle)
+        btn.style.background = '#b23c38'
+        btn.style.color = '#fff'
+        armTimer = setTimeout(() => {
+          armed = false
+          btn.textContent = DEFAULT_LABEL
+          applyStyle(roundStyle)
+          btn.style.background = 'rgba(255,255,255,.85)'
+          btn.style.color = '#5a3d00'
+        }, 4000)
+      })
+    </script>
+    <script>
+      // Выполняется на КАЖДОЙ загрузке страницы, ДО монтирования Vue (скрипт
+      // main-offline.js подключён ниже) — если стоит флаг отложенного сброса,
+      // чистим localStorage именно сейчас, когда уже точно никто больше не
+      // допишет в него старые данные, и только потом даём Vue прочитать
+      // (уже пустой) localStorage.
+      if (sessionStorage.getItem('ozongame_pending_reset') === '1') {
+        sessionStorage.removeItem('ozongame_pending_reset')
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith('ozongame') || k.startsWith('ozonGame'))
+          .forEach((k) => localStorage.removeItem(k))
+      }
+    </script>
+  </body>
+</html>
