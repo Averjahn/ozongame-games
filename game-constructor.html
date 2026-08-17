@@ -5936,39 +5936,36 @@ function renderNewspaperTab(root) {
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const money = (n) => Number(n).toLocaleString('ru-RU');
 
-  const arrow = (t) => (t === 'up' ? '↑' : t === 'down' ? '↓' : '=');
-
   const issueHtml = (issue, i) => `
     <article class="np-sheet">
-      <header class="np-head">
-        <div class="np-logo">📰</div>
-        <div>
-          <div class="np-title">Аптечный вестник</div>
-          <div class="np-meta">выпуск №${i + 1} из ${D.issues.length} · городские новости · ${D.price} монет</div>
-        </div>
-      </header>
-      <div class="np-lead">
-        <span class="np-kicker">${esc(issue.lead.kicker)}</span>
-        <h2 class="np-lead-title">${esc(issue.lead.title)}</h2>
-        <p class="np-deck">${esc(issue.lead.deck)}</p>
-        <p class="np-body">${esc(issue.lead.body)}</p>
+      <div class="np-masthead"><i></i><b>Аптечный вестник</b><i></i></div>
+      <div class="np-line">
+        <span>выпуск №${i + 1} из ${D.issues.length}</span>
+        <span>цена ${D.price} монет</span>
+        <span>городские новости</span>
       </div>
+      <div class="np-kicker">${esc(issue.lead.kicker)}</div>
+      <h2 class="np-title">${esc(issue.lead.title)}</h2>
+      <p class="np-deck">${esc(issue.lead.deck)}</p>
+      <p class="np-body">${esc(issue.lead.body)}</p>
       <div class="np-cols">
-        <section class="np-card">
-          <h3 class="np-card-head"><i class="np-dot np-dot-price"></i>Цены недели</h3>
-          ${issue.prices.map((r) => `
-            <div class="np-price-row">
-              <div class="np-price-name">${esc(r.name)}<span class="np-note">${esc(r.note)}</span></div>
-              <div class="np-tag np-t-${esc(r.trend)}"><span>${arrow(r.trend)}</span>${esc(r.change)}</div>
-            </div>`).join('')}
+        <section>
+          <h3 class="np-col-head">Движение цен</h3>
+          <table class="np-prices">
+            ${issue.prices.map((r) => `
+              <tr>
+                <td>${esc(r.name)}<span class="np-note">${esc(r.note)}</span></td>
+                <td class="np-chg np-${esc(r.trend)}">${esc(r.change)}</td>
+              </tr>`).join('')}
+          </table>
         </section>
-        <section class="np-card">
-          <h3 class="np-card-head"><i class="np-dot np-dot-estate"></i>Продаётся</h3>
+        <section>
+          <h3 class="np-col-head">Продаётся</h3>
           ${issue.estate.map((a) => `
             <div class="np-ad">
               <div class="np-ad-title">${esc(a.title)}</div>
               <div class="np-ad-text">${esc(a.text)}</div>
-              <div class="np-ad-foot"><span class="np-ad-price">${money(a.price)} монет</span><span class="np-soon">скоро</span></div>
+              <div class="np-ad-foot"><b>${money(a.price)} монет</b><span class="np-soon">скоро</span></div>
             </div>`).join('')}
         </section>
       </div>
@@ -5987,46 +5984,39 @@ function renderNewspaperTab(root) {
   .tab-np .unlock li{display:flex;gap:9px;font-size:12.5px;line-height:1.5;}
   .tab-np .unlock b{display:block;}
   .tab-np .unlock span.t{opacity:.7;}
-  .tab-np .sheets{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:20px;}
+  .tab-np .sheets{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:20px;}
 
-  /* лист газеты — та же палитра и шрифт, что в NewspaperIssue.vue и в самой игре */
-  .np-sheet{--ink:#27384a;--muted:#6b7d8f;--panel:#eef3f8;--card:#fff;--line:rgba(39,56,74,.1);
-    --blue:#3770c7;--yellow:#ffa600;--up:#e02900;--down:#2f9e00;
-    background:var(--panel);color:var(--ink);border-radius:18px;padding:16px;
-    font-family:'Comfortaa',system-ui,sans-serif;line-height:1.5;box-shadow:0 6px 18px rgba(39,56,74,.1);}
-  .np-head{display:flex;align-items:center;gap:12px;background:var(--blue);color:#fff;border-radius:13px;padding:12px 16px;margin-bottom:12px;}
-  .np-logo{width:40px;height:40px;flex:0 0 auto;border-radius:11px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:20px;}
-  .np-title{font-size:19px;font-weight:700;line-height:1.2;}
-  .np-meta{font-size:11.5px;opacity:.85;margin-top:2px;}
-  .np-lead{background:var(--card);border-radius:13px;padding:16px 18px;margin-bottom:12px;}
-  .np-kicker{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-    color:#8a5a00;background:#fff1cc;border-radius:100px;padding:4px 10px;margin-bottom:9px;}
-  .np-lead-title{font-size:20px;font-weight:700;line-height:1.25;margin:0 0 7px;}
-  .np-deck{font-size:14px;color:var(--blue);font-weight:600;margin:0 0 9px;}
-  .np-body{font-size:13.5px;margin:0;}
-  .np-cols{display:flex;gap:12px;}
-  .np-card{flex:1;min-width:0;background:var(--card);border-radius:13px;padding:14px 16px;}
-  .np-card-head{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;text-transform:uppercase;
-    letter-spacing:.06em;color:var(--muted);margin:0 0 10px;}
-  .np-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;display:inline-block;}
-  .np-dot-price{background:var(--blue);} .np-dot-estate{background:var(--yellow);}
-  .np-price-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
-  .np-price-row:last-child{border-bottom:none;padding-bottom:0;}
-  .np-price-name{font-size:13.5px;font-weight:600;min-width:0;}
-  .np-note{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:1px;}
-  .np-tag{flex:0 0 auto;display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;border-radius:100px;padding:5px 10px;white-space:nowrap;}
-  .np-tag span{font-size:11.5px;}
-  .np-t-up{color:var(--up);background:#ffe6e0;}
-  .np-t-down{color:var(--down);background:#e2f5da;}
-  .np-t-flat{color:var(--muted);background:#eef1f4;}
-  .np-ad{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:9px;}
-  .np-ad:last-child{margin-bottom:0;}
-  .np-ad-title{font-size:14px;font-weight:700;margin-bottom:3px;}
-  .np-ad-text{font-size:12px;color:var(--muted);line-height:1.5;}
-  .np-ad-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;}
-  .np-ad-price{font-size:13px;font-weight:700;color:#8a5a00;background:#fff1cc;border-radius:100px;padding:5px 11px;}
-  .np-soon{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
-    background:#eef1f4;border-radius:100px;padding:4px 9px;}
+  /* лист газеты — та же палитра и типографика, что в NewspaperIssue.vue */
+  .np-sheet{--ink:#2a2622;--paper:#f2ecdc;--rule:#c9bfa8;--kicker:#b8860b;--up:#b3352c;--down:#2f7a52;
+    background:var(--paper);color:var(--ink);border-radius:10px;padding:18px 20px 14px;
+    font-family:'PT Serif',Georgia,'Times New Roman',serif;line-height:1.45;box-shadow:0 6px 18px rgba(39,56,74,.12);}
+  .np-masthead{display:flex;align-items:center;gap:10px;}
+  .np-masthead i{flex:1;height:3px;background:var(--ink);}
+  .np-masthead b{font-size:26px;white-space:nowrap;}
+  .np-line{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;
+    font-family:'PT Sans Narrow','Arial Narrow',Arial,sans-serif;font-size:11.5px;text-transform:uppercase;
+    letter-spacing:.08em;padding:5px 0 7px;border-bottom:1px solid var(--rule);margin-bottom:12px;}
+  .np-kicker{font-family:'PT Sans Narrow','Arial Narrow',Arial,sans-serif;font-size:11.5px;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--kicker);font-weight:700;margin-bottom:3px;}
+  .np-title{font-size:21px;line-height:1.15;margin:0 0 6px;font-weight:700;}
+  .np-deck{font-size:14px;font-style:italic;margin:0 0 8px;}
+  .np-body{font-size:13.5px;margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+  .np-body::first-letter{float:left;font-size:42px;line-height:.8;padding:3px 7px 0 0;font-weight:700;}
+  .np-cols{display:flex;gap:20px;}
+  .np-cols section{flex:1;min-width:0;}
+  .np-col-head{font-family:'PT Sans Narrow','Arial Narrow',Arial,sans-serif;font-size:12px;text-transform:uppercase;
+    letter-spacing:.12em;margin:0 0 6px;padding-bottom:3px;border-bottom:2px solid var(--ink);}
+  .np-prices{width:100%;border-collapse:collapse;}
+  .np-prices td{padding:5px 0;border-bottom:1px dotted var(--rule);vertical-align:top;font-size:13.5px;}
+  .np-note{display:block;font-family:'PT Sans Narrow','Arial Narrow',Arial,sans-serif;font-size:11.5px;opacity:.65;}
+  .np-chg{text-align:right;font-weight:700;white-space:nowrap;}
+  .np-up{color:var(--up);} .np-down{color:var(--down);} .np-flat{opacity:.5;}
+  .np-ad{border:1px solid var(--rule);padding:8px 10px;margin-bottom:8px;}
+  .np-ad-title{font-weight:700;font-size:13.5px;margin-bottom:3px;}
+  .np-ad-text{font-size:12.5px;}
+  .np-ad-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font-size:13.5px;}
+  .np-soon{font-family:'PT Sans Narrow','Arial Narrow',Arial,sans-serif;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.1em;border:1px solid var(--rule);padding:1px 7px;opacity:.6;}
 </style>
 <div class="tab-np">
   <div class="wrap">
