@@ -91,6 +91,7 @@ const TOP_TABS = [
   { key: 'feedback', label: '🐛 Обратная связь', render: (root) => renderFeedbackTab(root) },
   { key: 'gamestats', label: '📈 Статистика игр', render: (root) => renderGameStatsTab(root) },
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
+  { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
   { key: 'newspaper', label: '📰 Газета', render: (root) => renderNewspaperTab(root) },
@@ -6226,5 +6227,185 @@ function renderBackendArchTab(root) {
 <script>
 mountActive();
 </script>
+
+<script>
+/* ============================================================
+   ВКЛАДКА «ГОРОД: СЕЗОНЫ И ВРЕМЯ»
+
+   Карта города существует в 12 состояниях: 4 сезона × 3 времени суток.
+   Все они — ОДИН и тот же город, перерисованный по свету и растительности,
+   поэтому главное, что здесь надо проверять глазами, — совпадает ли
+   планировка. Ради этого есть режим сравнения: любое состояние накладывается
+   на летний день ползунком-шторкой, и сдвиг зданий видно сразу.
+
+   Файлы читаются из public/map-city/<season>-<time>.jpg — ровно те же, что
+   грузит игра, без второй копии.
+   ============================================================ */
+const CITY_SEASONS = [
+  { key: 'spring', name: 'Весна', icon: '🌸' },
+  { key: 'summer', name: 'Лето', icon: '☀️' },
+  { key: 'autumn', name: 'Осень', icon: '🍂' },
+  { key: 'winter', name: 'Зима', icon: '❄️' },
+];
+const CITY_TIMES = [
+  { key: 'day', name: 'День', icon: '🌤' },
+  { key: 'evening', name: 'Вечер', icon: '🌇' },
+  { key: 'night', name: 'Ночь', icon: '🌙' },
+];
+const CITY_BASE_KEY = 'summer-day';
+
+function renderCityMapTab(root) {
+  root.className = 'tab-city';
+  root.innerHTML = `
+  <style>
+    .tab-city{font-family:inherit;color:var(--ink);}
+    .tab-city *{box-sizing:border-box;}
+    .tab-city h2{font-size:16px;margin:0 0 4px;}
+    .tab-city p.city-lead{color:var(--muted);font-size:13.5px;margin:0 0 14px;max-width:900px;line-height:1.55;}
+    .tab-city .city-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 6px 18px rgba(39,56,74,.06);}
+    .tab-city .city-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+    .tab-city .city-cell{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;position:relative;cursor:pointer;}
+    .tab-city .city-cell img{display:block;width:100%;aspect-ratio:1920/810;object-fit:cover;}
+    .tab-city .city-cap{position:absolute;left:0;right:0;bottom:0;padding:6px 9px;font-size:12px;font-weight:700;
+      color:#fff;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,0));display:flex;justify-content:space-between;gap:8px;}
+    .tab-city .city-miss{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;
+      background:rgba(20,30,42,.66);color:#fff;font-size:12.5px;font-weight:700;line-height:1.5;padding:10px;}
+    .tab-city .city-rowhead{grid-column:1/-1;margin:6px 0 -4px;font-size:13.5px;font-weight:800;}
+    .tab-city .city-sum{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:12px;}
+    .tab-city .city-sum b{color:var(--ink);}
+
+    /* Сравнение: шторка поверх летнего дня. */
+    .tab-city .cmp-wrap{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;}
+    .tab-city .cmp-wrap img{display:block;width:100%;aspect-ratio:1920/810;}
+    .tab-city .cmp-top{position:absolute;inset:0;}
+    .tab-city .cmp-top img{position:absolute;inset:0;width:100%;height:100%;}
+    .tab-city .cmp-line{position:absolute;top:0;bottom:0;width:2px;background:#FCBE2E;pointer-events:none;}
+    .tab-city .cmp-bar{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+    .tab-city select,.tab-city input[type=range]{font-family:inherit;font-size:13px;}
+    .tab-city select{padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);}
+    .tab-city input[type=range]{flex:1 1 220px;}
+    .tab-city .cmp-tag{font-size:12px;color:var(--muted);}
+  </style>
+
+  <h2>🌇 Город: сезоны и время суток</h2>
+  <p class="city-lead">
+    Карта живёт вместе с игроком: сезон берётся из месяца, время суток — из его часов.
+    Все 12 состояний должны быть <b>одним и тем же городом</b> — меняются только свет, небо
+    и растительность. Если в каком-то состоянии дом или мост уехал, пины сети встанут не на свои
+    здания, поэтому ниже есть шторка сравнения с эталонным летним днём.
+  </p>
+
+  <div class="city-panel">
+    <div class="city-grid" id="cityGrid"></div>
+    <div class="city-sum" id="citySum"></div>
+  </div>
+
+  <div class="city-panel">
+    <h2>Сравнение с летним днём</h2>
+    <p class="city-lead">Тяните ползунок: слева выбранное состояние, справа эталон. Здания на стыке должны совпадать без сдвига.</p>
+    <div class="cmp-wrap" id="cmpWrap">
+      <img id="cmpBase" alt="летний день">
+      <div class="cmp-top" id="cmpTop"><img id="cmpOver" alt="сравниваемое состояние"></div>
+      <div class="cmp-line" id="cmpLine"></div>
+    </div>
+    <div class="cmp-bar">
+      <select id="cmpSel"></select>
+      <input type="range" id="cmpRange" min="0" max="100" value="50">
+      <span class="cmp-tag" id="cmpTag"></span>
+    </div>
+  </div>`;
+
+  const url = (key) => `map-city/${key}.jpg`;
+  const grid = root.querySelector('#cityGrid');
+  const found = new Set();
+
+  // Наличие файла проверяем загрузкой: public/ не отдаёт списка каталога, а
+  // держать в конструкторе второй, руками поддерживаемый список готовых
+  // состояний — верный способ разойтись с игрой.
+  const cells = [];
+  CITY_SEASONS.forEach((s) => {
+    const head = document.createElement('div');
+    head.className = 'city-rowhead';
+    head.textContent = `${s.icon} ${s.name}`;
+    grid.appendChild(head);
+    CITY_TIMES.forEach((t) => {
+      const key = `${s.key}-${t.key}`;
+      const cell = document.createElement('div');
+      cell.className = 'city-cell';
+      cell.innerHTML = `<img alt="${s.name}, ${t.name}">
+        <div class="city-cap"><span>${t.icon} ${t.name}</span><span>${key}.jpg</span></div>`;
+      const img = cell.querySelector('img');
+      img.onerror = () => {
+        // прячем сам <img>: иначе поверх плашки «ещё не отрисовано» браузер
+        // рисует alt-текст сломанной картинки
+        img.removeAttribute('src');
+        img.style.display = 'none';
+        cell.style.aspectRatio = '1920/810';
+        const miss = document.createElement('div');
+        miss.className = 'city-miss';
+        miss.innerHTML = `ещё не отрисовано<br><span style="font-weight:400">в игре покажется летний день</span>`;
+        cell.appendChild(miss);
+      };
+      img.onload = () => { found.add(key); refreshSummary(); refreshSelect(); };
+      img.src = url(key);
+      cell.onclick = () => { if (found.has(key)) { sel.value = key; applyCompare(); root.querySelector('#cmpWrap').scrollIntoView({behavior:'smooth', block:'center'}); } };
+      grid.appendChild(cell);
+      cells.push({ key, cell });
+    });
+  });
+
+  const sumEl = root.querySelector('#citySum');
+  function refreshSummary() {
+    sumEl.innerHTML = `<span>Готово: <b>${found.size}</b> из 12</span>
+      <span>Осталось отрисовать: <b>${12 - found.size}</b></span>`;
+  }
+  refreshSummary();
+
+  const sel = root.querySelector('#cmpSel');
+  const range = root.querySelector('#cmpRange');
+  const over = root.querySelector('#cmpOver');
+  const base = root.querySelector('#cmpBase');
+  const top = root.querySelector('#cmpTop');
+  const line = root.querySelector('#cmpLine');
+  const tag = root.querySelector('#cmpTag');
+  base.src = url(CITY_BASE_KEY);
+
+  function refreshSelect() {
+    const keep = sel.value;
+    sel.innerHTML = '';
+    [...found].filter((k) => k !== CITY_BASE_KEY).forEach((k) => {
+      const o = document.createElement('option');
+      o.value = k; o.textContent = k;
+      sel.appendChild(o);
+    });
+    if (!sel.options.length) {
+      const o = document.createElement('option');
+      o.textContent = 'пока сравнивать не с чем';
+      sel.appendChild(o);
+      tag.textContent = 'отрисован только эталон';
+      return;
+    }
+    if (keep && found.has(keep)) sel.value = keep;
+    applyCompare();
+  }
+
+  function applyCompare() {
+    if (!sel.value || !found.has(sel.value)) return;
+    over.src = url(sel.value);
+    // Верхний слой всегда во всю ширину, шторка — это ОБРЕЗКА, а не сжатие:
+    // если менять ему width, картинка сплющивается вместе со шторкой и сравнивать
+    // становится нечего (на первом прогоне так и вышло). clip-path режет по месту
+    // и не зависит от того, успел ли контейнер получить размер.
+    const pct = Number(range.value);
+    top.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+    line.style.left = pct + '%';
+    tag.textContent = `слева ${sel.value}, справа ${CITY_BASE_KEY}`;
+  }
+  range.oninput = applyCompare;
+  sel.onchange = applyCompare;
+  refreshSelect();
+}
+</script>
+
 </body>
 </html>
