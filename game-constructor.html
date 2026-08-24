@@ -92,6 +92,7 @@ const TOP_TABS = [
   { key: 'gamestats', label: '📈 Статистика игр', render: (root) => renderGameStatsTab(root) },
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
   { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
+  { key: 'hallslots', label: '🏬 Обстановка аптеки', render: (root) => renderHallSlotsTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
   { key: 'newspaper', label: '📰 Газета', render: (root) => renderNewspaperTab(root) },
@@ -6404,6 +6405,291 @@ function renderCityMapTab(root) {
   range.oninput = applyCompare;
   sel.onchange = applyCompare;
   refreshSelect();
+}
+</script>
+
+
+<script>
+/* ============================================================
+   ВКЛАДКА «ОБСТАНОВКА АПТЕКИ»
+
+   Здесь расставляются вещи, которые стоят в зале: купленные улучшения аптеки
+   и мебель за жетоны. Раньше расстановку делал сам игрок перетаскиванием прямо
+   в игре — заказчик это отменил: места фиксируем мы, один раз, и вписываем в
+   код (src/constants/hallSlots.js), как давно сделано для товаров на полках.
+
+   ПОЛЕ ШИРЕ КАДРА. x предмета НЕ ограничен диапазоном 0..1200: слой обстановки
+   в игре лежит в некрытом слое сцены и не обрезается по границам мира. Поэтому
+   поле здесь нарочно шире фона — серые поля по бокам это «за кадром мира», и
+   ставить туда можно: на широком мониторе зал шире 1200, и там как раз стены.
+   ============================================================ */
+const HALL_WORLD_W = 1200;
+const HALL_WORLD_H = 810;
+const HALL_OVERHANG = 320;          // сколько видно за кадром мира с каждой стороны
+const HALL_FLOOR_Y = 762;           // линия пола (та же, что у покупателей)
+const HALL_DEFAULT_H = 116;
+
+/** Улучшения аптеки: файл → человеческое имя. Иконки, которым нарисован
+    физический предмет, показываем уже предметом — как и в игре. */
+const HALL_UPGRADES = {
+  1: [
+    ['1_flowers.svg', 'Цветы'], ['1_tonometer.svg', 'Тонометр'],
+    ['2_uvIrradiators.svg', 'Облучатели'], ['2_wifi.svg', 'Wi-Fi'],
+    ['3_phoneCharging.svg', 'Зарядка'], ['3_sofa.svg', 'Диван'],
+    ['4_newForm.svg', 'Новая форма'], ['4_tv.svg', 'Телевизор'],
+    ['5_smartLighting.svg', 'Умный свет'], ['5_trainingCourse.svg', 'Курсы'],
+    ['6_childrensCorner.svg', 'Детский уголок'], ['6_seasonalDisplay.svg', 'Сезонная витрина'],
+    ['7_bonusCards.svg', 'Бонусные карты'], ['7_productRange.svg', 'Ассортимент'],
+    ['8_neonSign.svg', 'Неоновая вывеска'], ['8_psychologistTraining.svg', 'Тренинг'],
+    ['9_newDesign.svg', 'Новый дизайн'], ['9_restRoom.svg', 'Комната отдыха'],
+    ['10_assortmentExpansion.svg', 'Расширение ассортимента'], ['10_coffeeMachine.svg', 'Кофемашина'],
+    ['11_onlineOrdering.svg', 'Онлайн-заказ'], ['11_virtualConsultant.svg', 'Виртуальный консультант'],
+    ['12_advertisingScreen.svg', 'Рекламный экран'], ['12_storageSystem.svg', 'Система хранения'],
+  ],
+  2: [
+    ['1_tonometer.svg', 'Тонометр'], ['2_wifi.svg', 'Wi-Fi'],
+    ['3_phoneCharging.svg', 'Зарядка'], ['4_tv.svg', 'Телевизор'],
+    ['5_smartLighting.svg', 'Умный свет'], ['6_seasonalDisplay.svg', 'Сезонная витрина'],
+    ['7_bonusCards.svg', 'Бонусные карты'], ['8_psychologistTraining.svg', 'Тренинг'],
+    ['9_restRoom.svg', 'Комната отдыха'], ['10_assortmentExpansion.svg', 'Расширение ассортимента'],
+    ['11_virtualConsultant.svg', 'Виртуальный консультант'], ['12_storageSystem.svg', 'Система хранения'],
+  ],
+};
+
+/** Те же подмены иконок на предметы, что в игре (constants/furniture.js). */
+const HALL_PROP_FOR_ICON = {
+  '2_wifi.svg': 'wifi.png',
+  '11_onlineOrdering.svg': 'onlineOrdering.png',
+  '11_virtualConsultant.svg': 'virtualConsultant.png',
+  '3_phoneCharging.svg': 'phoneCharging.png',
+  '1_tonometer.svg': 'tonometer.png',
+  '7_bonusCards.svg': 'bonusCards.png',
+  '5_trainingCourse.svg': 'trainingCourse.png',
+  '8_psychologistTraining.svg': 'psychologistTraining.png',
+  '4_newForm.svg': 'newForm.png',
+};
+
+function renderHallSlotsTab(root) {
+  root.className = 'tab-hall';
+  root.innerHTML = `
+  <style>
+    .tab-hall{font-family:inherit;color:var(--ink);}
+    .tab-hall *{box-sizing:border-box;}
+    .tab-hall h2{font-size:16px;margin:0 0 4px;}
+    .tab-hall p.hall-lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:960px;line-height:1.55;}
+    .tab-hall .hall-note{background:rgba(95,168,236,.12);border:1px solid var(--blue);border-radius:12px;
+      padding:11px 14px;font-size:13px;margin-bottom:14px;line-height:1.5;}
+    .tab-hall .hall-tabs{display:flex;gap:6px;margin-bottom:10px;}
+    .tab-hall .hall-tabs button{font-family:inherit;font-size:13px;padding:7px 14px;border-radius:8px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-hall .hall-tabs button.active{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700;}
+
+    .tab-hall .hall-stage{position:relative;margin:0 auto 14px;background:#20303f;border-radius:10px;
+      overflow:hidden;user-select:none;}
+    .tab-hall .hall-overhang{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(
+      45deg,rgba(255,255,255,.06) 0 8px,rgba(255,255,255,.02) 8px 16px);pointer-events:none;}
+    .tab-hall .hall-bg{position:absolute;top:0;height:100%;}
+    .tab-hall .hall-floor{position:absolute;left:0;right:0;border-top:1px dashed rgba(95,168,236,.9);pointer-events:none;}
+    .tab-hall .hall-obj{position:absolute;cursor:grab;}
+    .tab-hall .hall-obj.sel{outline:2px solid #FCBE2E;outline-offset:2px;}
+    .tab-hall .hall-obj img{display:block;height:100%;width:auto;pointer-events:none;}
+
+    .tab-hall .hall-side{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;}
+    .tab-hall .hall-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;}
+    .tab-hall .hall-list{max-height:340px;overflow:auto;margin:0;padding:0;list-style:none;}
+    .tab-hall .hall-list li{display:flex;align-items:center;gap:8px;padding:5px 0;border-top:1px solid var(--line);font-size:12.5px;}
+    .tab-hall .hall-list li:first-child{border-top:none;}
+    .tab-hall .hall-list img{width:26px;height:26px;object-fit:contain;}
+    .tab-hall .hall-list .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .tab-hall .hall-list button{font-family:inherit;font-size:11px;padding:3px 7px;border-radius:6px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-hall .hall-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+    .tab-hall .hall-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-hall .hall-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
+    .tab-hall pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:12px;
+      overflow:auto;max-height:260px;margin:10px 0 0;}
+  </style>
+
+  <h2>🏬 Обстановка аптеки: где стоят вещи</h2>
+  <p class="hall-lead">
+    Здесь задаются места предметов в зале — улучшений аптеки и мебели за жетоны.
+    Перетаскивайте мышью, размер меняйте колесом или кнопками. Когда закончите —
+    «📋 Скопировать код» и пришлите мне текст: я вставлю его в
+    <b>src/constants/hallSlots.js</b>, и у всех игроков вещи встанут именно так.
+  </p>
+  <div class="hall-note">
+    💡 Серые поля по бокам — это <b>за кадром мира</b> (x меньше 0 или больше 1200).
+    Туда ставить МОЖНО и нужно: слой обстановки в игре не обрезается, и на широком
+    мониторе зал шире кадра — там как раз боковые стены. Синяя пунктирная линия — пол.
+    Предметы «в зале» отмечены в списке справа галочкой; нажмите на строку, чтобы
+    добавить вещь на сцену или убрать её.
+  </div>
+
+  <div class="hall-tabs">
+    <button id="hallP1" class="active">Аптека 1</button>
+    <button id="hallP2">Аптека 2</button>
+  </div>
+
+  <div class="hall-side">
+    <div>
+      <div class="hall-ctl">
+        <button id="hallCopy" class="primary">📋 Скопировать код</button>
+        <button id="hallAuto">Разложить вдоль стен</button>
+        <button id="hallClear">Убрать всё со сцены</button>
+        <span id="hallHint" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div class="hall-stage" id="hallStage"></div>
+      <pre id="hallOut"></pre>
+    </div>
+    <div class="hall-panel">
+      <b style="font-size:13px">Что можно поставить</b>
+      <ul class="hall-list" id="hallList"></ul>
+    </div>
+  </div>`;
+
+  const STAGE_W = 1200 + HALL_OVERHANG * 2;
+  const stage = root.querySelector('#hallStage');
+  const view = Math.min(1100, root.clientWidth || 1100);
+  const scale = view / STAGE_W;
+  stage.style.width = view + 'px';
+  stage.style.height = (HALL_WORLD_H * scale) + 'px';
+
+  let pharmacy = 1;
+  // ключ предмета → {x, y, h}. x в координатах МИРА (0..1200 — кадр).
+  const placed = {};
+
+  function assetUrl(file) {
+    const prop = HALL_PROP_FOR_ICON[file];
+    if (prop) return 'hall-editor-assets/props/' + prop;
+    return `hall-editor-assets/p${pharmacy}/${file}`;
+  }
+  const worldToStage = (x) => (x + HALL_OVERHANG) * scale;
+  const stageToWorld = (px) => px / scale - HALL_OVERHANG;
+
+  function drawStage() {
+    stage.innerHTML = `
+      <div class="hall-overhang" style="left:0;width:${HALL_OVERHANG * scale}px"></div>
+      <div class="hall-overhang" style="right:0;width:${HALL_OVERHANG * scale}px"></div>
+      <img class="hall-bg" src="layout-calibrate-assets/roomAI${pharmacy}_content.jpg"
+           style="left:${HALL_OVERHANG * scale}px;width:${1200 * scale}px">
+      <div class="hall-floor" style="top:${HALL_FLOOR_Y * scale}px"></div>`;
+    for (const key of Object.keys(placed)) addNode(key);
+    renderOut();
+  }
+
+  function addNode(key) {
+    const s = placed[key];
+    const el = document.createElement('div');
+    el.className = 'hall-obj';
+    el.dataset.key = key;
+    el.innerHTML = `<img src="${assetUrl(key.replace(/^upg:/, ''))}">`;
+    stage.appendChild(el);
+    posNode(el);
+    el.addEventListener('pointerdown', (e) => startDrag(e, key, el));
+    el.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      placed[key].h = Math.max(30, Math.min(400, placed[key].h + (e.deltaY < 0 ? 6 : -6)));
+      posNode(el); renderOut();
+    }, { passive: false });
+  }
+
+  function posNode(el) {
+    const s = placed[el.dataset.key];
+    el.style.height = (s.h * scale) + 'px';
+    el.style.left = worldToStage(s.x) + 'px';
+    el.style.top = ((s.y - s.h) * scale) + 'px';
+    el.style.transform = 'translateX(-50%)';
+  }
+
+  let drag = null;
+  function startDrag(e, key, el) {
+    e.preventDefault();
+    [...stage.querySelectorAll('.hall-obj')].forEach((n) => n.classList.remove('sel'));
+    el.classList.add('sel');
+    drag = { key, el };
+    el.setPointerCapture?.(e.pointerId);
+    window.addEventListener('pointermove', onDrag);
+    window.addEventListener('pointerup', endDrag);
+  }
+  function onDrag(e) {
+    if (!drag) return;
+    const box = stage.getBoundingClientRect();
+    const s = placed[drag.key];
+    s.x = Math.round(stageToWorld(e.clientX - box.left));
+    s.y = Math.round(Math.max(60, Math.min(HALL_WORLD_H, (e.clientY - box.top) / scale)));
+    posNode(drag.el);
+    renderOut();
+  }
+  function endDrag() {
+    drag = null;
+    window.removeEventListener('pointermove', onDrag);
+    window.removeEventListener('pointerup', endDrag);
+  }
+
+  function renderList() {
+    const ul = root.querySelector('#hallList');
+    ul.innerHTML = '';
+    for (const [file, name] of HALL_UPGRADES[pharmacy]) {
+      const key = 'upg:' + file;
+      const li = document.createElement('li');
+      li.innerHTML = `<img src="${assetUrl(file)}"><span class="nm">${name}</span>
+        <button>${placed[key] ? '✓ на сцене' : 'поставить'}</button>`;
+      li.querySelector('button').onclick = () => {
+        if (placed[key]) delete placed[key];
+        else placed[key] = { x: 200, y: HALL_FLOOR_Y, h: HALL_DEFAULT_H };
+        drawStage(); renderList();
+      };
+      ul.appendChild(li);
+    }
+  }
+
+  function renderOut() {
+    const rows = Object.keys(placed).sort().map((k) => {
+      const s = placed[k];
+      return `    '${k}': { x: ${Math.round(s.x)}, y: ${Math.round(s.y)}, h: ${Math.round(s.h)} },`;
+    }).join('\n');
+    root.querySelector('#hallOut').textContent =
+      `  // аптека ${pharmacy}\n  ${pharmacy}: {\n${rows}\n  },`;
+  }
+
+  root.querySelector('#hallCopy').onclick = async () => {
+    const txt = root.querySelector('#hallOut').textContent;
+    try { await navigator.clipboard.writeText(txt); root.querySelector('#hallHint').textContent = 'скопировано'; }
+    catch { window.prompt('Скопируйте', txt); }
+    setTimeout(() => { root.querySelector('#hallHint').textContent = ''; }, 1800);
+  };
+  root.querySelector('#hallClear').onclick = () => {
+    for (const k of Object.keys(placed)) delete placed[k];
+    drawStage(); renderList();
+  };
+  root.querySelector('#hallAuto').onclick = () => {
+    const keys = HALL_UPGRADES[pharmacy].map(([f]) => 'upg:' + f);
+    keys.forEach((k, i) => {
+      const left = i % 2 === 0;
+      const step = Math.floor(i / 2) * 100;
+      placed[k] = {
+        x: left ? -HALL_OVERHANG + 90 + step : 1200 + HALL_OVERHANG - 90 - step,
+        y: HALL_FLOOR_Y, h: HALL_DEFAULT_H,
+      };
+    });
+    drawStage(); renderList();
+  };
+  root.querySelector('#hallP1').onclick = () => {
+    pharmacy = 1;
+    root.querySelector('#hallP1').classList.add('active');
+    root.querySelector('#hallP2').classList.remove('active');
+    drawStage(); renderList();
+  };
+  root.querySelector('#hallP2').onclick = () => {
+    pharmacy = 2;
+    root.querySelector('#hallP2').classList.add('active');
+    root.querySelector('#hallP1').classList.remove('active');
+    drawStage(); renderList();
+  };
+
+  drawStage();
+  renderList();
 }
 </script>
 
