@@ -6469,6 +6469,12 @@ const HALL_PROP_FOR_ICON = {
   '4_newForm.svg': 'newForm.png',
 };
 
+/** Имя предмета по ключу — для панели выбранного (обе аптеки в одной карте). */
+const HALL_NAME_BY_KEY = Object.fromEntries(
+  [].concat(HALL_UPGRADES[1] || [], HALL_UPGRADES[2] || [])
+    .map(([file, name]) => ['upg:' + file, name]),
+);
+
 function renderHallSlotsTab(root) {
   root.className = 'tab-hall';
   root.innerHTML = `
@@ -6507,6 +6513,15 @@ function renderHallSlotsTab(root) {
     .tab-hall .hall-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
       border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
     .tab-hall .hall-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
+    .tab-hall .hall-sel{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+      background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:12.5px;}
+    .tab-hall .hall-sel-name{font-weight:700;min-width:150px;}
+    .tab-hall .hall-sel-grp{display:flex;align-items:center;gap:5px;}
+    .tab-hall .hall-sel-grp b{font-weight:400;color:var(--muted);}
+    .tab-hall .hall-sel button{font-family:inherit;font-size:12.5px;padding:4px 9px;border-radius:7px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-hall .hall-sel button:disabled{opacity:.4;cursor:not-allowed;}
+    .tab-hall .hall-num{min-width:42px;text-align:center;font-variant-numeric:tabular-nums;}
     .tab-hall pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:12px;
       overflow:auto;max-height:260px;margin:10px 0 0;}
   </style>
@@ -6514,7 +6529,9 @@ function renderHallSlotsTab(root) {
   <h2>🏬 Обстановка аптеки: где стоят вещи</h2>
   <p class="hall-lead">
     Здесь задаются места предметов в зале — улучшений аптеки и мебели за жетоны.
-    Перетаскивайте мышью, размер меняйте колесом или кнопками. Когда закончите —
+    Перетаскивайте мышью. Размер — колесом или кнопками ниже, поворот — Shift+колесо
+    или кнопки ⟲ ⟳. Расстановка сохраняется в браузере: можно закрыть вкладку и
+    вернуться. Когда закончите —
     «📋 Скопировать код» и пришлите мне текст: я вставлю его в
     <b>src/constants/hallSlots.js</b>, и у всех игроков вещи встанут именно так.
   </p>
@@ -6540,6 +6557,25 @@ function renderHallSlotsTab(root) {
         <span id="hallHint" style="font-size:12px;color:var(--muted)"></span>
       </div>
       <div class="hall-stage" id="hallStage"></div>
+      <!-- Панель выбранного предмета. Колесо мышью работает, но подгонять
+           им размер и угол вслепую неудобно: здесь видно точные числа. -->
+      <div class="hall-sel" id="hallSel">
+        <span class="hall-sel-name" id="hallSelName">Предмет не выбран</span>
+        <span class="hall-sel-grp">
+          <b>размер</b>
+          <button data-h="-10">−</button>
+          <span id="hallSelH" class="hall-num">—</span>
+          <button data-h="10">+</button>
+        </span>
+        <span class="hall-sel-grp">
+          <b>поворот</b>
+          <button data-r="-15">⟲</button>
+          <span id="hallSelR" class="hall-num">—</span>
+          <button data-r="15">⟳</button>
+          <button data-r="0" id="hallSelR0">сброс</button>
+        </span>
+        <button id="hallSelFlip">зеркально</button>
+      </div>
       <pre id="hallOut"></pre>
     </div>
     <div class="hall-panel">
@@ -6556,8 +6592,31 @@ function renderHallSlotsTab(root) {
   stage.style.height = (HALL_WORLD_H * scale) + 'px';
 
   let pharmacy = 1;
-  // ключ предмета → {x, y, h}. x в координатах МИРА (0..1200 — кадр).
-  const placed = {};
+
+  /**
+   * Расстановка ПО АПТЕКАМ и с сохранением между заходами.
+   *
+   * Было две беды, обе всплыли в работе: во-первых, состояние жило в одном
+   * объекте на обе аптеки — часть файлов улучшений у них совпадает по имени, и
+   * расставленное в первой вылезало во второй. Во-вторых, всё терялось при
+   * перезагрузке страницы: расставил два десятка вещей, обновил — начинай
+   * заново.
+   *
+   * Ключ предмета → {x, y, h, rot, flip}. x в координатах МИРА (0..1200 — кадр).
+   */
+  const STORE_KEY = 'ozongame_hall_editor_v1';
+  const all = loadAll();
+
+  function loadAll() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+      return { 1: raw['1'] || {}, 2: raw['2'] || {} };
+    } catch { return { 1: {}, 2: {} }; }
+  }
+  function saveAll() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(all)); } catch { /* приват-режим */ }
+  }
+  function P() { return all[pharmacy]; }
 
   function assetUrl(file) {
     const prop = HALL_PROP_FOR_ICON[file];
@@ -6574,12 +6633,13 @@ function renderHallSlotsTab(root) {
       <img class="hall-bg" src="layout-calibrate-assets/roomAI${pharmacy}_content.jpg"
            style="left:${HALL_OVERHANG * scale}px;width:${1200 * scale}px">
       <div class="hall-floor" style="top:${HALL_FLOOR_Y * scale}px"></div>`;
-    for (const key of Object.keys(placed)) addNode(key);
+    for (const key of Object.keys(P())) addNode(key);
+    if (selected && !P()[selected]) selected = '';
+    select(selected);
     renderOut();
   }
 
   function addNode(key) {
-    const s = placed[key];
     const el = document.createElement('div');
     el.className = 'hall-obj';
     el.dataset.key = key;
@@ -6587,26 +6647,34 @@ function renderHallSlotsTab(root) {
     stage.appendChild(el);
     posNode(el);
     el.addEventListener('pointerdown', (e) => startDrag(e, key, el));
+    // колесо — размер, с Shift — поворот. Обе правки сохраняются сразу же.
     el.addEventListener('wheel', (e) => {
       e.preventDefault();
-      placed[key].h = Math.max(30, Math.min(400, placed[key].h + (e.deltaY < 0 ? 6 : -6)));
-      posNode(el); renderOut();
+      const s = P()[key];
+      if (e.shiftKey) s.rot = wrapDeg((s.rot || 0) + (e.deltaY < 0 ? 3 : -3));
+      else s.h = Math.max(30, Math.min(400, s.h + (e.deltaY < 0 ? 6 : -6)));
+      posNode(el); renderOut(); saveAll(); syncCtl();
     }, { passive: false });
+    el.addEventListener('click', () => select(key));
   }
 
+  function wrapDeg(d) { return Math.round(((d % 360) + 360) % 360); }
+
   function posNode(el) {
-    const s = placed[el.dataset.key];
+    const s = P()[el.dataset.key];
     el.style.height = (s.h * scale) + 'px';
     el.style.left = worldToStage(s.x) + 'px';
     el.style.top = ((s.y - s.h) * scale) + 'px';
-    el.style.transform = 'translateX(-50%)';
+    // Поворот вокруг НИЗА предмета, а не центра: вещь стоит на полу, и вращение
+    // вокруг середины отрывало бы её от пола на каждый градус.
+    el.style.transformOrigin = '50% 100%';
+    el.style.transform = `translateX(-50%) rotate(${s.rot || 0}deg)${s.flip ? ' scaleX(-1)' : ''}`;
   }
 
   let drag = null;
   function startDrag(e, key, el) {
     e.preventDefault();
-    [...stage.querySelectorAll('.hall-obj')].forEach((n) => n.classList.remove('sel'));
-    el.classList.add('sel');
+    select(key);
     drag = { key, el };
     el.setPointerCapture?.(e.pointerId);
     window.addEventListener('pointermove', onDrag);
@@ -6615,17 +6683,60 @@ function renderHallSlotsTab(root) {
   function onDrag(e) {
     if (!drag) return;
     const box = stage.getBoundingClientRect();
-    const s = placed[drag.key];
+    const s = P()[drag.key];
     s.x = Math.round(stageToWorld(e.clientX - box.left));
     s.y = Math.round(Math.max(60, Math.min(HALL_WORLD_H, (e.clientY - box.top) / scale)));
     posNode(drag.el);
     renderOut();
   }
   function endDrag() {
+    if (drag) saveAll();
     drag = null;
     window.removeEventListener('pointermove', onDrag);
     window.removeEventListener('pointerup', endDrag);
   }
+
+  // ── выбранный предмет ────────────────────────────────────────────────
+  let selected = '';
+
+  function select(key) {
+    selected = P()[key] ? key : '';
+    [...stage.querySelectorAll('.hall-obj')].forEach((n) => {
+      n.classList.toggle('sel', n.dataset.key === selected);
+    });
+    syncCtl();
+  }
+
+  function syncCtl() {
+    const s = selected ? P()[selected] : null;
+    root.querySelector('#hallSelName').textContent = s
+      ? (HALL_NAME_BY_KEY[selected] || selected)
+      : 'Предмет не выбран';
+    root.querySelector('#hallSelH').textContent = s ? Math.round(s.h) : '—';
+    root.querySelector('#hallSelR').textContent = s ? wrapDeg(s.rot || 0) + '°' : '—';
+    root.querySelectorAll('#hallSel button').forEach((b) => { b.disabled = !s; });
+  }
+
+  function applyToSelected(fn) {
+    if (!selected || !P()[selected]) return;
+    fn(P()[selected]);
+    const el = stage.querySelector(`.hall-obj[data-key="${CSS.escape(selected)}"]`);
+    if (el) posNode(el);
+    renderOut(); saveAll(); syncCtl();
+  }
+
+  root.querySelectorAll('#hallSel button[data-h]').forEach((b) => {
+    b.onclick = () => applyToSelected((s) => {
+      s.h = Math.max(30, Math.min(400, s.h + Number(b.dataset.h)));
+    });
+  });
+  root.querySelectorAll('#hallSel button[data-r]').forEach((b) => {
+    b.onclick = () => applyToSelected((s) => {
+      const d = Number(b.dataset.r);
+      s.rot = d === 0 ? 0 : wrapDeg((s.rot || 0) + d);
+    });
+  });
+  root.querySelector('#hallSelFlip').onclick = () => applyToSelected((s) => { s.flip = !s.flip; });
 
   function renderList() {
     const ul = root.querySelector('#hallList');
@@ -6634,20 +6745,23 @@ function renderHallSlotsTab(root) {
       const key = 'upg:' + file;
       const li = document.createElement('li');
       li.innerHTML = `<img src="${assetUrl(file)}"><span class="nm">${name}</span>
-        <button>${placed[key] ? '✓ на сцене' : 'поставить'}</button>`;
+        <button>${P()[key] ? '✓ на сцене' : 'поставить'}</button>`;
       li.querySelector('button').onclick = () => {
-        if (placed[key]) delete placed[key];
-        else placed[key] = { x: 200, y: HALL_FLOOR_Y, h: HALL_DEFAULT_H };
-        drawStage(); renderList();
+        if (P()[key]) delete P()[key];
+        else P()[key] = { x: 200, y: HALL_FLOOR_Y, h: HALL_DEFAULT_H, rot: 0, flip: false };
+        saveAll(); drawStage(); renderList();
       };
       ul.appendChild(li);
     }
   }
 
   function renderOut() {
-    const rows = Object.keys(placed).sort().map((k) => {
-      const s = placed[k];
-      return `    '${k}': { x: ${Math.round(s.x)}, y: ${Math.round(s.y)}, h: ${Math.round(s.h)} },`;
+    const rows = Object.keys(P()).sort().map((k) => {
+      const s = P()[k];
+      // rot и flip пишем ТОЛЬКО когда они не по умолчанию — иначе файл слотов
+      // забивается нулями, в которых потом не видно настоящих поворотов
+      const extra = (s.rot ? `, rot: ${wrapDeg(s.rot)}` : '') + (s.flip ? ', flip: true' : '');
+      return `    '${k}': { x: ${Math.round(s.x)}, y: ${Math.round(s.y)}, h: ${Math.round(s.h)}${extra} },`;
     }).join('\n');
     root.querySelector('#hallOut').textContent =
       `  // аптека ${pharmacy}\n  ${pharmacy}: {\n${rows}\n  },`;
@@ -6660,20 +6774,20 @@ function renderHallSlotsTab(root) {
     setTimeout(() => { root.querySelector('#hallHint').textContent = ''; }, 1800);
   };
   root.querySelector('#hallClear').onclick = () => {
-    for (const k of Object.keys(placed)) delete placed[k];
-    drawStage(); renderList();
+    for (const k of Object.keys(P())) delete P()[k];
+    saveAll(); drawStage(); renderList();
   };
   root.querySelector('#hallAuto').onclick = () => {
     const keys = HALL_UPGRADES[pharmacy].map(([f]) => 'upg:' + f);
     keys.forEach((k, i) => {
       const left = i % 2 === 0;
       const step = Math.floor(i / 2) * 100;
-      placed[k] = {
+      P()[k] = {
         x: left ? -HALL_OVERHANG + 90 + step : 1200 + HALL_OVERHANG - 90 - step,
-        y: HALL_FLOOR_Y, h: HALL_DEFAULT_H,
+        y: HALL_FLOOR_Y, h: HALL_DEFAULT_H, rot: 0, flip: false,
       };
     });
-    drawStage(); renderList();
+    saveAll(); drawStage(); renderList();
   };
   root.querySelector('#hallP1').onclick = () => {
     pharmacy = 1;
