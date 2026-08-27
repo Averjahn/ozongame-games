@@ -93,6 +93,7 @@ const TOP_TABS = [
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
   { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
   { key: 'sidewalks', label: '🚶 Тротуары', render: (root) => renderSidewalksTab(root) },
+  { key: 'cityplots', label: '🧱 Участки домов', render: (root) => renderCityPlotsTab(root) },
   { key: 'cityhouses', label: '🏘 Дома города', render: (root) => renderCityHousesTab(root) },
   { key: 'hallslots', label: '🏬 Обстановка аптеки', render: (root) => renderHallSlotsTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
@@ -6969,6 +6970,176 @@ function renderSidewalksTab(root) {
    src/constants/cityHouses.js (CITY_HOUSES).
    ============================================================ */
 const CITY_HOUSE_LIST = ['h-brick2','h-plaster2','h-corner3','h-narrow','h-wide2','h-shop1'];
+
+/**
+ * УЧАСТКИ ПОД ДОМА — заказчик размечает ПУСТЫЕ прямоугольные площадки прямо
+ * на живой карте (где по его вкусу должен стоять дом), а не подбирает
+ * конкретный спрайт и не гадает координаты на глаз. Автоматическая расстановка
+ * (случайный подбор + проверка по маске дорог) давала формально «без домов на
+ * дороге», но само расположение читалось как случайный разброс, а не как
+ * спроектированная застройка — заказчик должен сам решать, ГДЕ стоит квартал,
+ * а дизайнерский спрайт/этажность/ракурс уже подбираются из готового набора
+ * под размер и пропорции присланного участка.
+ */
+function renderCityPlotsTab(root) {
+  root.className = 'tab-cp';
+  root.innerHTML = `
+  <style>
+    .tab-cp{font-family:inherit;color:var(--ink);}
+    .tab-cp *{box-sizing:border-box;}
+    .tab-cp h2{font-size:16px;margin:0 0 4px;}
+    .tab-cp p.cp-lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:960px;line-height:1.55;}
+    .tab-cp .cp-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+    .tab-cp .cp-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-cp .cp-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
+    .tab-cp .cp-stage{position:relative;border-radius:10px;overflow:hidden;background:#20303f;
+      user-select:none;cursor:crosshair;}
+    .tab-cp .cp-stage > img.bg{display:block;width:100%;pointer-events:none;}
+    .tab-cp .cp-plot{position:absolute;border:2px solid #6FE06F;background:rgba(111,224,111,.18);
+      cursor:move;}
+    .tab-cp .cp-plot.sel{border-color:#FCBE2E;background:rgba(252,190,46,.22);}
+    .tab-cp .cp-plot .rs{position:absolute;right:-6px;bottom:-6px;width:12px;height:12px;
+      border-radius:3px;background:#fff;border:2px solid #27384a;cursor:nwse-resize;}
+    .tab-cp pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:11.5px;
+      overflow:auto;max-height:260px;margin:10px 0 0;}
+    .tab-cp .cp-note{font-size:12px;color:var(--muted);}
+  </style>
+
+  <h2>🧱 Участки под дома</h2>
+  <p class="cp-lead">
+    Тащите мышью по пустому месту карты — рисуется прямоугольная площадка
+    (участок под дом). Готовый участок можно двигать целиком (тащить за
+    середину) и менять размер (тащить за уголок внизу справа). Нижний край
+    прямоугольника — это ЗЕМЛЯ, куда встанет фундамент дома; сам дом наружу
+    вверх и по бокам может немного выходить за рамку — это нормально, важна
+    именно нижняя граница и общая ширина участка. Разметили — «📋 Скопировать
+    список» и пришлите мне: я подберу дизайн, этаж и ракурс под каждый участок
+    и сам впишу в <b>src/constants/cityHouses.js</b>.
+  </p>
+
+  <div class="cp-ctl">
+    <button id="cpCopy" class="primary">📋 Скопировать список</button>
+    <button id="cpDel">✕ Удалить участок</button>
+    <button id="cpClear">Стереть всё</button>
+    <span id="cpHint" class="cp-note"></span>
+  </div>
+  <div class="cp-stage" id="cpStage">
+    <img class="bg" src="map-city/empty.jpg" onerror="this.src='map-city/summer-day.jpg'">
+  </div>
+  <pre id="cpOut"></pre>`;
+
+  const IMG_W = 1920, OFFSET = 360;
+  const stage = root.querySelector('#cpStage');
+  const KEY = 'ozongame_cityplots_editor_v1';
+  let plots;
+  try { plots = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { plots = []; }
+  if (!Array.isArray(plots)) plots = [];
+  let sel = -1;
+
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(plots)); } catch {} };
+  const k = () => stage.clientWidth / IMG_W;
+
+  // Участок хранится в мировых координатах контента: x1/x2 — левый/правый
+  // край, y1/y2 — верх/низ (низ = земля). Порядок краёв не гарантирован при
+  // рисовании (тянуть можно в любую сторону) — нормализуем перед выводом.
+  function norm(p) {
+    return { x1: Math.min(p.x1, p.x2), x2: Math.max(p.x1, p.x2), y1: Math.min(p.y1, p.y2), y2: Math.max(p.y1, p.y2) };
+  }
+
+  function draw() {
+    [...stage.querySelectorAll('.cp-plot')].forEach((n) => n.remove());
+    plots.forEach((p, i) => {
+      const n = norm(p);
+      const el = document.createElement('div');
+      el.className = 'cp-plot' + (i === sel ? ' sel' : '');
+      el.style.left = (n.x1 + OFFSET) * k() + 'px';
+      el.style.top = n.y1 * k() + 'px';
+      el.style.width = (n.x2 - n.x1) * k() + 'px';
+      el.style.height = (n.y2 - n.y1) * k() + 'px';
+      el.innerHTML = '<div class="rs"></div>';
+      el.addEventListener('pointerdown', (e) => {
+        if (e.target.classList.contains('rs')) return; // ресайз — свой обработчик ниже
+        e.stopPropagation(); e.preventDefault();
+        sel = i; draw();
+        const startX = e.clientX, startY = e.clientY;
+        const orig = { x1: p.x1, x2: p.x2, y1: p.y1, y2: p.y2 };
+        const onMove = (ev) => {
+          const dx = (ev.clientX - startX) / k(), dy = (ev.clientY - startY) / k();
+          p.x1 = Math.round(orig.x1 + dx); p.x2 = Math.round(orig.x2 + dx);
+          p.y1 = Math.round(orig.y1 + dy); p.y2 = Math.round(orig.y2 + dy);
+          save(); draw();
+        };
+        const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); save(); };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
+      });
+      el.querySelector('.rs').addEventListener('pointerdown', (e) => {
+        e.stopPropagation(); e.preventDefault();
+        sel = i; draw();
+        const onMove = (ev) => {
+          const box = stage.getBoundingClientRect();
+          p.x2 = Math.round((ev.clientX - box.left) / k() - OFFSET);
+          p.y2 = Math.round((ev.clientY - box.top) / k());
+          save(); draw();
+        };
+        const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); save(); };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
+      });
+      stage.appendChild(el);
+    });
+    renderOut();
+  }
+
+  // Рисование нового участка — pointerdown прямо на фоне (не на существующем).
+  stage.querySelector('img.bg').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    const box = stage.getBoundingClientRect();
+    const x0 = Math.round((e.clientX - box.left) / k() - OFFSET);
+    const y0 = Math.round((e.clientY - box.top) / k());
+    const p = { x1: x0, y1: y0, x2: x0, y2: y0 };
+    plots.push(p);
+    sel = plots.length - 1;
+    const onMove = (ev) => {
+      p.x2 = Math.round((ev.clientX - box.left) / k() - OFFSET);
+      p.y2 = Math.round((ev.clientY - box.top) / k());
+      save(); draw();
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp);
+      // случайный клик без протяжки — площадка ~0×0, убираем как шум
+      const n = norm(p);
+      if (n.x2 - n.x1 < 8 || n.y2 - n.y1 < 8) { plots.splice(plots.indexOf(p), 1); sel = -1; }
+      save(); draw();
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  });
+
+  function renderOut() {
+    const rows = plots.map((p) => {
+      const n = norm(p);
+      const w = n.x2 - n.x1;
+      const cx = Math.round((n.x1 + n.x2) / 2);
+      return `  { x: ${cx}, y: ${n.y2}, w: ${w}, topY: ${n.y1} },`;
+    }).join('\n');
+    root.querySelector('#cpOut').textContent = `[\n${rows}\n]`;
+  }
+
+  root.querySelector('#cpDel').onclick = () => { if (plots[sel]) { plots.splice(sel, 1); sel = -1; save(); draw(); } };
+  root.querySelector('#cpClear').onclick = () => { plots = []; sel = -1; save(); draw(); };
+  root.querySelector('#cpCopy').onclick = async () => {
+    const txt = root.querySelector('#cpOut').textContent;
+    try { await navigator.clipboard.writeText(txt); root.querySelector('#cpHint').textContent = 'скопировано'; }
+    catch { window.prompt('Скопируйте', txt); }
+    setTimeout(() => { root.querySelector('#cpHint').textContent = ''; }, 1800);
+  };
+
+  window.addEventListener('resize', draw);
+  const bg = stage.querySelector('img.bg');
+  if (bg.complete) draw(); else bg.onload = draw;
+}
 
 function renderCityHousesTab(root) {
   root.className = 'tab-ch';
