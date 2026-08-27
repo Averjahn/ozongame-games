@@ -93,6 +93,7 @@ const TOP_TABS = [
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
   { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
   { key: 'sidewalks', label: '🚶 Тротуары', render: (root) => renderSidewalksTab(root) },
+  { key: 'cityhouses', label: '🏘 Дома города', render: (root) => renderCityHousesTab(root) },
   { key: 'hallslots', label: '🏬 Обстановка аптеки', render: (root) => renderHallSlotsTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
@@ -6952,6 +6953,161 @@ function renderSidewalksTab(root) {
 
   window.addEventListener('resize', draw);
   draw();
+}
+</script>
+
+
+<script>
+/* ============================================================
+   ВКЛАДКА «ДОМА ГОРОДА» — расстановка зданий-статистов по пустой карте.
+
+   Заказчик: дома фона выбивались из стилистики линейки, поэтому город
+   собирается конструктором. Фон — пустая карта (дороги как ориентиры),
+   дома — спрайты из public/city-houses. Клик по списку добавляет дом в
+   центр, перетаскивание мышью — позиция, колесо — размер, кнопки —
+   зеркало и удаление. «Скопировать код» — вставить в
+   src/constants/cityHouses.js (CITY_HOUSES).
+   ============================================================ */
+const CITY_HOUSE_LIST = ['h-brick2','h-plaster2','h-corner3','h-narrow','h-wide2','h-shop1'];
+
+function renderCityHousesTab(root) {
+  root.className = 'tab-ch';
+  root.innerHTML = `
+  <style>
+    .tab-ch{font-family:inherit;color:var(--ink);}
+    .tab-ch *{box-sizing:border-box;}
+    .tab-ch h2{font-size:16px;margin:0 0 4px;}
+    .tab-ch p.ch-lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:960px;line-height:1.55;}
+    .tab-ch .ch-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+    .tab-ch .ch-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-ch .ch-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
+    .tab-ch .ch-wrap{display:grid;grid-template-columns:1fr 210px;gap:14px;align-items:start;}
+    .tab-ch .ch-stage{position:relative;border-radius:10px;overflow:hidden;background:#20303f;user-select:none;}
+    .tab-ch .ch-stage > img.bg{display:block;width:100%;pointer-events:none;}
+    .tab-ch .ch-house{position:absolute;cursor:grab;}
+    .tab-ch .ch-house.sel{outline:2px solid #FCBE2E;outline-offset:1px;}
+    .tab-ch .ch-house img{display:block;height:100%;width:auto;pointer-events:none;}
+    .tab-ch .ch-list{list-style:none;margin:0;padding:0;background:var(--card);
+      border:1px solid var(--line);border-radius:12px;max-height:420px;overflow:auto;}
+    .tab-ch .ch-list li{display:flex;align-items:center;gap:8px;padding:6px 8px;
+      border-top:1px solid var(--line);font-size:12.5px;cursor:pointer;}
+    .tab-ch .ch-list li:first-child{border-top:none;}
+    .tab-ch .ch-list img{width:44px;height:44px;object-fit:contain;}
+    .tab-ch pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:11.5px;
+      overflow:auto;max-height:220px;margin:10px 0 0;}
+  </style>
+
+  <h2>🏘 Дома города</h2>
+  <p class="ch-lead">
+    Кликните дом в списке справа — он появится в центре карты. Тащите мышью,
+    размер — колесом над домом. Выбранный дом: «Зеркало» разворачивает,
+    «Удалить» убирает. Готово — «📋 Скопировать код» и пришлите мне: вставлю в
+    <b>src/constants/cityHouses.js</b>, и город соберётся у всех игроков.
+  </p>
+
+  <div class="ch-ctl">
+    <button id="chCopy" class="primary">📋 Скопировать код</button>
+    <button id="chFlip">↔ Зеркало</button>
+    <button id="chDel">✕ Удалить</button>
+    <button id="chClear">Стереть всё</button>
+    <span id="chHint" style="font-size:12px;color:var(--muted)"></span>
+  </div>
+  <div class="ch-wrap">
+    <div>
+      <div class="ch-stage" id="chStage">
+        <img class="bg" src="map-city/empty.jpg" onerror="this.src='map-city/summer-day.jpg'">
+      </div>
+      <pre id="chOut"></pre>
+    </div>
+    <ul class="ch-list" id="chList"></ul>
+  </div>`;
+
+  const IMG_W = 1920, OFFSET = 360;
+  const stage = root.querySelector('#chStage');
+  const KEY = 'ozongame_cityhouses_editor_v1';
+  let houses;
+  try { houses = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { houses = []; }
+  if (!Array.isArray(houses)) houses = [];
+  let sel = -1;
+
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(houses)); } catch {} };
+  const k = () => stage.clientWidth / IMG_W;
+
+  function draw() {
+    [...stage.querySelectorAll('.ch-house')].forEach((n) => n.remove());
+    houses.forEach((h, i) => {
+      const el = document.createElement('div');
+      el.className = 'ch-house' + (i === sel ? ' sel' : '');
+      el.innerHTML = `<img src="city-houses/${h.img}.png">`;
+      el.style.left = (h.x + OFFSET) * k() + 'px';
+      el.style.top = (h.y - h.h) * k() + 'px';
+      el.style.height = h.h * k() + 'px';
+      el.style.transform = 'translateX(-50%)' + (h.flip ? ' scaleX(-1)' : '');
+      el.addEventListener('pointerdown', (e) => startDrag(e, i, el));
+      el.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        h.h = Math.max(40, Math.min(420, h.h + (e.deltaY < 0 ? 8 : -8)));
+        save(); draw();
+      }, { passive: false });
+      stage.appendChild(el);
+    });
+    renderOut();
+  }
+
+  let drag = null;
+  function startDrag(e, i, el) {
+    e.preventDefault(); sel = i; draw();
+    drag = { i };
+    window.addEventListener('pointermove', onDrag);
+    window.addEventListener('pointerup', endDrag);
+  }
+  function onDrag(e) {
+    if (!drag) return;
+    const box = stage.getBoundingClientRect();
+    const h = houses[drag.i];
+    h.x = Math.round((e.clientX - box.left) / k() - OFFSET);
+    h.y = Math.round((e.clientY - box.top) / k() + h.h * 0); // y — линия земли
+    h.y = Math.round((e.clientY - box.top) / k());
+    save(); draw();
+  }
+  function endDrag() {
+    drag = null; save();
+    window.removeEventListener('pointermove', onDrag);
+    window.removeEventListener('pointerup', endDrag);
+  }
+
+  function renderOut() {
+    const rows = houses.map((h) =>
+      `  { img: '${h.img}', x: ${h.x}, y: ${h.y}, h: ${h.h}${h.flip ? ', flip: true' : ''} },`).join('\n');
+    root.querySelector('#chOut').textContent = `export const CITY_HOUSES = [\n${rows}\n]`;
+  }
+
+  const list = root.querySelector('#chList');
+  for (const name of CITY_HOUSE_LIST) {
+    const li = document.createElement('li');
+    li.innerHTML = `<img src="city-houses/${name}.png"><span>${name}</span>`;
+    li.onclick = () => {
+      houses.push({ img: name, x: 600, y: 500, h: 140, flip: false });
+      sel = houses.length - 1;
+      save(); draw();
+    };
+    list.appendChild(li);
+  }
+
+  root.querySelector('#chFlip').onclick = () => { if (houses[sel]) { houses[sel].flip = !houses[sel].flip; save(); draw(); } };
+  root.querySelector('#chDel').onclick = () => { if (houses[sel]) { houses.splice(sel, 1); sel = -1; save(); draw(); } };
+  root.querySelector('#chClear').onclick = () => { houses = []; sel = -1; save(); draw(); };
+  root.querySelector('#chCopy').onclick = async () => {
+    const txt = root.querySelector('#chOut').textContent;
+    try { await navigator.clipboard.writeText(txt); root.querySelector('#chHint').textContent = 'скопировано'; }
+    catch { window.prompt('Скопируйте', txt); }
+    setTimeout(() => { root.querySelector('#chHint').textContent = ''; }, 1800);
+  };
+
+  window.addEventListener('resize', draw);
+  const bg = stage.querySelector('img.bg');
+  if (bg.complete) draw(); else bg.onload = draw;
 }
 </script>
 
