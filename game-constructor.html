@@ -7001,6 +7001,8 @@ function renderCityPlotsTab(root) {
     .tab-cp .cp-plot.sel{border-color:#FCBE2E;background:rgba(252,190,46,.22);}
     .tab-cp .cp-plot .rs{position:absolute;right:-6px;bottom:-6px;width:12px;height:12px;
       border-radius:3px;background:#fff;border:2px solid #27384a;cursor:nwse-resize;}
+    .tab-cp .cp-plot .rot{position:absolute;left:-7px;top:-7px;width:13px;height:13px;
+      border-radius:50%;background:#FCBE2E;border:2px solid #6b5211;cursor:grab;}
     .tab-cp pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:11.5px;
       overflow:auto;max-height:260px;margin:10px 0 0;}
     .tab-cp .cp-note{font-size:12px;color:var(--muted);}
@@ -7010,12 +7012,14 @@ function renderCityPlotsTab(root) {
   <p class="cp-lead">
     Тащите мышью по пустому месту карты — рисуется прямоугольная площадка
     (участок под дом). Готовый участок можно двигать целиком (тащить за
-    середину) и менять размер (тащить за уголок внизу справа). Нижний край
-    прямоугольника — это ЗЕМЛЯ, куда встанет фундамент дома; сам дом наружу
-    вверх и по бокам может немного выходить за рамку — это нормально, важна
-    именно нижняя граница и общая ширина участка. Разметили — «📋 Скопировать
-    список» и пришлите мне: я подберу дизайн, этаж и ракурс под каждый участок
-    и сам впишу в <b>src/constants/cityHouses.js</b>.
+    середину), менять размер (тащить за белый уголок внизу справа) и
+    поворачивать на любой градус (тащить за жёлтый кружок вверху слева, как
+    будто берёте дом за угол и разворачиваете — не ступенями по 15°, а плавно).
+    Нижний край прямоугольника — это ЗЕМЛЯ, куда встанет фундамент дома; сам
+    дом наружу вверх и по бокам может немного выходить за рамку — это
+    нормально, важна именно нижняя граница и общая ширина участка. Разметили —
+    «📋 Скопировать список» и пришлите мне: я подберу дизайн, этаж и ракурс под
+    каждый участок и сам впишу в <b>src/constants/cityHouses.js</b>.
   </p>
 
   <div class="cp-ctl">
@@ -7057,9 +7061,14 @@ function renderCityPlotsTab(root) {
       el.style.top = n.y1 * k() + 'px';
       el.style.width = (n.x2 - n.x1) * k() + 'px';
       el.style.height = (n.y2 - n.y1) * k() + 'px';
-      el.innerHTML = '<div class="rs"></div>';
+      // поворот — вокруг ЦЕНТРА своего же прямоугольника, как дом крутился
+      // бы на месте; ресайз/перенос считаются в исходных (неповёрнутых)
+      // мировых координатах — угол только для превью, не мешает драгу.
+      el.style.transformOrigin = '50% 50%';
+      el.style.transform = (p.rot ? `rotate(${p.rot}deg)` : '');
+      el.innerHTML = '<div class="rs" title="размер"></div><div class="rot" title="поворот"></div>';
       el.addEventListener('pointerdown', (e) => {
-        if (e.target.classList.contains('rs')) return; // ресайз — свой обработчик ниже
+        if (e.target.classList.contains('rs') || e.target.classList.contains('rot')) return;
         e.stopPropagation(); e.preventDefault();
         sel = i; draw();
         const startX = e.clientX, startY = e.clientY;
@@ -7081,6 +7090,27 @@ function renderCityPlotsTab(root) {
           const box = stage.getBoundingClientRect();
           p.x2 = Math.round((ev.clientX - box.left) / k() - OFFSET);
           p.y2 = Math.round((ev.clientY - box.top) / k());
+          save(); draw();
+        };
+        const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); save(); };
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
+      });
+      // Поворот — тащим жёлтый кружок в углу вокруг ЦЕНТРА участка: угол
+      // считаем от центра к курсору в экранных координатах (масштаб k() на
+      // угол не влияет), поэтому получается настоящее «взял за угол и
+      // покрутил» — плавно, а не шагами по 15°, как у готовых домов.
+      el.querySelector('.rot').addEventListener('pointerdown', (e) => {
+        e.stopPropagation(); e.preventDefault();
+        sel = i; draw();
+        const box = stage.getBoundingClientRect();
+        const cx = box.left + ((n.x1 + n.x2) / 2 + OFFSET) * k();
+        const cy = box.top + ((n.y1 + n.y2) / 2) * k();
+        const angle0 = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI;
+        const rot0 = p.rot || 0;
+        const onMove = (ev) => {
+          const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
+          p.rot = Math.round((rot0 + (angle - angle0)) * 10) / 10;
           save(); draw();
         };
         const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); save(); };
@@ -7122,7 +7152,8 @@ function renderCityPlotsTab(root) {
       const n = norm(p);
       const w = n.x2 - n.x1;
       const cx = Math.round((n.x1 + n.x2) / 2);
-      return `  { x: ${cx}, y: ${n.y2}, w: ${w}, topY: ${n.y1} },`;
+      const rot = p.rot ? `, rot: ${p.rot}` : '';
+      return `  { x: ${cx}, y: ${n.y2}, w: ${w}, topY: ${n.y1}${rot} },`;
     }).join('\n');
     root.querySelector('#cpOut').textContent = `[\n${rows}\n]`;
   }
