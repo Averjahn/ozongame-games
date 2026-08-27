@@ -6987,7 +6987,7 @@ function renderCityHousesTab(root) {
     .tab-ch .ch-stage > img.bg{display:block;width:100%;pointer-events:none;}
     .tab-ch .ch-house{position:absolute;cursor:grab;}
     .tab-ch .ch-house.sel{outline:2px solid #FCBE2E;outline-offset:1px;}
-    .tab-ch #chZctl button{font-size:11.5px;padding:5px 9px;}
+    .tab-ch #chZctl button, .tab-ch #chRctl button{font-size:11.5px;padding:5px 9px;}
     .tab-ch .ch-house img{display:block;height:100%;width:auto;pointer-events:none;}
     .tab-ch .ch-list{list-style:none;margin:0;padding:0;background:var(--card);
       border:1px solid var(--line);border-radius:12px;max-height:420px;overflow:auto;}
@@ -7002,8 +7002,9 @@ function renderCityHousesTab(root) {
   <h2>🏘 Дома города</h2>
   <p class="ch-lead">
     Кликните дом в списке справа — он появится в центре карты. Тащите мышью,
-    размер — колесом над домом. Выбранный дом: «Зеркало» разворачивает,
-    «Удалить» убирает. Готово — «📋 Скопировать код» и пришлите мне: вставлю в
+    размер — колесом над домом, поворот — Shift+колесо или кнопки ⟲/⟳.
+    Выбранный дом: «Зеркало» разворачивает, «Удалить» убирает. Готово —
+    «📋 Скопировать код» и пришлите мне: вставлю в
     <b>src/constants/cityHouses.js</b>, и город соберётся у всех игроков.
   </p>
 
@@ -7013,6 +7014,13 @@ function renderCityHousesTab(root) {
     <button id="chDel">✕ Удалить</button>
     <button id="chClear">Стереть всё</button>
     <span id="chHint" style="font-size:12px;color:var(--muted)"></span>
+  </div>
+  <div class="ch-ctl" id="chRctl">
+    <span style="font-size:12.5px;color:var(--muted)">Поворот:</span>
+    <button id="chR-15">⟲ 15°</button>
+    <button id="chR15">⟳ 15°</button>
+    <button id="chR0">Сброс</button>
+    <span id="chRVal" style="font-size:12px;color:var(--muted)"></span>
   </div>
   <div class="ch-ctl" id="chZctl">
     <span style="font-size:12.5px;color:var(--muted)">Приоритет (кто над кем):</span>
@@ -7062,11 +7070,13 @@ function renderCityHousesTab(root) {
       el.style.left = (h.x + OFFSET) * k() + 'px';
       el.style.top = (h.y - h.h) * k() + 'px';
       el.style.height = h.h * k() + 'px';
-      el.style.transform = 'translateX(-50%)' + (h.flip ? ' scaleX(-1)' : '');
+      el.style.transformOrigin = '50% 100%';
+      el.style.transform = 'translateX(-50%)' + (h.rot ? ` rotate(${h.rot}deg)` : '') + (h.flip ? ' scaleX(-1)' : '');
       el.addEventListener('pointerdown', (e) => startDrag(e, i, el));
       el.addEventListener('wheel', (e) => {
         e.preventDefault();
-        h.h = Math.max(40, Math.min(420, h.h + (e.deltaY < 0 ? 8 : -8)));
+        if (e.shiftKey) h.rot = wrapDeg((h.rot || 0) + (e.deltaY < 0 ? 3 : -3));
+        else h.h = Math.max(40, Math.min(420, h.h + (e.deltaY < 0 ? 8 : -8)));
         save(); draw();
       }, { passive: false });
       stage.appendChild(el);
@@ -7097,12 +7107,14 @@ function renderCityHousesTab(root) {
     window.removeEventListener('pointerup', endDrag);
   }
 
+  function wrapDeg(d) { return Math.round(((d % 360) + 360) % 360); }
+
   function renderOut() {
     const rows = houses.map((h) => {
-      // z пишем ТОЛЬКО когда он отличается от 0 (порядка добавления) — иначе
-      // файл забился бы нулями, и настоящие переопределения приоритета
-      // потерялись бы в них
-      const extra = (h.z ? `, z: ${h.z}` : '') + (h.flip ? ', flip: true' : '');
+      // z и rot пишем ТОЛЬКО когда они отличаются от значения по умолчанию —
+      // иначе файл забился бы нулями, и настоящие переопределения (приоритет,
+      // угол) потерялись бы среди них
+      const extra = (h.z ? `, z: ${h.z}` : '') + (h.rot ? `, rot: ${wrapDeg(h.rot)}` : '') + (h.flip ? ', flip: true' : '');
       return `  { img: '${h.img}', x: ${h.x}, y: ${h.y}, h: ${h.h}${extra} },`;
     }).join('\n');
     root.querySelector('#chOut').textContent = `export const CITY_HOUSES = [\n${rows}\n]`;
@@ -7111,6 +7123,7 @@ function renderCityHousesTab(root) {
   function syncZ() {
     const h = houses[sel];
     root.querySelector('#chZVal').textContent = h ? `слой: ${h.z || 0}` : 'дом не выбран';
+    root.querySelector('#chRVal').textContent = h ? `угол: ${wrapDeg(h.rot || 0)}°` : '';
   }
 
   const list = root.querySelector('#chList');
@@ -7141,6 +7154,15 @@ function renderCityHousesTab(root) {
     houses[sel].z = dir > 0 ? Math.max(...zs, 0) + 1 : Math.min(...zs, 0) - 1;
     save(); draw();
   }
+  function bumpRot(delta) {
+    if (!houses[sel]) return;
+    houses[sel].rot = wrapDeg((houses[sel].rot || 0) + delta);
+    save(); draw();
+  }
+  root.querySelector('#chR15').onclick = () => bumpRot(15);
+  root.querySelector('#chR-15').onclick = () => bumpRot(-15);
+  root.querySelector('#chR0').onclick = () => { if (houses[sel]) { houses[sel].rot = 0; save(); draw(); } };
+
   root.querySelector('#chZUp').onclick = () => bumpZ(1);
   root.querySelector('#chZDown').onclick = () => bumpZ(-1);
   root.querySelector('#chZFront').onclick = () => extremeZ(1);
