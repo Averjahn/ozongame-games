@@ -92,6 +92,7 @@ const TOP_TABS = [
   { key: 'gamestats', label: '📈 Статистика игр', render: (root) => renderGameStatsTab(root) },
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
   { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
+  { key: 'sidewalks', label: '🚶 Тротуары', render: (root) => renderSidewalksTab(root) },
   { key: 'hallslots', label: '🏬 Обстановка аптеки', render: (root) => renderHallSlotsTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
@@ -6804,6 +6805,136 @@ function renderHallSlotsTab(root) {
 
   drawStage();
   renderList();
+}
+</script>
+
+
+<script>
+/* ============================================================
+   ВКЛАДКА «ТРОТУАРЫ» — маршруты пешеходов на карте города.
+
+   Первая версия водила людей по прямым линиям «на глаз», и они шагали
+   ПОВЕРХ домов (заказчик поймал). Здесь маршруты чертятся мышью прямо по
+   карте: клик ставит точку, точки соединяются ломаной вдоль тротуара.
+   Код копируется в src/constants/mapSidewalks.js (массив SIDEWALKS).
+
+   Координаты — системы .map-content (1200px): stageX/scale − OVERHANG.
+   Планировка города одинакова во всех 12 состояниях, поэтому чертить
+   можно на любом фоне — линии подойдут всем сезонам.
+   ============================================================ */
+function renderSidewalksTab(root) {
+  root.className = 'tab-walk';
+  root.innerHTML = `
+  <style>
+    .tab-walk{font-family:inherit;color:var(--ink);}
+    .tab-walk *{box-sizing:border-box;}
+    .tab-walk h2{font-size:16px;margin:0 0 4px;}
+    .tab-walk p.walk-lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:960px;line-height:1.55;}
+    .tab-walk .walk-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+    .tab-walk .walk-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-walk .walk-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
+    .tab-walk .walk-stage{position:relative;margin:0 auto 12px;border-radius:10px;overflow:hidden;
+      cursor:crosshair;user-select:none;background:#20303f;}
+    .tab-walk .walk-stage img{display:block;width:100%;pointer-events:none;}
+    .tab-walk .walk-stage svg{position:absolute;inset:0;width:100%;height:100%;}
+    .tab-walk pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:12px;
+      overflow:auto;max-height:220px;margin:10px 0 0;}
+  </style>
+
+  <h2>🚶 Тротуары: где ходят пешеходы</h2>
+  <p class="walk-lead">
+    Кликайте по карте вдоль тротуара — точки соединяются линией. «Новая линия» —
+    начать следующий маршрут, двойной клик — тоже завершает текущий.
+    Готово — «📋 Скопировать код» и пришлите мне: я вставлю его в
+    <b>src/constants/mapSidewalks.js</b>, и пешеходы пойдут ровно по этим линиям.
+    Чертить можно на любом сезоне — планировка во всех двенадцати одинаковая.
+  </p>
+
+  <div class="walk-ctl">
+    <button id="wkCopy" class="primary">📋 Скопировать код</button>
+    <button id="wkNew">Новая линия</button>
+    <button id="wkUndo">⌫ Убрать точку</button>
+    <button id="wkClear">Стереть всё</button>
+    <span id="wkHint" style="font-size:12px;color:var(--muted)"></span>
+  </div>
+  <div class="walk-stage" id="wkStage">
+    <img src="map-city/summer-day.jpg" alt="карта">
+    <svg id="wkSvg"></svg>
+  </div>
+  <pre id="wkOut"></pre>`;
+
+  // фон 1920×810; контентные координаты: image_x − 360 (см. mapDistricts)
+  const IMG_W = 1920, IMG_H = 810, OFFSET = 360;
+  const stage = root.querySelector('#wkStage');
+  const svg = root.querySelector('#wkSvg');
+
+  // Сохраняем в localStorage: начерченное не должно пропадать от перезагрузки
+  // (тот же урок, что со вкладкой обстановки).
+  const KEY = 'ozongame_sidewalks_editor_v1';
+  let lines;
+  try { lines = JSON.parse(localStorage.getItem(KEY) || '[[]]'); } catch { lines = [[]]; }
+  if (!Array.isArray(lines) || !lines.length) lines = [[]];
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(lines)); } catch {} }
+  function cur() { return lines[lines.length - 1]; }
+
+  function draw() {
+    const w = stage.clientWidth;
+    const k = w / IMG_W;
+    let out = '';
+    lines.forEach((ln, li) => {
+      if (!ln.length) return;
+      const last = li === lines.length - 1;
+      const pts = ln.map(([x, y]) => `${(x + OFFSET) * k},${y * k}`).join(' ');
+      out += `<polyline points="${pts}" fill="none"
+        stroke="${last ? '#FCBE2E' : '#7ED957'}" stroke-width="3"
+        stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
+      for (const [x, y] of ln) {
+        out += `<circle cx="${(x + OFFSET) * k}" cy="${y * k}" r="4"
+          fill="${last ? '#FCBE2E' : '#7ED957'}" stroke="#12202c" stroke-width="1.5"/>`;
+      }
+    });
+    svg.innerHTML = out;
+    renderOut();
+  }
+
+  function renderOut() {
+    const rows = lines.filter((l) => l.length >= 2).map((l) =>
+      '  [' + l.map(([x, y]) => `[${x}, ${y}]`).join(', ') + '],').join('\n');
+    root.querySelector('#wkOut').textContent =
+      `export const SIDEWALKS = [\n${rows}\n]`;
+  }
+
+  stage.addEventListener('click', (e) => {
+    const box = stage.getBoundingClientRect();
+    const k = box.width / IMG_W;
+    const x = Math.round((e.clientX - box.left) / k - OFFSET);
+    const y = Math.round((e.clientY - box.top) / k);
+    cur().push([x, y]);
+    save(); draw();
+  });
+  stage.addEventListener('dblclick', () => {
+    if (cur().length) lines.push([]);
+    save(); draw();
+  });
+
+  root.querySelector('#wkNew').onclick = () => { if (cur().length) { lines.push([]); save(); draw(); } };
+  root.querySelector('#wkUndo').onclick = () => {
+    if (cur().length) cur().pop();
+    else if (lines.length > 1) { lines.pop(); cur().pop(); }
+    save(); draw();
+  };
+  root.querySelector('#wkClear').onclick = () => { lines = [[]]; save(); draw(); };
+  root.querySelector('#wkCopy').onclick = async () => {
+    const txt = root.querySelector('#wkOut').textContent;
+    try { await navigator.clipboard.writeText(txt); root.querySelector('#wkHint').textContent = 'скопировано'; }
+    catch { window.prompt('Скопируйте', txt); }
+    setTimeout(() => { root.querySelector('#wkHint').textContent = ''; }, 1800);
+  };
+
+  window.addEventListener('resize', draw);
+  draw();
 }
 </script>
 
