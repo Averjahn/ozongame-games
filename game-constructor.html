@@ -6844,7 +6844,8 @@ function renderSidewalksTab(root) {
 
   <h2>🚶 Тротуары: где ходят пешеходы</h2>
   <p class="walk-lead">
-    Кликайте по карте вдоль тротуара — точки соединяются линией. «Новая линия» —
+    Выберите тип: по <b>тротуарам</b> ходят пешеходы, по <b>дорогам</b> ездят
+    машины. Кликайте по карте вдоль линии — точки соединяются. «Новая линия» —
     начать следующий маршрут, двойной клик — тоже завершает текущий.
     Готово — «📋 Скопировать код» и пришлите мне: я вставлю его в
     <b>src/constants/mapSidewalks.js</b>, и пешеходы пойдут ровно по этим линиям.
@@ -6852,6 +6853,8 @@ function renderSidewalksTab(root) {
   </p>
 
   <div class="walk-ctl">
+    <label><input type="radio" name="wkType" value="walk" checked> тротуар</label>
+    <label><input type="radio" name="wkType" value="road"> дорога</label>
     <button id="wkCopy" class="primary">📋 Скопировать код</button>
     <button id="wkNew">Новая линия</button>
     <button id="wkUndo">⌫ Убрать точку</button>
@@ -6871,11 +6874,15 @@ function renderSidewalksTab(root) {
 
   // Сохраняем в localStorage: начерченное не должно пропадать от перезагрузки
   // (тот же урок, что со вкладкой обстановки).
-  const KEY = 'ozongame_sidewalks_editor_v1';
+  // Линии двух типов: по тротуарам ходят пешеходы, по дорогам ездят машины.
+  // Формат записи: { type: 'walk'|'road', pts: [[x,y],...] }.
+  const KEY = 'ozongame_sidewalks_editor_v2';
   let lines;
-  try { lines = JSON.parse(localStorage.getItem(KEY) || '[[]]'); } catch { lines = [[]]; }
-  if (!Array.isArray(lines) || !lines.length) lines = [[]];
+  try { lines = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { lines = []; }
+  if (!Array.isArray(lines)) lines = [];
+  if (!lines.length) lines = [{ type: 'walk', pts: [] }];
 
+  function curType() { return root.querySelector('input[name=wkType]:checked').value; }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(lines)); } catch {} }
   function cur() { return lines[lines.length - 1]; }
 
@@ -6884,15 +6891,18 @@ function renderSidewalksTab(root) {
     const k = w / IMG_W;
     let out = '';
     lines.forEach((ln, li) => {
-      if (!ln.length) return;
+      if (!ln.pts.length) return;
       const last = li === lines.length - 1;
-      const pts = ln.map(([x, y]) => `${(x + OFFSET) * k},${y * k}`).join(' ');
+      // тротуары зелёные, дороги синие; активная линия всегда жёлтая
+      const color = last ? '#FCBE2E' : (ln.type === 'road' ? '#5FA8EC' : '#7ED957');
+      const pts = ln.pts.map(([x, y]) => `${(x + OFFSET) * k},${y * k}`).join(' ');
       out += `<polyline points="${pts}" fill="none"
-        stroke="${last ? '#FCBE2E' : '#7ED957'}" stroke-width="3"
-        stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>`;
-      for (const [x, y] of ln) {
+        stroke="${color}" stroke-width="3"
+        stroke-linejoin="round" stroke-linecap="round" opacity="0.9"
+        ${ln.type === 'road' ? 'stroke-dasharray="10 6"' : ''}/>`;
+      for (const [x, y] of ln.pts) {
         out += `<circle cx="${(x + OFFSET) * k}" cy="${y * k}" r="4"
-          fill="${last ? '#FCBE2E' : '#7ED957'}" stroke="#12202c" stroke-width="1.5"/>`;
+          fill="${color}" stroke="#12202c" stroke-width="1.5"/>`;
       }
     });
     svg.innerHTML = out;
@@ -6900,10 +6910,12 @@ function renderSidewalksTab(root) {
   }
 
   function renderOut() {
-    const rows = lines.filter((l) => l.length >= 2).map((l) =>
-      '  [' + l.map(([x, y]) => `[${x}, ${y}]`).join(', ') + '],').join('\n');
+    const dump = (type) => lines
+      .filter((l) => l.type === type && l.pts.length >= 2)
+      .map((l) => '  [' + l.pts.map(([x, y]) => `[${x}, ${y}]`).join(', ') + '],')
+      .join('\n');
     root.querySelector('#wkOut').textContent =
-      `export const SIDEWALKS = [\n${rows}\n]`;
+      `export const SIDEWALKS = [\n${dump('walk')}\n]\n\nexport const ROADS = [\n${dump('road')}\n]`;
   }
 
   stage.addEventListener('click', (e) => {
@@ -6911,21 +6923,26 @@ function renderSidewalksTab(root) {
     const k = box.width / IMG_W;
     const x = Math.round((e.clientX - box.left) / k - OFFSET);
     const y = Math.round((e.clientY - box.top) / k);
-    cur().push([x, y]);
+    // клик другим типом — автоматически начинает новую линию этого типа
+    if (cur().pts.length && cur().type !== curType()) lines.push({ type: curType(), pts: [] });
+    cur().type = curType();
+    cur().pts.push([x, y]);
     save(); draw();
   });
   stage.addEventListener('dblclick', () => {
-    if (cur().length) lines.push([]);
+    if (cur().pts.length) lines.push({ type: curType(), pts: [] });
     save(); draw();
   });
 
-  root.querySelector('#wkNew').onclick = () => { if (cur().length) { lines.push([]); save(); draw(); } };
+  root.querySelector('#wkNew').onclick = () => {
+    if (cur().pts.length) { lines.push({ type: curType(), pts: [] }); save(); draw(); }
+  };
   root.querySelector('#wkUndo').onclick = () => {
-    if (cur().length) cur().pop();
-    else if (lines.length > 1) { lines.pop(); cur().pop(); }
+    if (cur().pts.length) cur().pts.pop();
+    else if (lines.length > 1) { lines.pop(); cur().pts.pop(); }
     save(); draw();
   };
-  root.querySelector('#wkClear').onclick = () => { lines = [[]]; save(); draw(); };
+  root.querySelector('#wkClear').onclick = () => { lines = [{ type: curType(), pts: [] }]; save(); draw(); };
   root.querySelector('#wkCopy').onclick = async () => {
     const txt = root.querySelector('#wkOut').textContent;
     try { await navigator.clipboard.writeText(txt); root.querySelector('#wkHint').textContent = 'скопировано'; }
