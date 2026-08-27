@@ -6987,6 +6987,7 @@ function renderCityHousesTab(root) {
     .tab-ch .ch-stage > img.bg{display:block;width:100%;pointer-events:none;}
     .tab-ch .ch-house{position:absolute;cursor:grab;}
     .tab-ch .ch-house.sel{outline:2px solid #FCBE2E;outline-offset:1px;}
+    .tab-ch #chZctl button{font-size:11.5px;padding:5px 9px;}
     .tab-ch .ch-house img{display:block;height:100%;width:auto;pointer-events:none;}
     .tab-ch .ch-list{list-style:none;margin:0;padding:0;background:var(--card);
       border:1px solid var(--line);border-radius:12px;max-height:420px;overflow:auto;}
@@ -7013,6 +7014,14 @@ function renderCityHousesTab(root) {
     <button id="chClear">Стереть всё</button>
     <span id="chHint" style="font-size:12px;color:var(--muted)"></span>
   </div>
+  <div class="ch-ctl" id="chZctl">
+    <span style="font-size:12.5px;color:var(--muted)">Приоритет (кто над кем):</span>
+    <button id="chZBack">⏷ На самый низ</button>
+    <button id="chZDown">↓ На шаг назад</button>
+    <button id="chZUp">↑ На шаг вперёд</button>
+    <button id="chZFront">⏶ На самый верх</button>
+    <span id="chZVal" style="font-size:12px;color:var(--muted)"></span>
+  </div>
   <div class="ch-wrap">
     <div>
       <div class="ch-stage" id="chStage">
@@ -7034,9 +7043,19 @@ function renderCityHousesTab(root) {
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(houses)); } catch {} };
   const k = () => stage.clientWidth / IMG_W;
 
+  // Порядок отрисовки = приоритет наложения: DOM-порядок absolute-слоёв без
+  // явного z-index решает, кто «сверху» — тот же принцип, что в игре
+  // (MapHousesLayer.ordered). Индексы в houses[] НЕ переставляем (иначе клики
+  // и drag сбились бы), сортируем только для рендера.
+  function drawOrder() {
+    return houses.map((h, i) => i).sort((a, b) =>
+      (houses[a].z || 0) - (houses[b].z || 0) || a - b);
+  }
+
   function draw() {
     [...stage.querySelectorAll('.ch-house')].forEach((n) => n.remove());
-    houses.forEach((h, i) => {
+    for (const i of drawOrder()) {
+      const h = houses[i];
       const el = document.createElement('div');
       el.className = 'ch-house' + (i === sel ? ' sel' : '');
       el.innerHTML = `<img src="city-houses/${h.img}.png">`;
@@ -7051,13 +7070,14 @@ function renderCityHousesTab(root) {
         save(); draw();
       }, { passive: false });
       stage.appendChild(el);
-    });
+    }
     renderOut();
+    syncZ();
   }
 
   let drag = null;
   function startDrag(e, i, el) {
-    e.preventDefault(); sel = i; draw();
+    e.preventDefault(); sel = i; draw(); syncZ();
     drag = { i };
     window.addEventListener('pointermove', onDrag);
     window.addEventListener('pointerup', endDrag);
@@ -7078,9 +7098,19 @@ function renderCityHousesTab(root) {
   }
 
   function renderOut() {
-    const rows = houses.map((h) =>
-      `  { img: '${h.img}', x: ${h.x}, y: ${h.y}, h: ${h.h}${h.flip ? ', flip: true' : ''} },`).join('\n');
+    const rows = houses.map((h) => {
+      // z пишем ТОЛЬКО когда он отличается от 0 (порядка добавления) — иначе
+      // файл забился бы нулями, и настоящие переопределения приоритета
+      // потерялись бы в них
+      const extra = (h.z ? `, z: ${h.z}` : '') + (h.flip ? ', flip: true' : '');
+      return `  { img: '${h.img}', x: ${h.x}, y: ${h.y}, h: ${h.h}${extra} },`;
+    }).join('\n');
     root.querySelector('#chOut').textContent = `export const CITY_HOUSES = [\n${rows}\n]`;
+  }
+
+  function syncZ() {
+    const h = houses[sel];
+    root.querySelector('#chZVal').textContent = h ? `слой: ${h.z || 0}` : 'дом не выбран';
   }
 
   const list = root.querySelector('#chList');
@@ -7096,6 +7126,25 @@ function renderCityHousesTab(root) {
   }
 
   root.querySelector('#chFlip').onclick = () => { if (houses[sel]) { houses[sel].flip = !houses[sel].flip; save(); draw(); } };
+
+  // Приоритет — явное число z, а не перестановка внутри houses[]: так позиция
+  // в исходном массиве (и, значит, порядок добавления при равном z) не
+  // теряется, когда игрок просто подвинул один дом вперёд-назад.
+  function bumpZ(delta) {
+    if (!houses[sel]) return;
+    houses[sel].z = (houses[sel].z || 0) + delta;
+    save(); draw();
+  }
+  function extremeZ(dir) {
+    if (!houses[sel]) return;
+    const zs = houses.map((h) => h.z || 0);
+    houses[sel].z = dir > 0 ? Math.max(...zs, 0) + 1 : Math.min(...zs, 0) - 1;
+    save(); draw();
+  }
+  root.querySelector('#chZUp').onclick = () => bumpZ(1);
+  root.querySelector('#chZDown').onclick = () => bumpZ(-1);
+  root.querySelector('#chZFront').onclick = () => extremeZ(1);
+  root.querySelector('#chZBack').onclick = () => extremeZ(-1);
   root.querySelector('#chDel').onclick = () => { if (houses[sel]) { houses.splice(sel, 1); sel = -1; save(); draw(); } };
   root.querySelector('#chClear').onclick = () => { houses = []; sel = -1; save(); draw(); };
   root.querySelector('#chCopy').onclick = async () => {
