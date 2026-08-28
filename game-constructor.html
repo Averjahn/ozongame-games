@@ -6895,12 +6895,15 @@ function renderCityMapperTab(root) {
 
   <h2>🏗 Разметка города</h2>
   <p class="mk-lead">
-    <b>Колесо мыши — приближение</b> (к точке под курсором), <b>перетаскивание правой кнопкой
-    или с зажатым пробелом — сдвиг карты</b>. Режим переключается кнопками ниже.
+    <b>Колесо мыши — приближение</b> (к точке под курсором). <b>Тащите карту левой кнопкой,
+    чтобы сдвинуть её</b>; короткий клик без сдвига ставит точку. <b>Cmd/Ctrl+Z — отменить</b>
+    (жмите несколько раз, чтобы снять несколько последних правок), Shift+Cmd+Z — вернуть.
+    Режим переключается кнопками ниже.
     <br>
     <b>Дома:</b> клик по дому в списке справа — дом появится в центре экрана; тащите мышью,
     размер — <b>Shift+колесо</b> над домом или кнопки размера. <b>Дороги и тротуары:</b> клик
-    по карте ставит точку линии, точки можно перетаскивать; «Новая линия» начинает следующую.
+    по карте ставит точку линии, точки можно перетаскивать, Alt+клик по точке убирает её;
+    «Новая линия» начинает следующую.
     <br>
     Готово — «📋 Скопировать» под нужным слоем и пришлите мне.
   </p>
@@ -6949,13 +6952,49 @@ function renderCityMapperTab(root) {
   let spaceDown = false;
 
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+  /**
+   * ИСТОРИЯ ПРАВОК (Cmd/Ctrl+Z, Shift — вперёд).
+   *
+   * Снимок всего состояния перед каждым изменением, а не «убрать последнюю
+   * точку»: заказчик просил откатывать точки, но ровно та же беда с
+   * передвинутым не туда домом или случайным изменением размера, а снимок
+   * целиком (тут это ~7 КБ) закрывает все случаи одинаково и не может
+   * рассинхронизироваться с данными.
+   */
+  const undoStack = [], redoStack = [];
+  const HISTORY_MAX = 60;
+  function pushHistory() {
+    undoStack.push(JSON.stringify(S));
+    if (undoStack.length > HISTORY_MAX) undoStack.shift();
+    redoStack.length = 0;              // новая ветка правок — «вперёд» больше некуда
+  }
+  function applyState(json) {
+    S = JSON.parse(json);
+    selHouse = -1;
+    selLine = Math.min(selLine, Math.max(0, lines().length - 1));
+    save(); drawHouses(); drawSvg(); side(); ctxBar(); renderOut();
+  }
+  function undo() {
+    if (!undoStack.length) return;
+    redoStack.push(JSON.stringify(S));
+    applyState(undoStack.pop());
+  }
+  function redo() {
+    if (!redoStack.length) return;
+    undoStack.push(JSON.stringify(S));
+    applyState(redoStack.pop());
+  }
   const lines = () => (mode === 'roads' ? S.roads : S.sidewalks);
 
   /* ── зум и панорама ───────────────────────────────────────────────────── */
+  let svgZoom = -1;                          // при каком зуме нарисован слой линий
   function applyView() {
     world.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoom + ')';
     root.querySelector('#mkZoomVal').textContent = Math.round(zoom * 100) + '%';
-    drawSvg();                               // маркеры зависят от зума
+    // Маркеры масштабируются обратно зуму, поэтому пересобирать слой нужно
+    // ТОЛЬКО при смене зума: на панораме это был лишний разбор SVG каждый кадр.
+    if (svgZoom !== zoom) drawSvg();
   }
   function fit() {
     zoom = view.clientWidth / 1920;
@@ -6996,8 +7035,37 @@ function renderCityMapperTab(root) {
   view.addEventListener('pointerdown', (e) => {
     if (e.target.closest('.mk-house') || e.target.classList.contains('hit')) return;
     if (e.button === 2 || e.button === 1 || spaceDown) { startPan(e); return; }
-    if (mode !== 'houses') addPoint(toWorld(e));
+    if (e.button !== 0) return;
+    dragOrClick(e);
   });
+
+  /**
+   * Левая кнопка по карте делает ДВА разных дела, и различает их сдвиг.
+   *
+   * Раньше клик всегда ставил точку, а двигать карту приходилось правой
+   * кнопкой или пробелом — то есть самое частое действие требовало особого
+   * жеста, и разметка «ужасно неудобная» (заказчик). Теперь как в редакторах
+   * карт: потянул — поехала карта, отпустил не сдвинув — встала точка. Порог
+   * в 4px нужен, чтобы дрожание руки на клике не превращалось в панораму.
+   */
+  function dragOrClick(e) {
+    e.preventDefault();
+    const sx = e.clientX, sy = e.clientY, ox = panX, oy = panY;
+    let dragging = false;
+    const move = (ev) => {
+      const dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if (!dragging && Math.abs(dx) + Math.abs(dy) > 4) { dragging = true; view.classList.add('panning'); }
+      if (dragging) { panX = ox + dx; panY = oy + dy; applyView(); }
+    };
+    const up = (ev) => {
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+      view.classList.remove('panning');
+      if (dragging) return;                       // это была панорама, не клик
+      if (mode !== 'houses') addPoint(toWorld(ev));
+      else selectHouse(-1, null);                 // клик по пустому месту снимает выделение
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+  }
 
   function startPan(e) {
     e.preventDefault();
@@ -7035,6 +7103,7 @@ function renderCityMapperTab(root) {
           // из уже изменённых данных (заказчик: «перетаскивается только когда
           // отпускаю»). Меняем классы точечно, узел живёт весь драг.
           selectHouse(i, el);
+          pushHistory();                       // откат вернёт дом на место до перетаскивания
           // захват указателя: курсор может уйти за пределы дома и даже окна —
           // перетаскивание не сорвётся и не «залипнет» на полпути
           try { el.setPointerCapture(e.pointerId); } catch (err) {}
@@ -7077,12 +7146,19 @@ function renderCityMapperTab(root) {
   // попасть пиксель в пиксель нельзя даже на зуме, а подгонять к соседнему
   // дому приходится именно так.
   window.addEventListener('keydown', (e) => {
-    if (mode !== 'houses' || selHouse < 0) return;
     if (!root.closest('body') || root.offsetParent === null) return;
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      // Нажал несколько раз — снялось несколько последних правок (заказчик).
+      if (e.shiftKey) redo(); else undo();
+      return;
+    }
+    if (mode !== 'houses' || selHouse < 0) return;
     const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
     if (!d) return;
     e.preventDefault();
     const step = e.shiftKey ? 10 : 1;
+    pushHistory();
     const h = S.houses[selHouse];
     h.x += d[0] * step; h.y += d[1] * step;
     save(); drawHouses(); posHint(h); renderOut();
@@ -7090,6 +7166,7 @@ function renderCityMapperTab(root) {
 
   /* ── линии (дороги / тротуары) ────────────────────────────────────────── */
   function addPoint(p) {
+    pushHistory();
     const L = lines();
     if (!L[selLine]) { L[selLine] = []; }
     L[selLine].push([Math.round(p.x - OFFSET), Math.round(p.y)]);
@@ -7117,6 +7194,7 @@ function renderCityMapperTab(root) {
       });
     }
     svg.innerHTML = out;
+    svgZoom = zoom;
     svg.querySelectorAll('.hit').forEach((c) => {
       c.addEventListener('pointerdown', (e) => {
         if (e.button === 2 || spaceDown) { startPan(e); return; }
@@ -7124,11 +7202,13 @@ function renderCityMapperTab(root) {
         const li = +c.dataset.li, pi = +c.dataset.pi;
         selLine = li; side();
         if (e.altKey) {                       // Alt+клик — удалить точку
+          pushHistory();
           lines()[li].splice(pi, 1);
           if (!lines()[li].length) lines().splice(li, 1);
           save(); drawSvg(); side(); renderOut(); return;
         }
         try { c.setPointerCapture(e.pointerId); } catch (err) {}
+        pushHistory();                        // откат вернёт точку на прежнее место
         // Двигаем ТОЧЕЧНО: сам кружок и «d» его линии. Полный drawSvg() на
         // каждое движение пересобирал весь слой (десятки узлов) и заодно
         // выбрасывал перетаскиваемый кружок — то же, из-за чего залипало
@@ -7171,6 +7251,7 @@ function renderCityMapperTab(root) {
           // карты может быть далеко за экраном
           const cx = (view.clientWidth / 2 - panX) / zoom - OFFSET;
           const cy = (view.clientHeight / 2 - panY) / zoom;
+          pushHistory();
           S.houses.push({ img: li.dataset.n, x: Math.round(cx), y: Math.round(cy), h: 140 });
           selHouse = S.houses.length - 1;
           save(); drawHouses(); ctxBar(); renderOut();
@@ -7186,6 +7267,7 @@ function renderCityMapperTab(root) {
       el.querySelectorAll('li').forEach((li) => {
         li.onclick = (e) => {
           if (e.target.dataset.del !== undefined) {
+            pushHistory();
             L.splice(+e.target.dataset.del, 1); selLine = Math.max(0, selLine - 1);
           } else selLine = +li.dataset.i;
           save(); drawSvg(); side(); renderOut();
@@ -7205,38 +7287,40 @@ function renderCityMapperTab(root) {
         + '<button id="mkReset">Вернуть как в игре</button>'
         + '<span class="mk-note">' + (h ? ('выбран: ' + h.img + ' · высота ' + h.h) : 'дом не выбран')
         + ' · всего ' + S.houses.length + '</span>';
-      const bump = (d) => { if (h) { h.h = Math.max(40, Math.min(420, h.h + d)); save(); drawHouses(); ctxBar(); renderOut(); } };
+      const bump = (d) => { if (h) { pushHistory(); h.h = Math.max(40, Math.min(420, h.h + d)); save(); drawHouses(); ctxBar(); renderOut(); } };
       bar.querySelector('#mkBig').onclick = () => bump(10);
       bar.querySelector('#mkSm').onclick = () => bump(-10);
-      bar.querySelector('#mkFlip').onclick = () => { if (h) { h.flip = !h.flip; save(); drawHouses(); renderOut(); } };
+      bar.querySelector('#mkFlip').onclick = () => { if (h) { pushHistory(); h.flip = !h.flip; save(); drawHouses(); renderOut(); } };
       bar.querySelector('#mkDel').onclick = () => {
         if (selHouse < 0) return;
+        pushHistory();
         S.houses.splice(selHouse, 1); selHouse = -1; save(); drawHouses(); ctxBar(); renderOut();
       };
       bar.querySelector('#mkClear').onclick = () => {
+        pushHistory();
         S.houses = []; selHouse = -1; save(); drawHouses(); ctxBar(); renderOut();
       };
       bar.querySelector('#mkReset').onclick = () => {
+        pushHistory();
         S.houses = JSON.parse(JSON.stringify(CITY_SNAPSHOT.houses));
         selHouse = -1; save(); drawHouses(); ctxBar(); renderOut();
       };
     } else {
       const L = lines();
       bar.innerHTML = '<button id="mkNew" class="primary">＋ Новая линия</button>'
-        + '<button id="mkUndo">↶ Убрать точку</button>'
+        + '<button id="mkUndo">↶ Отменить (Cmd+Z)</button>'
         + '<button id="mkClearL">Стереть все линии</button>'
         + '<button id="mkResetL">Вернуть как в игре</button>'
         + '<span class="mk-note">Alt+клик по точке — удалить её. Линий: ' + L.length + '</span>';
-      bar.querySelector('#mkNew').onclick = () => { L.push([]); selLine = L.length - 1; save(); drawSvg(); side(); };
-      bar.querySelector('#mkUndo').onclick = () => {
-        if (L[selLine] && L[selLine].length) L[selLine].pop();
-        save(); drawSvg(); side(); renderOut();
-      };
+      bar.querySelector('#mkNew').onclick = () => { pushHistory(); L.push([]); selLine = L.length - 1; save(); drawSvg(); side(); };
+      bar.querySelector('#mkUndo').onclick = undo;
       bar.querySelector('#mkClearL').onclick = () => {
+        pushHistory();
         if (mode === 'roads') S.roads = []; else S.sidewalks = [];
         selLine = 0; save(); drawSvg(); side(); renderOut();
       };
       bar.querySelector('#mkResetL').onclick = () => {
+        pushHistory();
         const src = JSON.parse(JSON.stringify(mode === 'roads' ? CITY_SNAPSHOT.roads : CITY_SNAPSHOT.sidewalks));
         if (mode === 'roads') S.roads = src; else S.sidewalks = src;
         selLine = 0; save(); drawSvg(); side(); renderOut();
