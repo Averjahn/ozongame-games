@@ -92,9 +92,7 @@ const TOP_TABS = [
   { key: 'gamestats', label: '📈 Статистика игр', render: (root) => renderGameStatsTab(root) },
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
   { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
-  { key: 'sidewalks', label: '🚶 Тротуары', render: (root) => renderSidewalksTab(root) },
-  { key: 'cityplots', label: '🧱 Участки домов', render: (root) => renderCityPlotsTab(root) },
-  { key: 'cityhouses', label: '🏘 Дома города', render: (root) => renderCityHousesTab(root) },
+  { key: 'citymapper', label: '🏗 Разметка города', render: (root) => renderCityMapperTab(root) },
   { key: 'hallslots', label: '🏬 Обстановка аптеки', render: (root) => renderHallSlotsTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
@@ -6824,564 +6822,416 @@ function renderHallSlotsTab(root) {
    Планировка города одинакова во всех 12 состояниях, поэтому чертить
    можно на любом фоне — линии подойдут всем сезонам.
    ============================================================ */
-function renderSidewalksTab(root) {
-  root.className = 'tab-walk';
-  root.innerHTML = `
-  <style>
-    .tab-walk{font-family:inherit;color:var(--ink);}
-    .tab-walk *{box-sizing:border-box;}
-    .tab-walk h2{font-size:16px;margin:0 0 4px;}
-    .tab-walk p.walk-lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:960px;line-height:1.55;}
-    .tab-walk .walk-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
-    .tab-walk .walk-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
-      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
-    .tab-walk .walk-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
-    .tab-walk .walk-stage{position:relative;margin:0 auto 12px;border-radius:10px;overflow:hidden;
-      cursor:crosshair;user-select:none;background:#20303f;}
-    .tab-walk .walk-stage img{display:block;width:100%;pointer-events:none;}
-    .tab-walk .walk-stage svg{position:absolute;inset:0;width:100%;height:100%;}
-    .tab-walk pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:12px;
-      overflow:auto;max-height:220px;margin:10px 0 0;}
-  </style>
-
-  <h2>🚶 Тротуары: где ходят пешеходы</h2>
-  <p class="walk-lead">
-    Выберите тип: по <b>тротуарам</b> ходят пешеходы, по <b>дорогам</b> ездят
-    машины. Кликайте по карте вдоль линии — точки соединяются. «Новая линия» —
-    начать следующий маршрут, двойной клик — тоже завершает текущий.
-    Готово — «📋 Скопировать код» и пришлите мне: я вставлю его в
-    <b>src/constants/mapSidewalks.js</b>, и пешеходы пойдут ровно по этим линиям.
-    Чертить можно на любом сезоне — планировка во всех двенадцати одинаковая.
-  </p>
-
-  <div class="walk-ctl">
-    <label><input type="radio" name="wkType" value="walk" checked> тротуар</label>
-    <label><input type="radio" name="wkType" value="road"> дорога</label>
-    <button id="wkCopy" class="primary">📋 Скопировать код</button>
-    <button id="wkNew">Новая линия</button>
-    <button id="wkUndo">⌫ Убрать точку</button>
-    <button id="wkClear">Стереть всё</button>
-    <span id="wkHint" style="font-size:12px;color:var(--muted)"></span>
-  </div>
-  <div class="walk-stage" id="wkStage">
-    <img src="map-city/empty.jpg" onerror="this.src='map-city/summer-day.jpg'" alt="карта">
-    <svg id="wkSvg"></svg>
-  </div>
-  <pre id="wkOut"></pre>`;
-
-  // фон 1920×810; контентные координаты: image_x − 360 (см. mapDistricts)
-  const IMG_W = 1920, IMG_H = 810, OFFSET = 360;
-  const stage = root.querySelector('#wkStage');
-  const svg = root.querySelector('#wkSvg');
-
-  // Сохраняем в localStorage: начерченное не должно пропадать от перезагрузки
-  // (тот же урок, что со вкладкой обстановки).
-  // Линии двух типов: по тротуарам ходят пешеходы, по дорогам ездят машины.
-  // Формат записи: { type: 'walk'|'road', pts: [[x,y],...] }.
-  const KEY = 'ozongame_sidewalks_editor_v2';
-  let lines;
-  try { lines = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { lines = []; }
-  if (!Array.isArray(lines)) lines = [];
-  if (!lines.length) lines = [{ type: 'walk', pts: [] }];
-
-  function curType() { return root.querySelector('input[name=wkType]:checked').value; }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(lines)); } catch {} }
-  function cur() { return lines[lines.length - 1]; }
-
-  function draw() {
-    const w = stage.clientWidth;
-    const k = w / IMG_W;
-    let out = '';
-    lines.forEach((ln, li) => {
-      if (!ln.pts.length) return;
-      const last = li === lines.length - 1;
-      // тротуары зелёные, дороги синие; активная линия всегда жёлтая
-      const color = last ? '#FCBE2E' : (ln.type === 'road' ? '#5FA8EC' : '#7ED957');
-      const pts = ln.pts.map(([x, y]) => `${(x + OFFSET) * k},${y * k}`).join(' ');
-      out += `<polyline points="${pts}" fill="none"
-        stroke="${color}" stroke-width="3"
-        stroke-linejoin="round" stroke-linecap="round" opacity="0.9"
-        ${ln.type === 'road' ? 'stroke-dasharray="10 6"' : ''}/>`;
-      for (const [x, y] of ln.pts) {
-        out += `<circle cx="${(x + OFFSET) * k}" cy="${y * k}" r="4"
-          fill="${color}" stroke="#12202c" stroke-width="1.5"/>`;
-      }
-    });
-    svg.innerHTML = out;
-    renderOut();
-  }
-
-  function renderOut() {
-    const dump = (type) => lines
-      .filter((l) => l.type === type && l.pts.length >= 2)
-      .map((l) => '  [' + l.pts.map(([x, y]) => `[${x}, ${y}]`).join(', ') + '],')
-      .join('\n');
-    root.querySelector('#wkOut').textContent =
-      `export const SIDEWALKS = [\n${dump('walk')}\n]\n\nexport const ROADS = [\n${dump('road')}\n]`;
-  }
-
-  stage.addEventListener('click', (e) => {
-    const box = stage.getBoundingClientRect();
-    const k = box.width / IMG_W;
-    const x = Math.round((e.clientX - box.left) / k - OFFSET);
-    const y = Math.round((e.clientY - box.top) / k);
-    // клик другим типом — автоматически начинает новую линию этого типа
-    if (cur().pts.length && cur().type !== curType()) lines.push({ type: curType(), pts: [] });
-    cur().type = curType();
-    cur().pts.push([x, y]);
-    save(); draw();
-  });
-  stage.addEventListener('dblclick', () => {
-    if (cur().pts.length) lines.push({ type: curType(), pts: [] });
-    save(); draw();
-  });
-
-  root.querySelector('#wkNew').onclick = () => {
-    if (cur().pts.length) { lines.push({ type: curType(), pts: [] }); save(); draw(); }
-  };
-  root.querySelector('#wkUndo').onclick = () => {
-    if (cur().pts.length) cur().pts.pop();
-    else if (lines.length > 1) { lines.pop(); cur().pts.pop(); }
-    save(); draw();
-  };
-  root.querySelector('#wkClear').onclick = () => { lines = [{ type: curType(), pts: [] }]; save(); draw(); };
-  root.querySelector('#wkCopy').onclick = async () => {
-    const txt = root.querySelector('#wkOut').textContent;
-    try { await navigator.clipboard.writeText(txt); root.querySelector('#wkHint').textContent = 'скопировано'; }
-    catch { window.prompt('Скопируйте', txt); }
-    setTimeout(() => { root.querySelector('#wkHint').textContent = ''; }, 1800);
-  };
-
-  window.addEventListener('resize', draw);
-  draw();
-}
-</script>
-
-
-<script>
-/* ============================================================
-   ВКЛАДКА «ДОМА ГОРОДА» — расстановка зданий-статистов по пустой карте.
-
-   Заказчик: дома фона выбивались из стилистики линейки, поэтому город
-   собирается конструктором. Фон — пустая карта (дороги как ориентиры),
-   дома — спрайты из public/city-houses. Клик по списку добавляет дом в
-   центр, перетаскивание мышью — позиция, колесо — размер, кнопки —
-   зеркало и удаление. «Скопировать код» — вставить в
-   src/constants/cityHouses.js (CITY_HOUSES).
-   ============================================================ */
+/** Спрайты домов города (public/city-houses). */
 const CITY_HOUSE_LIST = ['h-brick2','h-plaster2','h-corner3','h-narrow','h-wide2','h-shop1'];
 
+/** Снимок ТЕКУЩИХ данных игры (cityHouses.js + mapSidewalks.js) — стартовое
+ *  состояние редактора: заказчик правит то, что реально видит в игре. */
+const CITY_SNAPSHOT = {"houses":[{"img":"h-wide2","x":-314,"y":69,"h":100,"flip":true},{"img":"h-plaster2","x":-314,"y":115,"h":100,"flip":true},{"img":"h-corner3","x":-222,"y":69,"h":120},{"img":"h-wide2","x":-314,"y":161,"h":100},{"img":"h-brick2","x":-222,"y":115,"h":105},{"img":"h-wide2","x":-84,"y":46,"h":145,"flip":true},{"img":"h-brick2","x":-268,"y":184,"h":100},{"img":"h-brick2","x":-130,"y":115,"h":105,"flip":true},{"img":"h-corner3","x":-38,"y":69,"h":110,"flip":true},{"img":"h-brick2","x":-268,"y":230,"h":140,"flip":true},{"img":"h-wide2","x":-176,"y":184,"h":100},{"img":"h-wide2","x":-38,"y":115,"h":95,"flip":true},{"img":"h-wide2","x":514,"y":161,"h":110},{"img":"h-brick2","x":698,"y":69,"h":120},{"img":"h-plaster2","x":560,"y":184,"h":105},{"img":"h-wide2","x":836,"y":46,"h":145,"flip":true},{"img":"h-brick2","x":560,"y":230,"h":140,"flip":true},{"img":"h-brick2","x":790,"y":115,"h":100,"flip":true},{"img":"h-brick2","x":-314,"y":759,"h":110},{"img":"h-wide2","x":-222,"y":713,"h":145,"flip":true},{"img":"h-brick2","x":8,"y":598,"h":135,"flip":true},{"img":"h-wide2","x":974,"y":115,"h":100},{"img":"h-brick2","x":-314,"y":805,"h":110},{"img":"h-brick2","x":-222,"y":759,"h":100},{"img":"h-plaster2","x":698,"y":299,"h":110},{"img":"h-wide2","x":790,"y":253,"h":130},{"img":"h-plaster2","x":928,"y":184,"h":155},{"img":"h-plaster2","x":1020,"y":138,"h":100,"flip":true},{"img":"h-plaster2","x":1204,"y":46,"h":155,"flip":true},{"img":"h-brick2","x":-222,"y":805,"h":100},{"img":"h-brick2","x":-130,"y":759,"h":110,"flip":true},{"img":"h-plaster2","x":330,"y":529,"h":100},{"img":"h-brick2","x":836,"y":276,"h":110,"flip":true},{"img":"h-brick2","x":1112,"y":138,"h":105},{"img":"h-brick2","x":146,"y":667,"h":100,"flip":true},{"img":"h-corner3","x":284,"y":598,"h":160,"flip":true},{"img":"h-brick2","x":422,"y":529,"h":105,"flip":true},{"img":"h-plaster2","x":790,"y":345,"h":155,"flip":true},{"img":"h-wide2","x":422,"y":575,"h":125,"flip":true},{"img":"h-plaster2","x":192,"y":736,"h":155,"flip":true},{"img":"h-brick2","x":1342,"y":161,"h":125},{"img":"h-corner3","x":1434,"y":115,"h":135,"flip":true},{"img":"h-wide2","x":1526,"y":69,"h":105},{"img":"h-wide2","x":1066,"y":345,"h":105,"flip":true},{"img":"h-corner3","x":1158,"y":299,"h":130,"flip":true},{"img":"h-brick2","x":1250,"y":253,"h":155},{"img":"h-plaster2","x":744,"y":552,"h":105},{"img":"h-wide2","x":928,"y":460,"h":145,"flip":true},{"img":"h-brick2","x":1112,"y":368,"h":105},{"img":"h-wide2","x":1434,"y":207,"h":100},{"img":"h-wide2","x":1526,"y":161,"h":105},{"img":"h-brick2","x":744,"y":598,"h":140},{"img":"h-brick2","x":928,"y":506,"h":140},{"img":"h-wide2","x":1020,"y":460,"h":95},{"img":"h-brick2","x":1204,"y":368,"h":105,"flip":true},{"img":"h-brick2","x":1296,"y":322,"h":155},{"img":"h-brick2","x":1480,"y":230,"h":100},{"img":"h-brick2","x":560,"y":736,"h":105,"flip":true},{"img":"h-plaster2","x":1158,"y":437,"h":110,"flip":true},{"img":"h-wide2","x":514,"y":805,"h":145,"flip":true},{"img":"h-wide2","x":652,"y":736,"h":95,"flip":true},{"img":"h-plaster2","x":836,"y":644,"h":155},{"img":"h-corner3","x":606,"y":805,"h":110},{"img":"h-wide2","x":698,"y":759,"h":95,"flip":true},{"img":"h-wide2","x":1388,"y":414,"h":100,"flip":true},{"img":"h-brick2","x":1480,"y":368,"h":100},{"img":"h-brick2","x":1112,"y":598,"h":110},{"img":"h-brick2","x":1296,"y":506,"h":155,"flip":true},{"img":"h-plaster2","x":1388,"y":460,"h":140},{"img":"h-plaster2","x":1480,"y":414,"h":125},{"img":"h-brick2","x":974,"y":713,"h":140},{"img":"h-brick2","x":1204,"y":598,"h":100},{"img":"h-brick2","x":1204,"y":644,"h":140,"flip":true},{"img":"h-plaster2","x":1250,"y":759,"h":100,"flip":true},{"img":"h-brick2","x":1342,"y":713,"h":125,"flip":true},{"img":"h-brick2","x":1250,"y":805,"h":140,"flip":true},{"img":"h-brick2","x":1342,"y":759,"h":105,"flip":true},{"img":"h-brick2","x":1434,"y":759,"h":105,"flip":true},{"img":"h-wide2","x":1434,"y":805,"h":140,"flip":true},{"img":"h-wide2","x":1526,"y":759,"h":95,"flip":true},{"img":"h-wide2","x":1526,"y":805,"h":105,"flip":true},{"img":"h-shop1","x":-296,"y":32,"h":110},{"img":"h-corner3","x":24,"y":32,"h":110,"flip":true},{"img":"h-shop1","x":-104,"y":160,"h":135,"flip":true},{"img":"h-shop1","x":-200,"y":464,"h":100},{"img":"h-shop1","x":568,"y":112,"h":95},{"img":"h-brick2","x":632,"y":144,"h":100,"flip":true},{"img":"h-shop1","x":824,"y":80,"h":100,"flip":true},{"img":"h-shop1","x":664,"y":192,"h":125},{"img":"h-shop1","x":1016,"y":80,"h":90},{"img":"h-shop1","x":984,"y":224,"h":120},{"img":"h-brick2","x":1048,"y":192,"h":105,"flip":true},{"img":"h-shop1","x":888,"y":304,"h":95,"flip":true},{"img":"h-shop1","x":344,"y":640,"h":125},{"img":"h-shop1","x":88,"y":800,"h":105,"flip":true},{"img":"h-shop1","x":1144,"y":400,"h":90},{"img":"h-shop1","x":856,"y":576,"h":90},{"img":"h-shop1","x":984,"y":544,"h":120},{"img":"h-shop1","x":1048,"y":512,"h":125},{"img":"h-shop1","x":600,"y":768,"h":90},{"img":"h-shop1","x":728,"y":800,"h":120,"flip":true},{"img":"h-shop1","x":1496,"y":448,"h":95},{"img":"h-corner3","x":1368,"y":544,"h":130,"flip":true},{"img":"h-brick2","x":1016,"y":752,"h":115},{"img":"h-shop1","x":1400,"y":656,"h":90},{"img":"h-brick2","x":1464,"y":720,"h":135,"flip":true},{"img":"h-narrow","x":-336,"y":300,"h":110},{"img":"h-narrow","x":120,"y":120,"h":120,"flip":true},{"img":"h-narrow","x":-48,"y":228,"h":130},{"img":"h-narrow","x":888,"y":48,"h":100,"flip":true},{"img":"h-shop1","x":-168,"y":720,"h":90,"flip":true},{"img":"h-shop1","x":384,"y":492,"h":100,"flip":true},{"img":"h-narrow","x":1416,"y":168,"h":100,"flip":true},{"img":"h-narrow","x":1536,"y":108,"h":110},{"img":"h-narrow","x":768,"y":516,"h":100},{"img":"h-narrow","x":1320,"y":264,"h":105,"flip":true},{"img":"h-shop1","x":1512,"y":192,"h":90,"flip":true},{"img":"h-narrow","x":600,"y":696,"h":100},{"img":"h-shop1","x":1440,"y":492,"h":100},{"img":"h-narrow","x":1080,"y":720,"h":105},{"img":"h-narrow","x":1512,"y":576,"h":100,"flip":true},{"img":"h-narrow","x":1536,"y":612,"h":105,"flip":true},{"img":"h-narrow","x":168,"y":88,"h":110},{"img":"h-shop1","x":8,"y":632,"h":100},{"img":"h-shop1","x":1064,"y":104,"h":90,"flip":true},{"img":"h-narrow","x":1208,"y":80,"h":100},{"img":"h-shop1","x":-56,"y":808,"h":100,"flip":true},{"img":"h-narrow","x":488,"y":552,"h":105},{"img":"h-wide2","x":1528,"y":32,"h":95},{"img":"h-narrow","x":1288,"y":360,"h":110,"flip":true},{"img":"h-narrow","x":1144,"y":560,"h":100,"flip":true},{"img":"h-shop1","x":1160,"y":808,"h":90,"flip":true},{"img":"h-narrow","x":1336,"y":800,"h":110,"flip":true}],"roads":[[[-354,332],[96,69]],[[372,144],[622,17]],[[146,793],[675,526]],[[1214,418],[1554,245]],[[990,807],[1512,513]],[[1133,86],[1554,314]],[[893,324],[1215,487]],[[1375,569],[1554,659]],[[-323,306],[81,511]],[[-180,573],[253,790]]],"sidewalks":[[[-362,318],[88,55]],[[153,807],[682,540]],[[136,773],[665,506]],[[1143,67],[1564,295]],[[886,338],[1208,501]],[[901,308],[1223,471]],[[1368,583],[1547,673]],[[1385,549],[1564,639]],[[-192,596],[241,813]],[[-171,555],[262,772]]]};
+
 /**
- * УЧАСТКИ ПОД ДОМА — заказчик размечает ПУСТЫЕ прямоугольные площадки прямо
- * на живой карте (где по его вкусу должен стоять дом), а не подбирает
- * конкретный спрайт и не гадает координаты на глаз. Автоматическая расстановка
- * (случайный подбор + проверка по маске дорог) давала формально «без домов на
- * дороге», но само расположение читалось как случайный разброс, а не как
- * спроектированная застройка — заказчик должен сам решать, ГДЕ стоит квартал,
- * а дизайнерский спрайт/этажность/ракурс уже подбираются из готового набора
- * под размер и пропорции присланного участка.
+ * РАЗМЕТКА ГОРОДА — один инструмент на дома, дороги и тротуары.
+ *
+ * Заменил три прежние вкладки («Тротуары», «Дома города», «Участки домов»):
+ * они работали в масштабе 1:1 по ширине экрана, где пиксель карты меньше
+ * пикселя курсора, и точно поставить дом или провести осевую дороги было
+ * физически невозможно — заказчик прямо попросил инструмент с приближением.
+ *
+ * Ключевое здесь — ЗУМ И ПАНОРАМА: мир (фон + дома + линии) лежит в одном
+ * div с transform: translate() scale(), а все координаты считаются в системе
+ * КАРТИНКИ (1920x810), не экрана. Поэтому разметка одинаково точна на любом
+ * увеличении, а маркеры точек масштабируются обратно зуму, чтобы не
+ * распухать на 6x.
+ *
+ * Стартовое состояние — РЕАЛЬНЫЕ данные игры (CITY_SNAPSHOT ниже), а не
+ * пустой холст: заказчик правит то, что видит в игре. «Стереть всё» в режиме
+ * даёт чистый лист, «Вернуть как в игре» откатывает к снимку.
  */
-function renderCityPlotsTab(root) {
-  root.className = 'tab-cp';
+function renderCityMapperTab(root) {
+  root.className = 'tab-mk';
   root.innerHTML = `
   <style>
-    .tab-cp{font-family:inherit;color:var(--ink);}
-    .tab-cp *{box-sizing:border-box;}
-    .tab-cp h2{font-size:16px;margin:0 0 4px;}
-    .tab-cp p.cp-lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:960px;line-height:1.55;}
-    .tab-cp .cp-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
-    .tab-cp .cp-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
+    .tab-mk{font-family:inherit;color:var(--ink);}
+    .tab-mk *{box-sizing:border-box;}
+    .tab-mk h2{font-size:16px;margin:0 0 4px;}
+    .tab-mk p.mk-lead{color:var(--muted);font-size:13px;margin:0 0 10px;max-width:1000px;line-height:1.5;}
+    .tab-mk .mk-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+    .tab-mk .mk-bar button{font-family:inherit;font-size:12.5px;padding:6px 11px;border-radius:8px;
       border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
-    .tab-cp .cp-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
-    .tab-cp .cp-stage{position:relative;border-radius:10px;overflow:hidden;background:#20303f;
-      user-select:none;cursor:crosshair;}
-    .tab-cp .cp-stage > img.bg{display:block;width:100%;pointer-events:none;}
-    .tab-cp .cp-plot{position:absolute;border:2px solid #6FE06F;background:rgba(111,224,111,.18);
-      cursor:move;}
-    .tab-cp .cp-plot.sel{border-color:#FCBE2E;background:rgba(252,190,46,.22);}
-    .tab-cp .cp-plot .rs{position:absolute;right:-6px;bottom:-6px;width:12px;height:12px;
-      border-radius:3px;background:#fff;border:2px solid #27384a;cursor:nwse-resize;}
-    .tab-cp .cp-plot .rot{position:absolute;left:-7px;top:-7px;width:13px;height:13px;
-      border-radius:50%;background:#FCBE2E;border:2px solid #6b5211;cursor:grab;}
-    .tab-cp pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:11.5px;
-      overflow:auto;max-height:260px;margin:10px 0 0;}
-    .tab-cp .cp-note{font-size:12px;color:var(--muted);}
+    .tab-mk .mk-bar button.on{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
+    .tab-mk .mk-bar button.primary{background:#91BD00;border-color:#7ba300;color:#fff;font-weight:700;}
+    .tab-mk .mk-bar .sep{width:1px;height:22px;background:var(--line);margin:0 4px;}
+    .tab-mk .mk-note{font-size:12px;color:var(--muted);}
+    .tab-mk .mk-wrap{display:grid;grid-template-columns:1fr 200px;gap:12px;align-items:start;}
+    .tab-mk .mk-view{position:relative;overflow:hidden;border-radius:10px;background:#1b2836;
+      height:600px;cursor:crosshair;touch-action:none;}
+    .tab-mk .mk-view.panning{cursor:grabbing;}
+    .tab-mk .mk-world{position:absolute;left:0;top:0;width:1920px;height:810px;transform-origin:0 0;}
+    .tab-mk .mk-world img.bg{display:block;width:1920px;height:810px;pointer-events:none;}
+    .tab-mk .mk-house{position:absolute;cursor:move;}
+    .tab-mk .mk-house img{display:block;height:100%;width:auto;pointer-events:none;}
+    .tab-mk .mk-house.sel{outline:2px solid #FCBE2E;outline-offset:1px;}
+    .tab-mk .mk-house.dim{opacity:.45;pointer-events:none;}
+    .tab-mk svg.mk-svg{position:absolute;left:0;top:0;pointer-events:none;}
+    .tab-mk svg.mk-svg .hit{pointer-events:all;cursor:grab;}
+    .tab-mk .mk-side{background:var(--card);border:1px solid var(--line);border-radius:12px;
+      max-height:600px;overflow:auto;}
+    .tab-mk .mk-side h3{font-size:12.5px;margin:0;padding:8px 10px;border-bottom:1px solid var(--line);}
+    .tab-mk .mk-pal{list-style:none;margin:0;padding:0;}
+    .tab-mk .mk-pal li{display:flex;align-items:center;gap:8px;padding:6px 8px;
+      border-top:1px solid var(--line);font-size:12px;cursor:pointer;}
+    .tab-mk .mk-pal li:hover{background:rgba(252,190,46,.12);}
+    .tab-mk .mk-pal img{width:40px;height:40px;object-fit:contain;}
+    .tab-mk .mk-lines{list-style:none;margin:0;padding:0;}
+    .tab-mk .mk-lines li{display:flex;align-items:center;justify-content:space-between;gap:6px;
+      padding:6px 8px;border-top:1px solid var(--line);font-size:12px;cursor:pointer;}
+    .tab-mk .mk-lines li.on{background:rgba(252,190,46,.18);font-weight:700;}
+    .tab-mk .mk-lines button{font-family:inherit;font-size:11px;padding:2px 6px;border-radius:5px;
+      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-mk pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:10px;font-size:11px;
+      overflow:auto;max-height:200px;margin:8px 0 0;}
   </style>
 
-  <h2>🧱 Участки под дома</h2>
-  <p class="cp-lead">
-    Тащите мышью по пустому месту карты — рисуется прямоугольная площадка
-    (участок под дом). Готовый участок можно двигать целиком (тащить за
-    середину), менять размер (тащить за белый уголок внизу справа) и
-    поворачивать на любой градус (тащить за жёлтый кружок вверху слева, как
-    будто берёте дом за угол и разворачиваете — не ступенями по 15°, а плавно).
-    Нижний край прямоугольника — это ЗЕМЛЯ, куда встанет фундамент дома; сам
-    дом наружу вверх и по бокам может немного выходить за рамку — это
-    нормально, важна именно нижняя граница и общая ширина участка. Разметили —
-    «📋 Скопировать список» и пришлите мне: я подберу дизайн, этаж и ракурс под
-    каждый участок и сам впишу в <b>src/constants/cityHouses.js</b>.
+  <h2>🏗 Разметка города</h2>
+  <p class="mk-lead">
+    <b>Колесо мыши — приближение</b> (к точке под курсором), <b>перетаскивание правой кнопкой
+    или с зажатым пробелом — сдвиг карты</b>. Режим переключается кнопками ниже.
+    <br>
+    <b>Дома:</b> клик по дому в списке справа — дом появится в центре экрана; тащите мышью,
+    размер — <b>Shift+колесо</b> над домом или кнопки размера. <b>Дороги и тротуары:</b> клик
+    по карте ставит точку линии, точки можно перетаскивать; «Новая линия» начинает следующую.
+    <br>
+    Готово — «📋 Скопировать» под нужным слоем и пришлите мне.
   </p>
 
-  <div class="cp-ctl">
-    <button id="cpCopy" class="primary">📋 Скопировать список</button>
-    <button id="cpDel">✕ Удалить участок</button>
-    <button id="cpClear">Стереть всё</button>
-    <span id="cpHint" class="cp-note"></span>
+  <div class="mk-bar">
+    <button id="mkModeH" class="on">🏘 Дома</button>
+    <button id="mkModeR">🚗 Дороги (машины)</button>
+    <button id="mkModeS">🚶 Тротуары (пешеходы)</button>
+    <span class="sep"></span>
+    <button id="mkZoomOut">−</button>
+    <span id="mkZoomVal" class="mk-note">100%</span>
+    <button id="mkZoomIn">+</button>
+    <button id="mkFit">В экран</button>
+    <span class="sep"></span>
+    <span id="mkHint" class="mk-note"></span>
   </div>
-  <div class="cp-stage" id="cpStage">
-    <img class="bg" src="map-city/empty.jpg" onerror="this.src='map-city/summer-day.jpg'">
-  </div>
-  <pre id="cpOut"></pre>`;
 
-  const IMG_W = 1920, OFFSET = 360;
-  const stage = root.querySelector('#cpStage');
-  const KEY = 'ozongame_cityplots_editor_v1';
-  let plots;
-  try { plots = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { plots = []; }
-  if (!Array.isArray(plots)) plots = [];
-  let sel = -1;
+  <div class="mk-bar" id="mkCtxBar"></div>
 
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(plots)); } catch {} };
-  const k = () => stage.clientWidth / IMG_W;
-
-  // Участок хранится в мировых координатах контента: x1/x2 — левый/правый
-  // край, y1/y2 — верх/низ (низ = земля). Порядок краёв не гарантирован при
-  // рисовании (тянуть можно в любую сторону) — нормализуем перед выводом.
-  function norm(p) {
-    return { x1: Math.min(p.x1, p.x2), x2: Math.max(p.x1, p.x2), y1: Math.min(p.y1, p.y2), y2: Math.max(p.y1, p.y2) };
-  }
-
-  function draw() {
-    [...stage.querySelectorAll('.cp-plot')].forEach((n) => n.remove());
-    plots.forEach((p, i) => {
-      const n = norm(p);
-      const el = document.createElement('div');
-      el.className = 'cp-plot' + (i === sel ? ' sel' : '');
-      el.style.left = (n.x1 + OFFSET) * k() + 'px';
-      el.style.top = n.y1 * k() + 'px';
-      el.style.width = (n.x2 - n.x1) * k() + 'px';
-      el.style.height = (n.y2 - n.y1) * k() + 'px';
-      // поворот — вокруг ЦЕНТРА своего же прямоугольника, как дом крутился
-      // бы на месте; ресайз/перенос считаются в исходных (неповёрнутых)
-      // мировых координатах — угол только для превью, не мешает драгу.
-      el.style.transformOrigin = '50% 50%';
-      el.style.transform = (p.rot ? `rotate(${p.rot}deg)` : '');
-      el.innerHTML = '<div class="rs" title="размер"></div><div class="rot" title="поворот"></div>';
-      el.addEventListener('pointerdown', (e) => {
-        if (e.target.classList.contains('rs') || e.target.classList.contains('rot')) return;
-        e.stopPropagation(); e.preventDefault();
-        sel = i; draw();
-        const startX = e.clientX, startY = e.clientY;
-        const orig = { x1: p.x1, x2: p.x2, y1: p.y1, y2: p.y2 };
-        const onMove = (ev) => {
-          const dx = (ev.clientX - startX) / k(), dy = (ev.clientY - startY) / k();
-          p.x1 = Math.round(orig.x1 + dx); p.x2 = Math.round(orig.x2 + dx);
-          p.y1 = Math.round(orig.y1 + dy); p.y2 = Math.round(orig.y2 + dy);
-          save(); draw();
-        };
-        const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); save(); };
-        window.addEventListener('pointermove', onMove);
-        window.addEventListener('pointerup', onUp);
-      });
-      el.querySelector('.rs').addEventListener('pointerdown', (e) => {
-        e.stopPropagation(); e.preventDefault();
-        sel = i; draw();
-        const onMove = (ev) => {
-          const box = stage.getBoundingClientRect();
-          p.x2 = Math.round((ev.clientX - box.left) / k() - OFFSET);
-          p.y2 = Math.round((ev.clientY - box.top) / k());
-          save(); draw();
-        };
-        const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); save(); };
-        window.addEventListener('pointermove', onMove);
-        window.addEventListener('pointerup', onUp);
-      });
-      // Поворот — тащим жёлтый кружок в углу вокруг ЦЕНТРА участка: угол
-      // считаем от центра к курсору в экранных координатах (масштаб k() на
-      // угол не влияет), поэтому получается настоящее «взял за угол и
-      // покрутил» — плавно, а не шагами по 15°, как у готовых домов.
-      el.querySelector('.rot').addEventListener('pointerdown', (e) => {
-        e.stopPropagation(); e.preventDefault();
-        sel = i; draw();
-        const box = stage.getBoundingClientRect();
-        const cx = box.left + ((n.x1 + n.x2) / 2 + OFFSET) * k();
-        const cy = box.top + ((n.y1 + n.y2) / 2) * k();
-        const angle0 = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI;
-        const rot0 = p.rot || 0;
-        const onMove = (ev) => {
-          const angle = Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180 / Math.PI;
-          p.rot = Math.round((rot0 + (angle - angle0)) * 10) / 10;
-          save(); draw();
-        };
-        const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); save(); };
-        window.addEventListener('pointermove', onMove);
-        window.addEventListener('pointerup', onUp);
-      });
-      stage.appendChild(el);
-    });
-    renderOut();
-  }
-
-  // Рисование нового участка — pointerdown прямо на фоне (не на существующем).
-  stage.querySelector('img.bg').addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    const box = stage.getBoundingClientRect();
-    const x0 = Math.round((e.clientX - box.left) / k() - OFFSET);
-    const y0 = Math.round((e.clientY - box.top) / k());
-    const p = { x1: x0, y1: y0, x2: x0, y2: y0 };
-    plots.push(p);
-    sel = plots.length - 1;
-    const onMove = (ev) => {
-      p.x2 = Math.round((ev.clientX - box.left) / k() - OFFSET);
-      p.y2 = Math.round((ev.clientY - box.top) / k());
-      save(); draw();
-    };
-    const onUp = () => {
-      window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp);
-      // случайный клик без протяжки — площадка ~0×0, убираем как шум
-      const n = norm(p);
-      if (n.x2 - n.x1 < 8 || n.y2 - n.y1 < 8) { plots.splice(plots.indexOf(p), 1); sel = -1; }
-      save(); draw();
-    };
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-  });
-
-  function renderOut() {
-    const rows = plots.map((p) => {
-      const n = norm(p);
-      const w = n.x2 - n.x1;
-      const cx = Math.round((n.x1 + n.x2) / 2);
-      const rot = p.rot ? `, rot: ${p.rot}` : '';
-      return `  { x: ${cx}, y: ${n.y2}, w: ${w}, topY: ${n.y1}${rot} },`;
-    }).join('\n');
-    root.querySelector('#cpOut').textContent = `[\n${rows}\n]`;
-  }
-
-  root.querySelector('#cpDel').onclick = () => { if (plots[sel]) { plots.splice(sel, 1); sel = -1; save(); draw(); } };
-  root.querySelector('#cpClear').onclick = () => { plots = []; sel = -1; save(); draw(); };
-  root.querySelector('#cpCopy').onclick = async () => {
-    const txt = root.querySelector('#cpOut').textContent;
-    try { await navigator.clipboard.writeText(txt); root.querySelector('#cpHint').textContent = 'скопировано'; }
-    catch { window.prompt('Скопируйте', txt); }
-    setTimeout(() => { root.querySelector('#cpHint').textContent = ''; }, 1800);
-  };
-
-  window.addEventListener('resize', draw);
-  const bg = stage.querySelector('img.bg');
-  if (bg.complete) draw(); else bg.onload = draw;
-}
-
-function renderCityHousesTab(root) {
-  root.className = 'tab-ch';
-  root.innerHTML = `
-  <style>
-    .tab-ch{font-family:inherit;color:var(--ink);}
-    .tab-ch *{box-sizing:border-box;}
-    .tab-ch h2{font-size:16px;margin:0 0 4px;}
-    .tab-ch p.ch-lead{color:var(--muted);font-size:13.5px;margin:0 0 12px;max-width:960px;line-height:1.55;}
-    .tab-ch .ch-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
-    .tab-ch .ch-ctl button{font-family:inherit;font-size:12.5px;padding:7px 12px;border-radius:8px;
-      border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
-    .tab-ch .ch-ctl .primary{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
-    .tab-ch .ch-wrap{display:grid;grid-template-columns:1fr 210px;gap:14px;align-items:start;}
-    .tab-ch .ch-stage{position:relative;border-radius:10px;overflow:hidden;background:#20303f;user-select:none;}
-    .tab-ch .ch-stage > img.bg{display:block;width:100%;pointer-events:none;}
-    .tab-ch .ch-house{position:absolute;cursor:grab;}
-    .tab-ch .ch-house.sel{outline:2px solid #FCBE2E;outline-offset:1px;}
-    .tab-ch #chZctl button, .tab-ch #chRctl button{font-size:11.5px;padding:5px 9px;}
-    .tab-ch .ch-house img{display:block;height:100%;width:auto;pointer-events:none;}
-    .tab-ch .ch-list{list-style:none;margin:0;padding:0;background:var(--card);
-      border:1px solid var(--line);border-radius:12px;max-height:420px;overflow:auto;}
-    .tab-ch .ch-list li{display:flex;align-items:center;gap:8px;padding:6px 8px;
-      border-top:1px solid var(--line);font-size:12.5px;cursor:pointer;}
-    .tab-ch .ch-list li:first-child{border-top:none;}
-    .tab-ch .ch-list img{width:44px;height:44px;object-fit:contain;}
-    .tab-ch pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:12px;font-size:11.5px;
-      overflow:auto;max-height:220px;margin:10px 0 0;}
-  </style>
-
-  <h2>🏘 Дома города</h2>
-  <p class="ch-lead">
-    Кликните дом в списке справа — он появится в центре карты. Тащите мышью,
-    размер — колесом над домом, поворот — Shift+колесо или кнопки ⟲/⟳.
-    Выбранный дом: «Зеркало» разворачивает, «Удалить» убирает. Готово —
-    «📋 Скопировать код» и пришлите мне: вставлю в
-    <b>src/constants/cityHouses.js</b>, и город соберётся у всех игроков.
-  </p>
-
-  <div class="ch-ctl">
-    <button id="chCopy" class="primary">📋 Скопировать код</button>
-    <button id="chFlip">↔ Зеркало</button>
-    <button id="chDel">✕ Удалить</button>
-    <button id="chClear">Стереть всё</button>
-    <span id="chHint" style="font-size:12px;color:var(--muted)"></span>
-  </div>
-  <div class="ch-ctl" id="chRctl">
-    <span style="font-size:12.5px;color:var(--muted)">Поворот:</span>
-    <button id="chR-15">⟲ 15°</button>
-    <button id="chR15">⟳ 15°</button>
-    <button id="chR0">Сброс</button>
-    <span id="chRVal" style="font-size:12px;color:var(--muted)"></span>
-  </div>
-  <div class="ch-ctl" id="chZctl">
-    <span style="font-size:12.5px;color:var(--muted)">Приоритет (кто над кем):</span>
-    <button id="chZBack">⏷ На самый низ</button>
-    <button id="chZDown">↓ На шаг назад</button>
-    <button id="chZUp">↑ На шаг вперёд</button>
-    <button id="chZFront">⏶ На самый верх</button>
-    <span id="chZVal" style="font-size:12px;color:var(--muted)"></span>
-  </div>
-  <div class="ch-wrap">
+  <div class="mk-wrap">
     <div>
-      <div class="ch-stage" id="chStage">
-        <img class="bg" src="map-city/empty.jpg" onerror="this.src='map-city/summer-day.jpg'">
+      <div class="mk-view" id="mkView">
+        <div class="mk-world" id="mkWorld">
+          <img class="bg" src="map-city/empty.jpg" onerror="this.src='map-city/summer-day.jpg'">
+          <svg class="mk-svg" viewBox="0 0 1920 810" width="1920" height="810"></svg>
+        </div>
       </div>
-      <pre id="chOut"></pre>
+      <pre id="mkOut"></pre>
     </div>
-    <ul class="ch-list" id="chList"></ul>
+    <div class="mk-side" id="mkSide"></div>
   </div>`;
 
-  const IMG_W = 1920, OFFSET = 360;
-  const stage = root.querySelector('#chStage');
-  const KEY = 'ozongame_cityhouses_editor_v1';
-  let houses;
-  try { houses = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { houses = []; }
-  if (!Array.isArray(houses)) houses = [];
-  let sel = -1;
+  const KEY = 'ozongame_citymapper_v1';
+  const view = root.querySelector('#mkView');
+  const world = root.querySelector('#mkWorld');
+  const svg = root.querySelector('svg.mk-svg');
+  const OFFSET = 360;                       // мировой x = контентный x + 360
 
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(houses)); } catch {} };
-  const k = () => stage.clientWidth / IMG_W;
+  let S;
+  try { S = JSON.parse(localStorage.getItem(KEY)); } catch { S = null; }
+  if (!S || !Array.isArray(S.houses)) S = JSON.parse(JSON.stringify(CITY_SNAPSHOT));
 
-  // Порядок отрисовки = приоритет наложения: DOM-порядок absolute-слоёв без
-  // явного z-index решает, кто «сверху» — тот же принцип, что в игре
-  // (MapHousesLayer.ordered). Индексы в houses[] НЕ переставляем (иначе клики
-  // и drag сбились бы), сортируем только для рендера.
-  function drawOrder() {
-    return houses.map((h, i) => i).sort((a, b) =>
-      (houses[a].z || 0) - (houses[b].z || 0) || a - b);
+  let mode = 'houses';
+  let zoom = 1, panX = 0, panY = 0;
+  let selHouse = -1, selLine = 0;
+  let spaceDown = false;
+
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+  const lines = () => (mode === 'roads' ? S.roads : S.sidewalks);
+
+  /* ── зум и панорама ───────────────────────────────────────────────────── */
+  function applyView() {
+    world.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoom + ')';
+    root.querySelector('#mkZoomVal').textContent = Math.round(zoom * 100) + '%';
+    drawSvg();                               // маркеры зависят от зума
+  }
+  function fit() {
+    zoom = view.clientWidth / 1920;
+    panX = 0; panY = (view.clientHeight - 810 * zoom) / 2;
+    applyView();
+  }
+  function zoomAt(sx, sy, factor) {
+    const nz = Math.min(8, Math.max(0.2, zoom * factor));
+    // точка под курсором остаётся на месте: пересчитываем сдвиг от неё
+    panX = sx - (sx - panX) * (nz / zoom);
+    panY = sy - (sy - panY) * (nz / zoom);
+    zoom = nz;
+    applyView();
+  }
+  /** Экранные координаты → координаты КАРТИНКИ (1920x810). */
+  function toWorld(e) {
+    const r = view.getBoundingClientRect();
+    return { x: (e.clientX - r.left - panX) / zoom, y: (e.clientY - r.top - panY) / zoom };
   }
 
-  function draw() {
-    [...stage.querySelectorAll('.ch-house')].forEach((n) => n.remove());
-    for (const i of drawOrder()) {
-      const h = houses[i];
-      const el = document.createElement('div');
-      el.className = 'ch-house' + (i === sel ? ' sel' : '');
-      el.innerHTML = `<img src="city-houses/${h.img}.png">`;
-      el.style.left = (h.x + OFFSET) * k() + 'px';
-      el.style.top = (h.y - h.h) * k() + 'px';
-      el.style.height = h.h * k() + 'px';
-      el.style.transformOrigin = '50% 100%';
-      el.style.transform = 'translateX(-50%)' + (h.rot ? ` rotate(${h.rot}deg)` : '') + (h.flip ? ' scaleX(-1)' : '');
-      el.addEventListener('pointerdown', (e) => startDrag(e, i, el));
-      el.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        if (e.shiftKey) h.rot = wrapDeg((h.rot || 0) + (e.deltaY < 0 ? 3 : -3));
-        else h.h = Math.max(40, Math.min(420, h.h + (e.deltaY < 0 ? 8 : -8)));
-        save(); draw();
-      }, { passive: false });
-      stage.appendChild(el);
+  view.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const r = view.getBoundingClientRect();
+    // Shift+колесо над выбранным домом — размер, а не зум
+    if (e.shiftKey && mode === 'houses' && selHouse >= 0) {
+      const h = S.houses[selHouse];
+      h.h = Math.max(40, Math.min(420, h.h + (e.deltaY < 0 ? 4 : -4)));
+      save(); drawHouses(); renderOut();
+      return;
     }
-    renderOut();
-    syncZ();
-  }
+    zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+  }, { passive: false });
 
-  let drag = null;
-  function startDrag(e, i, el) {
-    e.preventDefault(); sel = i; draw(); syncZ();
-    drag = { i };
-    window.addEventListener('pointermove', onDrag);
-    window.addEventListener('pointerup', endDrag);
-  }
-  function onDrag(e) {
-    if (!drag) return;
-    const box = stage.getBoundingClientRect();
-    const h = houses[drag.i];
-    h.x = Math.round((e.clientX - box.left) / k() - OFFSET);
-    h.y = Math.round((e.clientY - box.top) / k() + h.h * 0); // y — линия земли
-    h.y = Math.round((e.clientY - box.top) / k());
-    save(); draw();
-  }
-  function endDrag() {
-    drag = null; save();
-    window.removeEventListener('pointermove', onDrag);
-    window.removeEventListener('pointerup', endDrag);
-  }
+  window.addEventListener('keydown', (e) => { if (e.code === 'Space') spaceDown = true; });
+  window.addEventListener('keyup', (e) => { if (e.code === 'Space') spaceDown = false; });
+  view.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  function wrapDeg(d) { return Math.round(((d % 360) + 360) % 360); }
+  view.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.mk-house') || e.target.classList.contains('hit')) return;
+    if (e.button === 2 || e.button === 1 || spaceDown) { startPan(e); return; }
+    if (mode !== 'houses') addPoint(toWorld(e));
+  });
 
-  function renderOut() {
-    const rows = houses.map((h) => {
-      // z и rot пишем ТОЛЬКО когда они отличаются от значения по умолчанию —
-      // иначе файл забился бы нулями, и настоящие переопределения (приоритет,
-      // угол) потерялись бы среди них
-      const extra = (h.z ? `, z: ${h.z}` : '') + (h.rot ? `, rot: ${wrapDeg(h.rot)}` : '') + (h.flip ? ', flip: true' : '');
-      return `  { img: '${h.img}', x: ${h.x}, y: ${h.y}, h: ${h.h}${extra} },`;
-    }).join('\n');
-    root.querySelector('#chOut').textContent = `export const CITY_HOUSES = [\n${rows}\n]`;
-  }
-
-  function syncZ() {
-    const h = houses[sel];
-    root.querySelector('#chZVal').textContent = h ? `слой: ${h.z || 0}` : 'дом не выбран';
-    root.querySelector('#chRVal').textContent = h ? `угол: ${wrapDeg(h.rot || 0)}°` : '';
-  }
-
-  const list = root.querySelector('#chList');
-  for (const name of CITY_HOUSE_LIST) {
-    const li = document.createElement('li');
-    li.innerHTML = `<img src="city-houses/${name}.png"><span>${name}</span>`;
-    li.onclick = () => {
-      houses.push({ img: name, x: 600, y: 500, h: 140, flip: false });
-      sel = houses.length - 1;
-      save(); draw();
+  function startPan(e) {
+    e.preventDefault();
+    view.classList.add('panning');
+    const sx = e.clientX, sy = e.clientY, ox = panX, oy = panY;
+    const move = (ev) => { panX = ox + (ev.clientX - sx); panY = oy + (ev.clientY - sy); applyView(); };
+    const up = () => {
+      view.classList.remove('panning');
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
     };
-    list.appendChild(li);
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
   }
 
-  root.querySelector('#chFlip').onclick = () => { if (houses[sel]) { houses[sel].flip = !houses[sel].flip; save(); draw(); } };
+  /* ── дома ─────────────────────────────────────────────────────────────── */
+  function drawHouses() {
+    [...world.querySelectorAll('.mk-house')].forEach((n) => n.remove());
+    const frag = document.createDocumentFragment();
+    S.houses.map((h, i) => [h, i])
+      .sort((a, b) => (a[0].z || 0) - (b[0].z || 0) || a[0].y - b[0].y)
+      .forEach(([h, i]) => {
+        const el = document.createElement('div');
+        el.className = 'mk-house' + (i === selHouse ? ' sel' : '') + (mode !== 'houses' ? ' dim' : '');
+        el.innerHTML = '<img src="city-houses/' + h.img + '.png">';
+        el.style.left = (h.x + OFFSET) + 'px';
+        el.style.top = (h.y - h.h) + 'px';
+        el.style.height = h.h + 'px';
+        el.style.transform = 'translateX(-50%)' + (h.flip ? ' scaleX(-1)' : '');
+        el.addEventListener('pointerdown', (e) => {
+          if (e.button === 2 || e.button === 1 || spaceDown) { startPan(e); return; }
+          e.stopPropagation(); e.preventDefault();
+          selHouse = i; drawHouses(); ctxBar(); renderOut();
+          const st = toWorld(e), ox = h.x, oy = h.y;
+          const move = (ev) => {
+            const p = toWorld(ev);
+            h.x = Math.round(ox + (p.x - st.x)); h.y = Math.round(oy + (p.y - st.y));
+            el.style.left = (h.x + OFFSET) + 'px'; el.style.top = (h.y - h.h) + 'px';
+          };
+          const up = () => {
+            save(); drawHouses(); renderOut();
+            window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+          };
+          window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+        });
+        frag.appendChild(el);
+      });
+    world.appendChild(frag);
+  }
 
-  // Приоритет — явное число z, а не перестановка внутри houses[]: так позиция
-  // в исходном массиве (и, значит, порядок добавления при равном z) не
-  // теряется, когда игрок просто подвинул один дом вперёд-назад.
-  function bumpZ(delta) {
-    if (!houses[sel]) return;
-    houses[sel].z = (houses[sel].z || 0) + delta;
-    save(); draw();
+  /* ── линии (дороги / тротуары) ────────────────────────────────────────── */
+  function addPoint(p) {
+    const L = lines();
+    if (!L[selLine]) { L[selLine] = []; }
+    L[selLine].push([Math.round(p.x - OFFSET), Math.round(p.y)]);
+    save(); drawSvg(); side(); renderOut();
   }
-  function extremeZ(dir) {
-    if (!houses[sel]) return;
-    const zs = houses.map((h) => h.z || 0);
-    houses[sel].z = dir > 0 ? Math.max(...zs, 0) + 1 : Math.min(...zs, 0) - 1;
-    save(); draw();
-  }
-  function bumpRot(delta) {
-    if (!houses[sel]) return;
-    houses[sel].rot = wrapDeg((houses[sel].rot || 0) + delta);
-    save(); draw();
-  }
-  root.querySelector('#chR15').onclick = () => bumpRot(15);
-  root.querySelector('#chR-15').onclick = () => bumpRot(-15);
-  root.querySelector('#chR0').onclick = () => { if (houses[sel]) { houses[sel].rot = 0; save(); draw(); } };
 
-  root.querySelector('#chZUp').onclick = () => bumpZ(1);
-  root.querySelector('#chZDown').onclick = () => bumpZ(-1);
-  root.querySelector('#chZFront').onclick = () => extremeZ(1);
-  root.querySelector('#chZBack').onclick = () => extremeZ(-1);
-  root.querySelector('#chDel').onclick = () => { if (houses[sel]) { houses.splice(sel, 1); sel = -1; save(); draw(); } };
-  root.querySelector('#chClear').onclick = () => { houses = []; sel = -1; save(); draw(); };
-  root.querySelector('#chCopy').onclick = async () => {
-    const txt = root.querySelector('#chOut').textContent;
-    try { await navigator.clipboard.writeText(txt); root.querySelector('#chHint').textContent = 'скопировано'; }
-    catch { window.prompt('Скопируйте', txt); }
-    setTimeout(() => { root.querySelector('#chHint').textContent = ''; }, 1800);
+  function drawSvg() {
+    const r = 6 / zoom, sw = 2.5 / zoom;
+    const pal = { roads: '#ff3ecb', sidewalks: '#37d6ff' };
+    let out = '';
+    for (const kind of ['roads', 'sidewalks']) {
+      const active = mode === kind;
+      (S[kind] || []).forEach((pts, li) => {
+        if (pts.length < 1) return;
+        const d = pts.map((p, k) => (k ? 'L' : 'M') + (p[0] + OFFSET) + ' ' + p[1]).join(' ');
+        out += '<path d="' + d + '" fill="none" stroke="' + pal[kind] + '" stroke-width="' + sw
+             + '" opacity="' + (active ? 1 : 0.28) + '"/>';
+        if (!active) return;
+        pts.forEach((p, pi) => {
+          out += '<circle class="hit" data-li="' + li + '" data-pi="' + pi + '" cx="' + (p[0] + OFFSET)
+               + '" cy="' + p[1] + '" r="' + r + '" fill="'
+               + (li === selLine ? '#fff' : pal[kind]) + '" stroke="#12202c" stroke-width="' + (sw * 0.6) + '"/>';
+        });
+      });
+    }
+    svg.innerHTML = out;
+    svg.querySelectorAll('.hit').forEach((c) => {
+      c.addEventListener('pointerdown', (e) => {
+        if (e.button === 2 || spaceDown) { startPan(e); return; }
+        e.stopPropagation(); e.preventDefault();
+        const li = +c.dataset.li, pi = +c.dataset.pi;
+        selLine = li; side();
+        if (e.altKey) {                       // Alt+клик — удалить точку
+          lines()[li].splice(pi, 1);
+          if (!lines()[li].length) lines().splice(li, 1);
+          save(); drawSvg(); side(); renderOut(); return;
+        }
+        const move = (ev) => {
+          const p = toWorld(ev);
+          lines()[li][pi] = [Math.round(p.x - OFFSET), Math.round(p.y)];
+          drawSvg();
+        };
+        const up = () => {
+          save(); renderOut();
+          window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+        };
+        window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+      });
+    });
+  }
+
+  /* ── боковая панель ───────────────────────────────────────────────────── */
+  function side() {
+    const el = root.querySelector('#mkSide');
+    if (mode === 'houses') {
+      el.innerHTML = '<h3>Поставить дом</h3><ul class="mk-pal">'
+        + CITY_HOUSE_LIST.map((n) => '<li data-n="' + n + '"><img src="city-houses/' + n
+          + '.png"><span>' + n + '</span></li>').join('') + '</ul>';
+      el.querySelectorAll('li').forEach((li) => {
+        li.onclick = () => {
+          // дом появляется в ЦЕНТРЕ ТЕКУЩЕГО ВИДА, а не карты: на зуме центр
+          // карты может быть далеко за экраном
+          const cx = (view.clientWidth / 2 - panX) / zoom - OFFSET;
+          const cy = (view.clientHeight / 2 - panY) / zoom;
+          S.houses.push({ img: li.dataset.n, x: Math.round(cx), y: Math.round(cy), h: 140 });
+          selHouse = S.houses.length - 1;
+          save(); drawHouses(); ctxBar(); renderOut();
+        };
+      });
+    } else {
+      const L = lines();
+      el.innerHTML = '<h3>' + (mode === 'roads' ? 'Дороги' : 'Тротуары') + '</h3><ul class="mk-lines">'
+        + L.map((pts, i) => '<li class="' + (i === selLine ? 'on' : '') + '" data-i="' + i + '">'
+          + '<span>линия ' + (i + 1) + ' · ' + pts.length + ' т.</span>'
+          + '<button data-del="' + i + '">✕</button></li>').join('')
+        + '</ul>';
+      el.querySelectorAll('li').forEach((li) => {
+        li.onclick = (e) => {
+          if (e.target.dataset.del !== undefined) {
+            L.splice(+e.target.dataset.del, 1); selLine = Math.max(0, selLine - 1);
+          } else selLine = +li.dataset.i;
+          save(); drawSvg(); side(); renderOut();
+        };
+      });
+    }
+  }
+
+  /* ── контекстная панель под режим ─────────────────────────────────────── */
+  function ctxBar() {
+    const bar = root.querySelector('#mkCtxBar');
+    if (mode === 'houses') {
+      const h = S.houses[selHouse];
+      bar.innerHTML = '<button id="mkBig">Крупнее</button><button id="mkSm">Мельче</button>'
+        + '<button id="mkFlip">↔ Зеркало</button><button id="mkDel">✕ Удалить</button>'
+        + '<span class="sep"></span><button id="mkClear">Стереть все дома</button>'
+        + '<button id="mkReset">Вернуть как в игре</button>'
+        + '<span class="mk-note">' + (h ? ('выбран: ' + h.img + ' · высота ' + h.h) : 'дом не выбран')
+        + ' · всего ' + S.houses.length + '</span>';
+      const bump = (d) => { if (h) { h.h = Math.max(40, Math.min(420, h.h + d)); save(); drawHouses(); ctxBar(); renderOut(); } };
+      bar.querySelector('#mkBig').onclick = () => bump(10);
+      bar.querySelector('#mkSm').onclick = () => bump(-10);
+      bar.querySelector('#mkFlip').onclick = () => { if (h) { h.flip = !h.flip; save(); drawHouses(); renderOut(); } };
+      bar.querySelector('#mkDel').onclick = () => {
+        if (selHouse < 0) return;
+        S.houses.splice(selHouse, 1); selHouse = -1; save(); drawHouses(); ctxBar(); renderOut();
+      };
+      bar.querySelector('#mkClear').onclick = () => {
+        S.houses = []; selHouse = -1; save(); drawHouses(); ctxBar(); renderOut();
+      };
+      bar.querySelector('#mkReset').onclick = () => {
+        S.houses = JSON.parse(JSON.stringify(CITY_SNAPSHOT.houses));
+        selHouse = -1; save(); drawHouses(); ctxBar(); renderOut();
+      };
+    } else {
+      const L = lines();
+      bar.innerHTML = '<button id="mkNew" class="primary">＋ Новая линия</button>'
+        + '<button id="mkUndo">↶ Убрать точку</button>'
+        + '<button id="mkClearL">Стереть все линии</button>'
+        + '<button id="mkResetL">Вернуть как в игре</button>'
+        + '<span class="mk-note">Alt+клик по точке — удалить её. Линий: ' + L.length + '</span>';
+      bar.querySelector('#mkNew').onclick = () => { L.push([]); selLine = L.length - 1; save(); drawSvg(); side(); };
+      bar.querySelector('#mkUndo').onclick = () => {
+        if (L[selLine] && L[selLine].length) L[selLine].pop();
+        save(); drawSvg(); side(); renderOut();
+      };
+      bar.querySelector('#mkClearL').onclick = () => {
+        if (mode === 'roads') S.roads = []; else S.sidewalks = [];
+        selLine = 0; save(); drawSvg(); side(); renderOut();
+      };
+      bar.querySelector('#mkResetL').onclick = () => {
+        const src = JSON.parse(JSON.stringify(mode === 'roads' ? CITY_SNAPSHOT.roads : CITY_SNAPSHOT.sidewalks));
+        if (mode === 'roads') S.roads = src; else S.sidewalks = src;
+        selLine = 0; save(); drawSvg(); side(); renderOut();
+      };
+    }
+  }
+
+  /* ── вывод кода ───────────────────────────────────────────────────────── */
+  function renderOut() {
+    let txt;
+    if (mode === 'houses') {
+      txt = 'export const CITY_HOUSES = [\n' + S.houses.map((h) =>
+        '  { img: \'' + h.img + '\', x: ' + h.x + ', y: ' + h.y + ', h: ' + h.h
+        + (h.flip ? ', flip: true' : '') + ' },').join('\n') + '\n]';
+    } else {
+      const name = mode === 'roads' ? 'ROADS' : 'SIDEWALKS';
+      txt = 'export const ' + name + ' = [\n' + lines().filter((p) => p.length > 1).map((pts) =>
+        '  [' + pts.map((p) => '[' + p[0] + ', ' + p[1] + ']').join(', ') + '],').join('\n') + '\n]';
+    }
+    root.querySelector('#mkOut').textContent = txt;
+  }
+
+  function setMode(m) {
+    mode = m; selHouse = -1; selLine = 0;
+    root.querySelector('#mkModeH').classList.toggle('on', m === 'houses');
+    root.querySelector('#mkModeR').classList.toggle('on', m === 'roads');
+    root.querySelector('#mkModeS').classList.toggle('on', m === 'sidewalks');
+    view.style.cursor = m === 'houses' ? 'default' : 'crosshair';
+    drawHouses(); drawSvg(); side(); ctxBar(); renderOut();
+  }
+  root.querySelector('#mkModeH').onclick = () => setMode('houses');
+  root.querySelector('#mkModeR').onclick = () => setMode('roads');
+  root.querySelector('#mkModeS').onclick = () => setMode('sidewalks');
+  root.querySelector('#mkZoomIn').onclick = () => zoomAt(view.clientWidth / 2, view.clientHeight / 2, 1.3);
+  root.querySelector('#mkZoomOut').onclick = () => zoomAt(view.clientWidth / 2, view.clientHeight / 2, 1 / 1.3);
+  root.querySelector('#mkFit').onclick = fit;
+
+  // одна кнопка копирования на текущий слой — что видно в окне кода, то и уйдёт
+  const copyBtn = document.createElement('button');
+  copyBtn.textContent = '📋 Скопировать';
+  copyBtn.className = 'primary';
+  copyBtn.onclick = async () => {
+    const t = root.querySelector('#mkOut').textContent;
+    try { await navigator.clipboard.writeText(t); root.querySelector('#mkHint').textContent = 'скопировано'; }
+    catch { window.prompt('Скопируйте', t); }
+    setTimeout(() => { root.querySelector('#mkHint').textContent = ''; }, 1800);
   };
+  root.querySelector('#mkFit').after(copyBtn);
 
-  window.addEventListener('resize', draw);
-  const bg = stage.querySelector('img.bg');
-  if (bg.complete) draw(); else bg.onload = draw;
+  const bg = world.querySelector('img.bg');
+  const boot = () => { fit(); setMode('houses'); };
+  if (bg.complete) boot(); else bg.onload = boot;
 }
+
+
 </script>
 
 </body>
