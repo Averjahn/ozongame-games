@@ -7028,23 +7028,65 @@ function renderCityMapperTab(root) {
         el.addEventListener('pointerdown', (e) => {
           if (e.button === 2 || e.button === 1 || spaceDown) { startPan(e); return; }
           e.stopPropagation(); e.preventDefault();
-          selHouse = i; drawHouses(); ctxBar(); renderOut();
+          // ВЫДЕЛЯЕМ БЕЗ ПЕРЕСБОРКИ DOM. Здесь раньше звался drawHouses(), а он
+          // сносит и создаёт заново все .mk-house — перетаскиваемый узел тут же
+          // выбрасывался из документа, и move писал стили в мёртвый элемент.
+          // Дом «догонял» курсор только на отпускании, когда список рисовался
+          // из уже изменённых данных (заказчик: «перетаскивается только когда
+          // отпускаю»). Меняем классы точечно, узел живёт весь драг.
+          selectHouse(i, el);
+          // захват указателя: курсор может уйти за пределы дома и даже окна —
+          // перетаскивание не сорвётся и не «залипнет» на полпути
+          try { el.setPointerCapture(e.pointerId); } catch (err) {}
           const st = toWorld(e), ox = h.x, oy = h.y;
           const move = (ev) => {
             const p = toWorld(ev);
             h.x = Math.round(ox + (p.x - st.x)); h.y = Math.round(oy + (p.y - st.y));
             el.style.left = (h.x + OFFSET) + 'px'; el.style.top = (h.y - h.h) + 'px';
+            posHint(h);
           };
           const up = () => {
-            save(); drawHouses(); renderOut();
-            window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+            el.removeEventListener('pointermove', move);
+            el.removeEventListener('pointerup', up);
+            el.removeEventListener('pointercancel', up);
+            save(); drawHouses(); ctxBar(); renderOut();
           };
-          window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+          el.addEventListener('pointermove', move);
+          el.addEventListener('pointerup', up);
+          el.addEventListener('pointercancel', up);
         });
         frag.appendChild(el);
       });
     world.appendChild(frag);
   }
+
+  /** Пометить дом выбранным, не пересобирая слой (см. комментарий в drawHouses). */
+  function selectHouse(i, el) {
+    selHouse = i;
+    world.querySelectorAll('.mk-house.sel').forEach((n) => n.classList.remove('sel'));
+    if (el) el.classList.add('sel');
+    ctxBar();
+  }
+
+  /** Живые координаты в строке подсказки — видно, куда именно встал дом. */
+  function posHint(h) {
+    root.querySelector('#mkHint').textContent = 'x ' + h.x + '  y ' + h.y;
+  }
+
+  // Стрелки двигают выбранный дом по пикселю (Shift — по десять): мышью
+  // попасть пиксель в пиксель нельзя даже на зуме, а подгонять к соседнему
+  // дому приходится именно так.
+  window.addEventListener('keydown', (e) => {
+    if (mode !== 'houses' || selHouse < 0) return;
+    if (!root.closest('body') || root.offsetParent === null) return;
+    const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    const step = e.shiftKey ? 10 : 1;
+    const h = S.houses[selHouse];
+    h.x += d[0] * step; h.y += d[1] * step;
+    save(); drawHouses(); posHint(h); renderOut();
+  });
 
   /* ── линии (дороги / тротуары) ────────────────────────────────────────── */
   function addPoint(p) {
@@ -7063,7 +7105,8 @@ function renderCityMapperTab(root) {
       (S[kind] || []).forEach((pts, li) => {
         if (pts.length < 1) return;
         const d = pts.map((p, k) => (k ? 'L' : 'M') + (p[0] + OFFSET) + ' ' + p[1]).join(' ');
-        out += '<path d="' + d + '" fill="none" stroke="' + pal[kind] + '" stroke-width="' + sw
+        out += '<path data-kind="' + kind + '" data-li="' + li + '" d="' + d
+             + '" fill="none" stroke="' + pal[kind] + '" stroke-width="' + sw
              + '" opacity="' + (active ? 1 : 0.28) + '"/>';
         if (!active) return;
         pts.forEach((p, pi) => {
@@ -7085,16 +7128,32 @@ function renderCityMapperTab(root) {
           if (!lines()[li].length) lines().splice(li, 1);
           save(); drawSvg(); side(); renderOut(); return;
         }
+        try { c.setPointerCapture(e.pointerId); } catch (err) {}
+        // Двигаем ТОЧЕЧНО: сам кружок и «d» его линии. Полный drawSvg() на
+        // каждое движение пересобирал весь слой (десятки узлов) и заодно
+        // выбрасывал перетаскиваемый кружок — то же, из-за чего залипало
+        // перетаскивание домов.
+        const path = svg.querySelector('path[data-kind="' + mode + '"][data-li="' + li + '"]');
         const move = (ev) => {
           const p = toWorld(ev);
-          lines()[li][pi] = [Math.round(p.x - OFFSET), Math.round(p.y)];
-          drawSvg();
+          const nx = Math.round(p.x - OFFSET), ny = Math.round(p.y);
+          lines()[li][pi] = [nx, ny];
+          c.setAttribute('cx', nx + OFFSET); c.setAttribute('cy', ny);
+          if (path) {
+            path.setAttribute('d', lines()[li]
+              .map((q, k) => (k ? 'L' : 'M') + (q[0] + OFFSET) + ' ' + q[1]).join(' '));
+          }
+          root.querySelector('#mkHint').textContent = 'x ' + nx + '  y ' + ny;
         };
         const up = () => {
-          save(); renderOut();
-          window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+          c.removeEventListener('pointermove', move);
+          c.removeEventListener('pointerup', up);
+          c.removeEventListener('pointercancel', up);
+          save(); drawSvg(); renderOut();
         };
-        window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+        c.addEventListener('pointermove', move);
+        c.addEventListener('pointerup', up);
+        c.addEventListener('pointercancel', up);
       });
     });
   }
