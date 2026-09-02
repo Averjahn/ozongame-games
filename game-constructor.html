@@ -6828,6 +6828,28 @@ const CITY_YARD_LIST = ['y-football','y-basket','y-playground','y-parking',
 const CITY_HOUSE_LIST = ['h-brick2','h-plaster2','h-corner3','h-narrow','h-wide2','h-shop1',
   'h-panel9','h-khrush','h-cottage','h-office','h-stalin','h-mall','h-newbuild','h-ruin'];
 
+/**
+ * НАБОР ДОМОВ ДЛЯ ГЕНЕРАЦИИ ГОРОДА.
+ *
+ * Заказчик: «можешь в конструкторе добавить возможность выбора используемых
+ * домов, чтобы я выбрал, и ты именно из этих домов генерировал наш город».
+ * Отмеченный набор лежит отдельно от расстановки: он ничего не меняет на
+ * карте прямо сейчас, а служит ТЗ для следующей генерации города. Читается
+ * кнопкой «🏠 Набор для генерации» — оттуда список копируется в задачу.
+ */
+const KIT_KEY = 'ozongame_citykit_v1';
+function kitLoad() {
+  try {
+    const v = JSON.parse(localStorage.getItem(KIT_KEY) || 'null');
+    if (Array.isArray(v) && v.length) return new Set(v);
+  } catch {}
+  return new Set(CITY_HOUSE_LIST);      // по умолчанию разрешено всё
+}
+function kitSave(set) {
+  try { localStorage.setItem(KIT_KEY, JSON.stringify([...set])); } catch {}
+}
+let CITY_KIT = null;   // инициализируется при первом обращении
+
 /** Снимок ТЕКУЩИХ данных игры (cityHouses.js + mapSidewalks.js) — стартовое
  *  состояние редактора: заказчик правит то, что реально видит в игре. */
 /** Отпечаток эталона: меняется, как только я перерасставил город. */
@@ -6912,7 +6934,13 @@ function renderCityMapperTab(root) {
     .tab-mk .mk-pal li{display:flex;align-items:center;gap:8px;padding:6px 8px;
       border-top:1px solid var(--line);font-size:12px;cursor:pointer;}
     .tab-mk .mk-pal li:hover{background:rgba(252,190,46,.12);}
-    .tab-mk .mk-pal img{width:40px;height:40px;object-fit:contain;}
+    .tab-mk .mk-kit li { position: relative; cursor: pointer; }
+.mk-kit li.off { opacity: .32; filter: grayscale(1); }
+.mk-kit li.on::after {
+  content: '✓'; position: absolute; right: 4px; top: 2px;
+  color: #2b8a3e; font-weight: 700; font-size: 13px;
+}
+.mk-pal img{width:40px;height:40px;object-fit:contain;}
     .tab-mk .mk-lines{list-style:none;margin:0;padding:0;}
     .tab-mk .mk-lines li{display:flex;align-items:center;justify-content:space-between;gap:6px;
       padding:6px 8px;border-top:1px solid var(--line);font-size:12px;cursor:pointer;}
@@ -7346,10 +7374,45 @@ function renderCityMapperTab(root) {
     if (objMode()) {
       const isYard = mode === 'yards';
       const listNames = isYard ? CITY_YARD_LIST : CITY_HOUSE_LIST;
+      if (!CITY_KIT) CITY_KIT = kitLoad();
+      const kitUI = isYard ? '' :
+        ('<h3 style="margin-top:14px">Набор для генерации города</h3>'
+         + '<p class="mk-note" style="margin:0 0 6px">Отметьте дома, из которых строить город. '
+         + 'На текущую расстановку не влияет — это задание на следующую генерацию.</p>'
+         + '<ul class="mk-pal mk-kit">'
+         + listNames.map((n) => '<li data-k="' + n + '" class="' + (CITY_KIT.has(n) ? 'on' : 'off')
+             + '"><img src="city-houses/' + n + '.png"><span>' + n + '</span></li>').join('')
+         + '</ul><div class="mk-row"><button id="mkKitAll">Все</button>'
+         + '<button id="mkKitNone">Снять все</button>'
+         + '<button id="mkKitCopy" class="primary">📋 Скопировать набор</button></div>');
       el.innerHTML = '<h3>' + (isYard ? 'Поставить двор' : 'Поставить дом') + '</h3><ul class="mk-pal">'
         + listNames.map((n) => '<li data-n="' + n + '"><img src="' + folderOf(isYard) + '/' + n
-          + '.png"><span>' + n + '</span></li>').join('') + '</ul>';
-      el.querySelectorAll('li').forEach((li) => {
+          + '.png"><span>' + n + '</span></li>').join('') + '</ul>' + kitUI;
+      el.querySelectorAll('.mk-kit li').forEach((li) => {
+        li.onclick = () => {
+          const n = li.dataset.k;
+          if (CITY_KIT.has(n)) CITY_KIT.delete(n); else CITY_KIT.add(n);
+          li.className = CITY_KIT.has(n) ? 'on' : 'off';
+          kitSave(CITY_KIT);
+        };
+      });
+      const kitAll = el.querySelector('#mkKitAll');
+      if (kitAll) {
+        kitAll.onclick = () => { CITY_KIT = new Set(CITY_HOUSE_LIST); kitSave(CITY_KIT); side(); };
+        el.querySelector('#mkKitNone').onclick = () => { CITY_KIT = new Set(); kitSave(CITY_KIT); side(); };
+        el.querySelector('#mkKitCopy').onclick = () => {
+          const txt = 'НАБОР ДОМОВ ДЛЯ ГЕНЕРАЦИИ ГОРОДА (' + CITY_KIT.size + ' из '
+            + CITY_HOUSE_LIST.length + '):\n' + [...CITY_KIT].join(', ')
+            + '\n\nИСКЛЮЧЕНЫ:\n' + CITY_HOUSE_LIST.filter((n) => !CITY_KIT.has(n)).join(', ');
+          navigator.clipboard?.writeText(txt);
+          alert(txt);
+        };
+      }
+      // ТОЛЬКО первая палитра (постановка объекта). Раньше здесь стояло
+      // querySelectorAll('li') без ограничения, и оно перезаписывало onclick
+      // у пунктов набора для генерации — те переставали переключаться, потому
+      // что этот обработчик навешивается ПОЗЖЕ.
+      el.querySelectorAll('.mk-pal:not(.mk-kit) li').forEach((li) => {
         li.onclick = () => {
           // дом появляется в ЦЕНТРЕ ТЕКУЩЕГО ВИДА, а не карты: на зуме центр
           // карты может быть далеко за экраном
