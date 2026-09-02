@@ -6864,6 +6864,21 @@ const BASELINE_ID = '5f1da245a41c';
  * масштабом: наклон грани это dy/dx, значит сжатие по x поднимает угол, а
  * вертикальные стены остаются вертикальными.
  */
+/**
+ * РАЗВОРОТ АПТЕКИ НА 90°. Заказчик: «нужно иметь возможность поворачивать
+ * аптеку, чтобы дверь смотрела на другую улицу». Зеркало (кнопка ↔) даёт
+ * только два направления из четырёх — изометрию нельзя отразить по вертикали.
+ * Второй ракурс нарисован отдельным спрайтом (…-b), у него витрина и дверь на
+ * правой грани. Кнопка «⟳ Повернуть» переключает между парой, сохраняя
+ * ступень улучшения.
+ */
+const TURN_PAIRS = {
+  'ph-worn': 'ph-worn-b', 'ph-fixed': 'ph-fixed-b',
+  'ph-sign': 'ph-sign-b', 'ph-big': 'ph-big-b',
+};
+const TURN_BACK = Object.fromEntries(Object.entries(TURN_PAIRS).map(([a, b]) => [b, a]));
+function turnOf(img) { return TURN_PAIRS[img] || TURN_BACK[img] || null; }
+
 /** Здания сети: точки берутся из deliveryStore/supplyChainStore игры. */
 const NETWORK_BUILDINGS = [
   { img: 'b-warehouse', x: -239, y: 740, h: 150, title: 'Склад (правке не подлежит)' },
@@ -6871,7 +6886,7 @@ const NETWORK_BUILDINGS = [
 ];
 
 const STREET_ANGLE = 32.5;
-const BASE_ANGLE = {'h-brick2':34.74,'h-corner3':27.61,'h-corner5':32.38,'h-cottage':26.83,'h-house4':28.92,'h-khrush':28.29,'h-mall':29.57,'h-narrow':29.32,'h-newbuild':29.66,'h-office':31.45,'h-panel9':26.08,'h-panelw':28.39,'h-plaster2':27.65,'h-ruin':28.46,'h-shop1':28.63,'h-slab7':22.17,'h-stalin':29.52,'h-tower9':27.46,'h-wide2':27.27,'i-bungalow':26.61,'i-hotel':29.51,'i-villa':26.53,'ph-big':26.58,'ph-fixed':29.19,'ph-sign':27.58,'ph-worn':29.01,'sh-big':27.61,'sh-fixed':27.06,'sh-sign':26.35,'sh-worn':27.9};
+const BASE_ANGLE = {'h-brick2':34.74,'h-corner3':27.61,'h-corner5':32.38,'h-cottage':26.83,'h-house4':28.92,'h-khrush':28.29,'h-mall':29.57,'h-narrow':29.32,'h-newbuild':29.66,'h-office':31.45,'h-panel9':26.08,'h-panelw':28.39,'h-plaster2':27.65,'h-ruin':28.46,'h-shop1':28.63,'h-slab7':22.17,'h-stalin':29.52,'h-tower9':27.46,'h-wide2':27.27,'i-bungalow':26.61,'i-hotel':29.51,'i-villa':26.53,'ph-big':29.19,'ph-big-b':29.19,'ph-fixed':29.19,'ph-fixed-b':29.19,'ph-sign':29.19,'ph-sign-b':29.19,'ph-worn':29.19,'ph-worn-b':29.19,'sh-big':27.61,'sh-fixed':27.06,'sh-sign':26.35,'sh-worn':27.9};
 function scaleXFor(img, override) {
   if (typeof override === 'number' && override > 0) return override;
   const a = BASE_ANGLE[img];
@@ -7477,6 +7492,7 @@ function renderCityMapperTab(root) {
       const h = objs()[selHouse];
       bar.innerHTML = '<button id="mkBig">Крупнее</button><button id="mkSm">Мельче</button>'
         + '<button id="mkFlip">↔ Зеркало</button>'
+        + (h && turnOf(h.img) ? '<button id="mkTurn">⟳ Повернуть 90°</button>' : '')
         + (isYard ? '' : '<span class="sep"></span><button id="mkAngM">∠ −</button>'
             + '<button id="mkAngP">∠ +</button><button id="mkAngR">∠ по улице</button>')
         + '<button id="mkDel">✕ Удалить</button>'
@@ -7491,6 +7507,12 @@ function renderCityMapperTab(root) {
       bar.querySelector('#mkBig').onclick = () => bump(10);
       bar.querySelector('#mkSm').onclick = () => bump(-10);
       bar.querySelector('#mkFlip').onclick = () => { if (h) { pushHistory(); h.flip = !h.flip; save(); drawHouses(); renderOut(); } };
+      const turnBtn = bar.querySelector('#mkTurn');
+      if (turnBtn) turnBtn.onclick = () => {
+        const alt = turnOf(h.img);
+        if (!alt) return;
+        pushHistory(); h.img = alt; save(); drawHouses(); ctxBar(); renderOut();
+      };
       // УГОЛ К УЛИЦЕ. Шаг задаётся в ГРАДУСАХ, а не в множителе: заказчик
       // правит угол здания, а не абстрактный scaleX, и подпись должна сходиться
       // с тем, что он крутит.
