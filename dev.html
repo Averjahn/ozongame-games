@@ -2,6 +2,14 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <!-- ВХОДНОЙ HTML НЕ КЭШИРУЕМ. Скрипты и картинки Vite именует по хешу
+         содержимого, их кэшировать можно и нужно; а вот сам html — это список
+         актуальных хешей, и стоит браузеру придержать его, как игрок остаётся
+         на старой сборке при полностью выложенной новой. Ровно это и вышло:
+         «здания не разрушаются» при уже задеплоенных спрайтах руин. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <!-- viewport-fit=cover — чтобы работал env(safe-area-inset-*): без него отступы
          под «домашнюю полоску»/чёлку iPhone всегда резолвятся в 0 и нижний ряд
          управления в мини-играх перекрывается (см. GamesWrapper.vue) -->
@@ -10,8 +18,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-CN7kLyjK.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-n3vVjQY8.css">
+    <script type="module" crossorigin src="./assets/index-C9n2q9QY.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-B4XPcjwH.css">
   </head>
   <body>
     <div id="app"></div>
