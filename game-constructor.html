@@ -212,10 +212,12 @@ const TUT_STEPS = [
         + 'чтобы отменить несколько.',
   },
   {
-    title: 'Склад и завод трогать не нужно',
-    body: 'На карте есть два тёмных здания с подписями <b>СКЛАД</b> и <b>ЗАВОД</b>. '
-        + 'Они стоят на своих местах: к ним по дорогам ездят игровые грузовики.<br><br>'
-        + 'Их нельзя двигать, и не ставьте дома поверх них.',
+    title: 'Склад и завод',
+    body: 'Два здания с подписями <b>СКЛАД</b> и <b>ЗАВОД</b> тоже переставляются — тащите '
+        + 'их мышью, как дома.<br><br>'
+        + 'Важно одно: к ним по улицам ездят игровые грузовики, поэтому ставьте их '
+        + '<b>у дороги</b>. Если убрать их вглубь квартала, машины не смогут подъехать.<br><br>'
+        + 'Размер у них фиксированный — меняется только положение.',
   },
   {
     title: 'Как расставлять, чтобы город получился живым',
@@ -236,7 +238,9 @@ const TUT_STEPS = [
         + '1. включите <b>🏘 Дома</b> → <b>📋 Скопировать</b> → пришлите текст;<br>'
         + '2. включите <b>🌳 Дворы</b> → <b>📋 Скопировать</b> → пришлите второй текст.<br><br>'
         + 'Тот же текст виден в окне под картой — если буфер обмена не сработает, '
-        + 'можно скопировать оттуда вручную.',
+        + 'можно скопировать оттуда вручную.<br><br>'
+        + 'В тексте домов вторым блоком идут координаты склада и завода — так и нужно, '
+        + 'ничего вырезать не надо.',
   },
 ];
 
@@ -7114,8 +7118,8 @@ function turnOf(img) { return TURN_PAIRS[img] || TURN_BACK[img] || null; }
 
 /** Здания сети: точки берутся из deliveryStore/supplyChainStore игры. */
 const NETWORK_BUILDINGS = [
-  { img: 'b-warehouse', x: -239, y: 740, h: 150, name: 'СКЛАД', title: 'Склад: сюда и отсюда ездят грузовики. Двигать не нужно' },
-  { img: 'b-factory',   x: 654,  y: 140, h: 140, name: 'ЗАВОД', title: 'Завод: отсюда возят товар на склад. Двигать не нужно' },
+  { key: 'warehouse', img: 'b-warehouse', x: -239, y: 740, h: 150, name: 'СКЛАД', title: 'Склад: сюда и отсюда ездят грузовики. Ставьте у дороги' },
+  { key: 'factory',   img: 'b-factory',   x: 654,  y: 140, h: 140, name: 'ЗАВОД', title: 'Завод: отсюда возят товар на склад. Ставьте у дороги' },
 ];
 
 const STREET_ANGLE = 32.5;
@@ -7190,9 +7194,9 @@ function renderCityMapperTab(root) {
     .tab-mk .mk-pal li{display:flex;align-items:center;gap:8px;padding:6px 8px;
       border-top:1px solid var(--line);font-size:12px;cursor:pointer;}
     .tab-mk .mk-pal li:hover{background:rgba(252,190,46,.12);}
-    .tab-mk .mk-fixed { opacity: .92; pointer-events: none; }
-.mk-fixed img { filter: drop-shadow(0 3px 6px rgba(20,17,13,.25)); }
-.mk-fixed .mk-tag { position:absolute; left:50%; bottom:-6px; transform:translateX(-50%);
+    .tab-mk .mk-net { opacity: .96; cursor: move; }
+.mk-net img { filter: drop-shadow(0 3px 6px rgba(20,17,13,.25)); }
+.mk-net .mk-tag { position:absolute; left:50%; bottom:-6px; transform:translateX(-50%);
   background:#27384a; color:#fff; font:700 11px/1.2 inherit; letter-spacing:.06em;
   padding:3px 8px; border-radius:7px; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,.35); }
 .mk-kit li { position: relative; cursor: pointer; }
@@ -7235,8 +7239,9 @@ function renderCityMapperTab(root) {
     там же. Колесо мыши приближает карту, перетаскивание левой кнопкой по пустому
     месту двигает её, <b>Cmd/Ctrl + Z</b> отменяет.
     <br><br>
-    Тёмные здания с подписями <b>СКЛАД</b> и <b>ЗАВОД</b> двигать не нужно — они стоят на
-    своих местах, к ним ездят грузовики. Просто не ставьте дома поверх них и на дороги.
+    Здания с подписями <b>СКЛАД</b> и <b>ЗАВОД</b> тоже можно двигать — они тащатся мышью,
+    как дома. К ним по улицам ездят грузовики, поэтому ставьте их <b>у дороги</b>, а не в
+    глубине квартала. Дома на них и на проезжую часть ставить не нужно.
     <br><br>
     Когда закончите, пришлите <b>два текста</b> — кнопка копирует тот слой, который
     сейчас открыт: включите <b>🏘 Дома</b> → <b>📋 Скопировать</b>, затем
@@ -7327,6 +7332,14 @@ function renderCityMapperTab(root) {
     if (!Array.isArray(S.yards)) S.yards = [];
     if (!Array.isArray(S.roads)) S.roads = [];
     if (!Array.isArray(S.sidewalks)) S.sidewalks = [];
+    // СКЛАД И ЗАВОД — теперь ТОЖЕ двигаются (заказчик: «завод тоже можно
+    // двигать и склад»). Раньше рисовались справочно и правке не подлежали.
+    // Их точки завязаны на граф дорог: к ним ездят грузовики, поэтому ставить
+    // их надо у проезжей части, а не в глубине квартала.
+    // На острове их нет — там источник снабжения аэропорт.
+    if (k !== 'island' && !Array.isArray(S.buildings)) {
+      S.buildings = NETWORK_BUILDINGS.map((b) => ({ key: b.key, x: b.x, y: b.y }));
+    }
   }
   useMap('city');
   /** Эталон активной карты — с ним сравнивает разбор правок. */
@@ -7486,9 +7499,13 @@ function renderCityMapperTab(root) {
     // расстановке. Рисуем их здесь СПРАВОЧНО, чтобы было видно, куда ходят
     // грузовики и где нельзя ставить дома; правке они не подлежат — их точки
     // завязаны на граф дорог и на экономику.
-    for (const b of (mapKey === 'island' ? [] : NETWORK_BUILDINGS)) {
+    for (const meta of (mapKey === 'island' ? [] : NETWORK_BUILDINGS)) {
+      // положение берём из состояния (его правит пользователь), а размер и
+      // подпись — из справочника: габарит здания задан игрой, а не разметкой
+      const st = (S.buildings || []).find((x) => x.key === meta.key) || meta;
+      const b = { ...meta, x: st.x, y: st.y };
       const el = document.createElement('div');
-      el.className = 'mk-house mk-fixed';
+      el.className = 'mk-house mk-net';
       // ПОДПИСЬ ВИДИМАЯ, а не только во всплывающей подсказке. Заказчик:
       // «склад и завод должны быть подписаны, чтобы человек понимал, что это
       // склад и завод» — постороннему по картинке это неочевидно, а
@@ -7500,6 +7517,33 @@ function renderCityMapperTab(root) {
       el.style.height = b.h + 'px';
       el.style.transform = 'translateX(-50%)';
       el.title = b.title;
+      // перетаскивание — тем же приёмом, что у домов: узел живёт весь драг,
+      // слой не пересобирается, иначе элемент выпадает из документа на первом
+      // же движении и «догоняет» курсор только на отпускании
+      el.addEventListener('pointerdown', (e) => {
+        if (e.button === 2 || e.button === 1 || spaceDown) { startPan(e); return; }
+        e.stopPropagation(); e.preventDefault();
+        pushHistory();
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        const start = toWorld(e), ox = st.x, oy = st.y;
+        const move = (ev) => {
+          const p = toWorld(ev);
+          st.x = Math.round(ox + (p.x - start.x));
+          st.y = Math.round(oy + (p.y - start.y));
+          el.style.left = (st.x + OFFSET) + 'px';
+          el.style.top = (st.y - meta.h) + 'px';
+          root.querySelector('#mkHint').textContent = meta.name + ':  x ' + st.x + '  y ' + st.y;
+        };
+        const up = () => {
+          el.removeEventListener('pointermove', move);
+          el.removeEventListener('pointerup', up);
+          el.removeEventListener('pointercancel', up);
+          save(); drawHouses(); renderOut();
+        };
+        el.addEventListener('pointermove', move);
+        el.addEventListener('pointerup', up);
+        el.addEventListener('pointercancel', up);
+      });
       world.appendChild(el);
     }
     const list = S.yards.map((h, i) => [h, i, true])
@@ -7842,6 +7886,13 @@ function renderCityMapperTab(root) {
         // равными расчётным
         + (typeof h.sx === 'number' ? ', sx: ' + h.sx : '')
         + (h.zone ? ", zone: '" + h.zone + "'" : '') + ' },').join('\n') + '\n]';
+      // Склад и завод идут ВТОРЫМ блоком в том же тексте: они лежат в другом
+      // файле (constants/networkBuildings.js), и смешивать их с домами нельзя.
+      if (mode === 'houses' && mapKey !== 'island' && Array.isArray(S.buildings)) {
+        txt += '\n\nexport const DEFAULT_BUILDINGS = [\n'
+          + S.buildings.map((b) => "  { key: '" + b.key + "', x: " + b.x + ', y: ' + b.y + ' },').join('\n')
+          + '\n]';
+      }
     } else {
       const name = mode === 'roads' ? 'ROADS' : 'SIDEWALKS';
       txt = 'export const ' + name + ' = [\n' + lines().filter((p) => p.length > 1).map((pts) =>
