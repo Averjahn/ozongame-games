@@ -148,6 +148,191 @@ function mountActive() {
   tabRootEl.className = ''; // сброс scoping-класса (tab-guide/tab-layout/...), иначе он копится между переключениями и стили одной вкладки просачиваются в другую
   const t = TOP_TABS.find((x) => x.key === activeTopKey);
   t.render(tabRootEl);
+  if (FOCUS_CITY) setupTutorial();
+}
+
+/**
+ * ОБУЧЕНИЕ ДЛЯ ЧЕЛОВЕКА СО СТОРОНЫ.
+ *
+ * Заказчик: «сделай обучалку, чтобы пользователь понимал, как вообще
+ * расставлять дома, какие у него есть инструменты». Одного абзаца текста для
+ * этого мало: человек впервые видит инструмент и не знает ни что такое
+ * «дворы», ни почему дом нельзя ставить поперёк улицы.
+ *
+ * Поэтому шаги ведут за руку и ПОДСВЕЧИВАЮТ ту самую кнопку, о которой идёт
+ * речь, — читать про «Shift + колесо» абстрактно бесполезно. Отдельный шаг
+ * отдан не кнопкам, а ПРАВИЛАМ хорошей расстановки: их мы вывели за много
+ * итераций (docs/placement-rules.md), и без них человек расставит дома
+ * технически верно, но город получится неправильный.
+ *
+ * Показывается сама при первом заходе, дальше — по кнопке «❓ Как расставлять».
+ * Отметку о показе держим в localStorage, но если её нет (приватный режим) —
+ * просто покажется снова, это не ошибка.
+ */
+const TUT_KEY = 'ozongame_city_tutorial_seen_v1';
+
+const TUT_STEPS = [
+  {
+    title: 'Что нужно сделать',
+    body: 'Расставить по городу <b>дома</b>, а потом <b>дворы</b> — детские площадки, '
+        + 'скверы, парковки и корты, которые заполняют зелень внутри кварталов.<br><br>'
+        + 'Карта, дороги и река уже нарисованы и не меняются. Ваша задача — только '
+        + 'застройка. Всё сохраняется в браузере само: можно закрыть вкладку и вернуться.',
+  },
+  {
+    title: 'Дома и дворы — два отдельных слоя',
+    target: '#mkModeH',
+    body: 'Эти две кнопки переключают, с чем вы сейчас работаете. Сначала расставьте '
+        + '<b>🏘 Дома</b>, затем переключитесь на <b>🌳 Дворы</b>.<br><br>'
+        + 'Правки в одном слое не мешают другому, и переключаться можно сколько угодно раз.',
+  },
+  {
+    title: 'Как поставить объект',
+    target: '#mkSide',
+    body: 'Справа — список того, что можно поставить. Нажмите на нужный дом: он появится '
+        + 'в центре экрана. Дальше <b>тащите его мышью</b> на место.<br><br>'
+        + 'Чтобы выбрать уже стоящий дом, просто нажмите на него.',
+  },
+  {
+    title: 'Размер, зеркало, поворот',
+    target: '#mkCtxBar',
+    body: 'Когда дом выбран, здесь появляются кнопки: <b>Крупнее / Мельче</b>, '
+        + '<b>↔ Зеркало</b> (развернуть фасад в другую сторону) и <b>∠ по улице</b> — '
+        + 'она сама доворачивает дом под угол улиц города.<br><br>'
+        + 'Размер удобнее менять <b>Shift + колесо</b> прямо над домом. '
+        + 'Кнопка <b>✕ Удалить</b> убирает выбранный дом.',
+  },
+  {
+    title: 'Как двигать карту',
+    target: '#mkFit',
+    body: '<b>Колесо мыши</b> приближает и отдаляет карту к точке под курсором. '
+        + '<b>Перетаскивание левой кнопкой по пустому месту</b> двигает карту. '
+        + 'Кнопка <b>В экран</b> возвращает вид целиком.<br><br>'
+        + '<b>Cmd/Ctrl + Z</b> отменяет последнее действие — жмите несколько раз, '
+        + 'чтобы отменить несколько.',
+  },
+  {
+    title: 'Склад и завод трогать не нужно',
+    body: 'На карте есть два тёмных здания с подписями <b>СКЛАД</b> и <b>ЗАВОД</b>. '
+        + 'Они стоят на своих местах: к ним по дорогам ездят игровые грузовики.<br><br>'
+        + 'Их нельзя двигать, и не ставьте дома поверх них.',
+  },
+  {
+    title: 'Как расставлять, чтобы город получился живым',
+    body: '<b>Дома стоят вдоль улиц</b>, фасадом к проезжей части, а не посреди газона. '
+        + 'Ставьте их вплотную к тротуару — узкая полоска зелени сбоку это нормально, '
+        + 'широкий пустырь между домом и дорогой — нет.<br><br>'
+        + '<b>Углы кварталов занимайте</b> — пустой угол сразу читается как дыра. '
+        + 'Внутри одного квартала держите дома примерно одной высоты и стиля: так это '
+        + 'выглядит настоящим районом, а не случайной кучей.<br><br>'
+        + '<b>Не ставьте дом на дорогу, тротуар или реку.</b> Зелень, которая осталась '
+        + 'внутри квартала, потом заполняется дворами.',
+  },
+  {
+    title: 'Как прислать результат',
+    target: '#mkFit',
+    body: 'Кнопка <b>📋 Скопировать</b> копирует тот слой, который сейчас открыт. '
+        + 'Поэтому текстов будет <b>два</b>:<br><br>'
+        + '1. включите <b>🏘 Дома</b> → <b>📋 Скопировать</b> → пришлите текст;<br>'
+        + '2. включите <b>🌳 Дворы</b> → <b>📋 Скопировать</b> → пришлите второй текст.<br><br>'
+        + 'Тот же текст виден в окне под картой — если буфер обмена не сработает, '
+        + 'можно скопировать оттуда вручную.',
+  },
+];
+
+function setupTutorial() {
+  if (document.getElementById('tutOverlay')) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    #tutOverlay { position:fixed; inset:0; z-index:9000; display:none; }
+    #tutOverlay.on { display:block; }
+    #tutOverlay .tut-dim { position:absolute; inset:0; background:rgba(8,16,24,.62); }
+    #tutOverlay .tut-card { position:absolute; left:50%; bottom:28px; transform:translateX(-50%);
+      width:min(560px, calc(100vw - 32px)); background:var(--card); color:var(--ink);
+      border-radius:16px; padding:20px 22px 16px; box-shadow:0 18px 50px rgba(0,0,0,.5); }
+    #tutOverlay h3 { margin:0 0 8px; font-size:17px; }
+    #tutOverlay .tut-body { font-size:14px; line-height:1.6; }
+    #tutOverlay .tut-foot { display:flex; align-items:center; gap:8px; margin-top:16px; }
+    #tutOverlay .tut-step { font-size:12.5px; color:var(--muted); margin-right:auto; }
+    #tutOverlay button { font-family:inherit; font-size:13.5px; font-weight:700; cursor:pointer;
+      border-radius:10px; padding:9px 16px; border:1px solid var(--line);
+      background:var(--bg2); color:var(--ink); }
+    #tutOverlay button.primary { background:#FCBE2E; border-color:#f0ad1c; color:#6b5211; }
+    #tutOverlay .tut-ring { position:absolute; border:3px solid #FCBE2E; border-radius:12px;
+      box-shadow:0 0 0 9999px rgba(8,16,24,.62); pointer-events:none; transition:all .18s ease; }
+    #tutOpen { margin-left:8px; }
+  `;
+  document.head.appendChild(style);
+
+  const ov = document.createElement('div');
+  ov.id = 'tutOverlay';
+  ov.innerHTML = '<div class="tut-dim"></div><div class="tut-ring" style="display:none"></div>'
+    + '<div class="tut-card"><h3></h3><div class="tut-body"></div>'
+    + '<div class="tut-foot"><span class="tut-step"></span>'
+    + '<button class="tut-skip">Пропустить</button>'
+    + '<button class="tut-prev">Назад</button>'
+    + '<button class="tut-next primary">Далее</button></div></div>';
+  document.body.appendChild(ov);
+
+  const ring = ov.querySelector('.tut-ring');
+  const dim = ov.querySelector('.tut-dim');
+  let i = 0;
+
+  function show() {
+    const st = TUT_STEPS[i];
+    ov.querySelector('h3').textContent = st.title;
+    ov.querySelector('.tut-body').innerHTML = st.body;
+    ov.querySelector('.tut-step').textContent = 'Шаг ' + (i + 1) + ' из ' + TUT_STEPS.length;
+    ov.querySelector('.tut-prev').style.visibility = i ? 'visible' : 'hidden';
+    ov.querySelector('.tut-next').textContent = i === TUT_STEPS.length - 1 ? 'Понятно' : 'Далее';
+
+    // Подсветка: вырезаем нужную кнопку из затемнения. Если элемента нет
+    // (вёрстка вкладки поменялась) — просто затемняем всё, без падения.
+    const el = st.target ? document.querySelector(st.target) : null;
+    if (el && el.offsetParent !== null) {
+      const r = el.getBoundingClientRect();
+      const pad = 6;
+      ring.style.display = 'block';
+      ring.style.left = (r.left - pad) + 'px';
+      ring.style.top = (r.top - pad) + 'px';
+      ring.style.width = (r.width + pad * 2) + 'px';
+      ring.style.height = (r.height + pad * 2) + 'px';
+      dim.style.display = 'none';
+    } else {
+      ring.style.display = 'none';
+      dim.style.display = 'block';
+    }
+  }
+  function close() {
+    ov.classList.remove('on');
+    try { localStorage.setItem(TUT_KEY, '1'); } catch (e) { /* приватный режим */ }
+  }
+  function open() { i = 0; ov.classList.add('on'); show(); }
+
+  ov.querySelector('.tut-next').onclick = () => { if (i < TUT_STEPS.length - 1) { i++; show(); } else close(); };
+  ov.querySelector('.tut-prev').onclick = () => { if (i > 0) { i--; show(); } };
+  ov.querySelector('.tut-skip').onclick = close;
+  document.addEventListener('keydown', (e) => {
+    if (!ov.classList.contains('on')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowRight') ov.querySelector('.tut-next').click();
+    if (e.key === 'ArrowLeft') ov.querySelector('.tut-prev').click();
+  });
+
+  // кнопка повторного вызова — рядом с «В экран», где человек её найдёт
+  const fit = document.getElementById('mkFit');
+  if (fit && !document.getElementById('tutOpen')) {
+    const b = document.createElement('button');
+    b.id = 'tutOpen';
+    b.textContent = '❓ Как расставлять';
+    b.onclick = open;
+    fit.after(b);
+  }
+
+  let seen = false;
+  try { seen = localStorage.getItem(TUT_KEY) === '1'; } catch (e) { /* приватный режим */ }
+  if (!seen) open();
 }
 </script>
 
