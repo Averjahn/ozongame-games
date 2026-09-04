@@ -63,7 +63,18 @@
 </head>
 <body>
 <div class="shell-header">
-  <h1>🧩 Конструктор игры</h1>
+  <h1 id="pageTitle">🧩 Конструктор игры</h1>
+  <style>
+    /* Режим «только расстановка»: прячем вкладки и служебные кнопки. */
+    body.focus-city #topTabs { display: none; }
+    body.focus-city #mkModeR,
+    body.focus-city #mkModeS,
+    body.focus-city #mkDiff,
+    body.focus-city #mkFresh,
+    body.focus-city #mkPrev { display: none; }
+    body.focus-city .mk-lead { display: none; }
+    body.focus-city #mkFocusNote { display: block !important; }
+  </style>
 </div>
 <div class="top-tabs" id="topTabs"></div>
 <div id="tabRoot"></div>
@@ -102,7 +113,22 @@ const TOP_TABS = [
 
 const topTabsEl = document.getElementById('topTabs');
 const tabRootEl = document.getElementById('tabRoot');
-let activeTopKey = TOP_TABS[0].key;
+
+/**
+ * РЕЖИМ «ТОЛЬКО РАССТАНОВКА» — ?task=city
+ *
+ * Заказчик: «нужна прямая ссылка на конструктор, где надо только расставлять
+ * дома и дворы, чтобы отправить её человеку». Полный конструктор с двумя
+ * десятками вкладок постороннему человеку не нужен и только пугает, поэтому по
+ * этому параметру остаётся ровно один инструмент, без вкладок и без наших
+ * служебных кнопок (дороги, тротуары, сверка правок).
+ */
+const FOCUS_CITY = new URLSearchParams(location.search).get('task') === 'city'
+  || location.hash === '#city';   // якорь надёжнее: query-строку некоторые
+                                  // статические серверы срезают вместе с .html
+if (FOCUS_CITY) document.body.classList.add('focus-city');
+
+let activeTopKey = FOCUS_CITY ? 'citymapper' : TOP_TABS[0].key;
 
 TOP_TABS.forEach((t) => {
   const btn = document.createElement('button');
@@ -114,6 +140,10 @@ TOP_TABS.forEach((t) => {
 });
 function renderTopTabs() { [...topTabsEl.children].forEach((b) => b.classList.toggle('active', b.dataset.key === activeTopKey)); }
 function mountActive() {
+  if (FOCUS_CITY) {
+    const h = document.getElementById('pageTitle');
+    if (h) h.textContent = '🏗 Расстановка домов и дворов';
+  }
   tabRootEl.innerHTML = '';
   tabRootEl.className = ''; // сброс scoping-класса (tab-guide/tab-layout/...), иначе он копится между переключениями и стили одной вкладки просачиваются в другую
   const t = TOP_TABS.find((x) => x.key === activeTopKey);
@@ -6227,7 +6257,25 @@ function renderBackendArchTab(root) {
 </script>
 
 <script>
-mountActive();
+/**
+ * Первый монтаж — ТОЛЬКО после разбора всей страницы.
+ *
+ * Раньше здесь стоял голый mountActive(). Работало по случайности: по
+ * умолчанию открывалась первая вкладка, а её render-функция объявлена в блоке
+ * <script> ВЫШЕ этого места. Подъём объявлений действует лишь внутри своего
+ * блока, поэтому стоило сделать стартовой вкладку, объявленную ниже (режим
+ * ?task=city / #city открывает «Разметку города», а она объявлена почти в
+ * конце файла), как страница падала на «renderCityMapperTab is not defined» и
+ * оставалась пустой.
+ *
+ * DOMContentLoaded срабатывает после выполнения всех встроенных скриптов, то
+ * есть к этому моменту объявлены все вкладки без исключения.
+ */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mountActive);
+} else {
+  mountActive();
+}
 </script>
 
 <script>
@@ -6881,8 +6929,8 @@ function turnOf(img) { return TURN_PAIRS[img] || TURN_BACK[img] || null; }
 
 /** Здания сети: точки берутся из deliveryStore/supplyChainStore игры. */
 const NETWORK_BUILDINGS = [
-  { img: 'b-warehouse', x: -239, y: 740, h: 150, title: 'Склад (правке не подлежит)' },
-  { img: 'b-factory',   x: 654,  y: 140, h: 140, title: 'Завод (правке не подлежит)' },
+  { img: 'b-warehouse', x: -239, y: 740, h: 150, name: 'СКЛАД', title: 'Склад: сюда и отсюда ездят грузовики. Двигать не нужно' },
+  { img: 'b-factory',   x: 654,  y: 140, h: 140, name: 'ЗАВОД', title: 'Завод: отсюда возят товар на склад. Двигать не нужно' },
 ];
 
 const STREET_ANGLE = 32.5;
@@ -6959,6 +7007,9 @@ function renderCityMapperTab(root) {
     .tab-mk .mk-pal li:hover{background:rgba(252,190,46,.12);}
     .tab-mk .mk-fixed { opacity: .92; pointer-events: none; }
 .mk-fixed img { filter: drop-shadow(0 3px 6px rgba(20,17,13,.25)); }
+.mk-fixed .mk-tag { position:absolute; left:50%; bottom:-6px; transform:translateX(-50%);
+  background:#27384a; color:#fff; font:700 11px/1.2 inherit; letter-spacing:.06em;
+  padding:3px 8px; border-radius:7px; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,.35); }
 .mk-kit li { position: relative; cursor: pointer; }
 .mk-kit li.off { opacity: .32; filter: grayscale(1); }
 .mk-kit li.on::after {
@@ -6990,6 +7041,22 @@ function renderCityMapperTab(root) {
     <br>
     Готово — «📋 Скопировать» под нужным слоем и пришлите мне.
   </p>
+
+  <div class="mk-note" id="mkFocusNote" style="display:none">
+    <b>Задача: расставить дома и дворы по городу.</b><br>
+    Переключайтесь кнопками <b>🏘 Дома</b> и <b>🌳 Дворы</b>. Нажмите объект в списке
+    справа — он появится в центре экрана; тащите его мышью на место.
+    Размер — <b>Shift + колесо</b> над объектом или кнопки размера, зеркало и поворот —
+    там же. Колесо мыши приближает карту, перетаскивание левой кнопкой по пустому
+    месту двигает её, <b>Cmd/Ctrl + Z</b> отменяет.
+    <br><br>
+    Тёмные здания с подписями <b>СКЛАД</b> и <b>ЗАВОД</b> двигать не нужно — они стоят на
+    своих местах, к ним ездят грузовики. Просто не ставьте дома поверх них и на дороги.
+    <br><br>
+    Когда закончите, пришлите <b>два текста</b> — кнопка копирует тот слой, который
+    сейчас открыт: включите <b>🏘 Дома</b> → <b>📋 Скопировать</b>, затем
+    <b>🌳 Дворы</b> → <b>📋 Скопировать</b>. Текст также виден в окне под картой.
+  </div>
 
   <div class="mk-bar">
     <button id="mkMapC" class="on">🏙 Город</button>
@@ -7237,7 +7304,12 @@ function renderCityMapperTab(root) {
     for (const b of (mapKey === 'island' ? [] : NETWORK_BUILDINGS)) {
       const el = document.createElement('div');
       el.className = 'mk-house mk-fixed';
-      el.innerHTML = '<img src="city-buildings/' + b.img + '.png">';
+      // ПОДПИСЬ ВИДИМАЯ, а не только во всплывающей подсказке. Заказчик:
+      // «склад и завод должны быть подписаны, чтобы человек понимал, что это
+      // склад и завод» — постороннему по картинке это неочевидно, а
+      // наводить мышь на каждое здание он не станет.
+      el.innerHTML = '<img src="city-buildings/' + b.img + '.png">'
+        + '<span class="mk-tag">' + b.name + '</span>';
       el.style.left = (b.x + OFFSET) + 'px';
       el.style.top = (b.y - b.h) + 'px';
       el.style.height = b.h + 'px';

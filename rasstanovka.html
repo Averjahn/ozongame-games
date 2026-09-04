@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Расстановка домов и дворов</title>
+  <!--
+    КОРОТКАЯ ССЫЛКА ДЛЯ ПОСТОРОННЕГО ЧЕЛОВЕКА.
+
+    Заказчик: «нужна прямая ссылка на конструктор, в котором нужно будет только
+    расставлять дома по карте, чтобы я отправил её человеку». Сам инструмент —
+    вкладка «Разметка города» общего конструктора, она открывается параметром
+    ?task=city (там прячутся остальные вкладки, дороги, тротуары и наши
+    служебные кнопки). Этот файл нужен только ради опрятного адреса: присылать
+    человеку «game-constructor.html#city» неудобно и легко потерять хвост
+    после вопросительного знака при копировании в мессенджер.
+
+    Адрес с ЯКОРЕМ (#city), а не с query-строкой: часть статических серверов
+    (например `serve` с чисткой адресов) срезает и «.html», и всё после «?» —
+    на такой раздаче режим молча не включился бы. Якорь не срезает никто.
+
+    Переход и через <meta>, и скриптом: если у человека отключён JS, сработает
+    meta; если meta почему-то не отработает — сработает replace(), который ещё
+    и не оставляет лишнюю запись в истории браузера.
+  -->
+  <meta http-equiv="refresh" content="0; url=game-constructor.html#city">
+  <link rel="canonical" href="game-constructor.html#city">
+  <style>
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; background: #101a24; color: #d7e6f5;
+      font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center;
+    }
+    a { color: #6db3f2; }
+  </style>
+</head>
+<body>
+  <p>
+    Открываю расстановку домов и дворов…<br>
+    Если ничего не произошло — <a href="game-constructor.html#city">нажмите сюда</a>.
+  </p>
+  <script>location.replace('game-constructor.html#city')</script>
+</body>
+</html>
