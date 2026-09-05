@@ -6734,7 +6734,10 @@ function renderHallSlotsTab(root) {
       45deg,rgba(255,255,255,.06) 0 8px,rgba(255,255,255,.02) 8px 16px);pointer-events:none;}
     .tab-hall .hall-bg{position:absolute;top:0;height:100%;}
     .tab-hall .hall-floor{position:absolute;left:0;right:0;border-top:1px dashed rgba(95,168,236,.9);pointer-events:none;}
+    .tab-hall .hall-zone{position:absolute;pointer-events:none;border:1px dashed rgba(255,122,114,.75);
+      background:repeating-linear-gradient(45deg,rgba(255,122,114,.13) 0 6px,transparent 6px 12px);border-radius:3px;}
     .tab-hall .hall-obj{position:absolute;cursor:grab;}
+    .tab-hall .hall-obj.bad{outline:2px solid #ff7a72;outline-offset:2px;}
     .tab-hall .hall-obj.sel{outline:2px solid #FCBE2E;outline-offset:2px;}
     .tab-hall .hall-obj img{display:block;height:100%;width:auto;pointer-events:none;}
 
@@ -6792,6 +6795,7 @@ function renderHallSlotsTab(root) {
         <button id="hallCopy" class="primary">📋 Скопировать код</button>
         <button id="hallAuto">Разложить вдоль стен</button>
         <button id="hallClear">Убрать всё со сцены</button>
+        <button id="hallZones">Занятые места: вкл</button>
         <span id="hallHint" style="font-size:12px;color:var(--muted)"></span>
       </div>
       <div class="hall-stage" id="hallStage"></div>
@@ -6813,6 +6817,10 @@ function renderHallSlotsTab(root) {
           <button data-r="0" id="hallSelR0">сброс</button>
         </span>
         <button id="hallSelFlip">зеркально</button>
+        <span class="hall-sel-grp">
+          <b>картинка</b>
+          <select id="hallSelImg"><option value="">как у улучшения</option></select>
+        </span>
       </div>
       <pre id="hallOut"></pre>
     </div>
@@ -6830,6 +6838,9 @@ function renderHallSlotsTab(root) {
   stage.style.height = (HALL_WORLD_H * scale) + 'px';
 
   let pharmacy = 1;
+  /** Показывать ли штриховку занятых мест. По умолчанию — да: без неё и
+      получалась «раскиданная» обстановка. */
+  let showZones = true;
 
   /**
    * Расстановка ПО АПТЕКАМ и с сохранением между заходами.
@@ -6861,6 +6872,36 @@ function renderHallSlotsTab(root) {
     if (prop) return 'hall-editor-assets/props/' + prop;
     return `hall-editor-assets/p${pharmacy}/${file}`;
   }
+  /**
+   * ЧТО В ЗАЛЕ УЖЕ ЗАНЯТО.
+   *
+   * Главная причина, по которой обстановка выглядела «раскиданной»: расставляли
+   * вслепую. В игре половину кадра закрывают панели и персонажи, и предмет,
+   * поставленный в красивое место на голом фоне, оказывался за меню или за
+   * спиной фармацевта. Прямоугольники сняты ЗАМЕРОМ в работающей игре
+   * (мир 1200×810) и показаны здесь штриховкой — ставить туда нельзя.
+   */
+  const HALL_ZONES = [
+    { x1: 26, y1: 300, x2: 316, y2: 810, name: 'меню игрока' },
+    { x1: 0, y1: 0, x2: 1200, y2: 186, name: 'верхняя панель' },
+    { x1: 525, y1: 42, x2: 838, y2: 420, name: 'фармацевт' },
+    { x1: 715, y1: 285, x2: 909, y2: 435, name: 'монитор' },
+    { x1: 395, y1: 460, x2: 850, y2: 720, name: 'прилавок' },
+  ];
+  function zonesHtml() {
+    if (!showZones) return '';
+    return HALL_ZONES.map((z) => `<div class="hall-zone" title="${z.name}" style="left:${worldToStage(z.x1)}px;
+      top:${z.y1 * scale}px; width:${(z.x2 - z.x1) * scale}px; height:${(z.y2 - z.y1) * scale}px"></div>`).join('');
+  }
+  /** Попадает ли предмет в занятую зону — подсвечиваем прямо в списке. */
+  function inZone(sl) {
+    const w = (sl.h || HALL_DEFAULT_H) * 0.8;
+    const x1 = sl.x - w / 2, x2 = sl.x + w / 2;
+    const y2 = sl.y == null ? HALL_FLOOR_Y : sl.y;
+    const y1 = y2 - (sl.h || HALL_DEFAULT_H);
+    return HALL_ZONES.find((z) => x2 > z.x1 && z.x2 > x1 && y2 > z.y1 && z.y2 > y1) || null;
+  }
+
   const worldToStage = (x) => (x + HALL_OVERHANG) * scale;
   const stageToWorld = (px) => px / scale - HALL_OVERHANG;
 
@@ -6868,9 +6909,10 @@ function renderHallSlotsTab(root) {
     stage.innerHTML = `
       <div class="hall-overhang" style="left:0;width:${HALL_OVERHANG * scale}px"></div>
       <div class="hall-overhang" style="right:0;width:${HALL_OVERHANG * scale}px"></div>
-      <img class="hall-bg" src="layout-calibrate-assets/roomAI${pharmacy}_content.jpg"
+      <img class="hall-bg" src="hall-editor-assets/rooms/roomAI${pharmacy}-empty.png"
            style="left:${HALL_OVERHANG * scale}px;width:${1200 * scale}px">
-      <div class="hall-floor" style="top:${HALL_FLOOR_Y * scale}px"></div>`;
+      <div class="hall-floor" style="top:${HALL_FLOOR_Y * scale}px"></div>
+      ${zonesHtml()}`;
     for (const key of Object.keys(P())) addNode(key);
     if (selected && !P()[selected]) selected = '';
     select(selected);
@@ -6881,7 +6923,11 @@ function renderHallSlotsTab(root) {
     const el = document.createElement('div');
     el.className = 'hall-obj';
     el.dataset.key = key;
-    el.innerHTML = `<img src="${assetUrl(key.replace(/^upg:/, ''))}">`;
+    // ПОДМЕНА КАРТИНКИ. Заказчик: «менять их положение и картинки». Иногда
+    // иконка улучшения — не предмет (значок Wi-Fi, «курс сотрудников»), и в
+    // зале уместнее другая вещь; теперь её можно выбрать, а в код уедет поле img.
+    const sl0 = P()[key] || {};
+    el.innerHTML = `<img src="${assetUrl(sl0.img || key.replace(/^upg:/, ''))}">`;
     stage.appendChild(el);
     posNode(el);
     el.addEventListener('pointerdown', (e) => startDrag(e, key, el));
@@ -6953,6 +6999,26 @@ function renderHallSlotsTab(root) {
     root.querySelector('#hallSelH').textContent = s ? Math.round(s.h) : '—';
     root.querySelector('#hallSelR').textContent = s ? wrapDeg(s.rot || 0) + '°' : '—';
     root.querySelectorAll('#hallSel button').forEach((b) => { b.disabled = !s; });
+
+    // список картинок: все иконки этой аптеки плюс предметы из props
+    const sel = root.querySelector('#hallSelImg');
+    sel.disabled = !s;
+    if (sel.options.length <= 1) {
+      for (const [file, name] of HALL_UPGRADES[pharmacy]) {
+        const o = document.createElement('option');
+        o.value = file; o.textContent = name;
+        sel.appendChild(o);
+      }
+    }
+    sel.value = s?.img || '';
+
+    // предмет, попавший в занятое место, помечаем прямо на сцене
+    for (const el of stage.querySelectorAll('.hall-obj')) {
+      const sl = P()[el.dataset.key];
+      el.classList.toggle('bad', !!(sl && inZone(sl)));
+      if (sl && inZone(sl)) el.title = `Попадает в занятое место: ${inZone(sl).name}`;
+      else el.removeAttribute('title');
+    }
   }
 
   function applyToSelected(fn) {
@@ -6962,6 +7028,11 @@ function renderHallSlotsTab(root) {
     if (el) posNode(el);
     renderOut(); saveAll(); syncCtl();
   }
+
+  root.querySelector('#hallSelImg').onchange = (e) => {
+    applyToSelected((sl) => { sl.img = e.target.value || undefined; });
+    drawStage();
+  };
 
   root.querySelectorAll('#hallSel button[data-h]').forEach((b) => {
     b.onclick = () => applyToSelected((s) => {
@@ -6998,7 +7069,8 @@ function renderHallSlotsTab(root) {
       const s = P()[k];
       // rot и flip пишем ТОЛЬКО когда они не по умолчанию — иначе файл слотов
       // забивается нулями, в которых потом не видно настоящих поворотов
-      const extra = (s.rot ? `, rot: ${wrapDeg(s.rot)}` : '') + (s.flip ? ', flip: true' : '');
+      const extra = (s.rot ? `, rot: ${wrapDeg(s.rot)}` : '') + (s.flip ? ', flip: true' : '')
+        + (s.img ? `, img: '${s.img}'` : '');
       return `    '${k}': { x: ${Math.round(s.x)}, y: ${Math.round(s.y)}, h: ${Math.round(s.h)}${extra} },`;
     }).join('\n');
     root.querySelector('#hallOut').textContent =
@@ -7010,6 +7082,11 @@ function renderHallSlotsTab(root) {
     try { await navigator.clipboard.writeText(txt); root.querySelector('#hallHint').textContent = 'скопировано'; }
     catch { window.prompt('Скопируйте', txt); }
     setTimeout(() => { root.querySelector('#hallHint').textContent = ''; }, 1800);
+  };
+  root.querySelector('#hallZones').onclick = (e) => {
+    showZones = !showZones;
+    e.currentTarget.textContent = `Занятые места: ${showZones ? 'вкл' : 'выкл'}`;
+    drawStage();
   };
   root.querySelector('#hallClear').onclick = () => {
     for (const k of Object.keys(P())) delete P()[k];
