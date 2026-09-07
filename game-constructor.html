@@ -6795,8 +6795,8 @@ function renderHallSlotsTab(root) {
   </div>
 
   <div class="hall-tabs">
-    <button id="hallP1" class="active">Аптека 1</button>
-    <button id="hallP2">Аптека 2</button>
+    <button id="hallP1">Аптека 1 (в игре не показывается)</button>
+    <button id="hallP2" class="active">Аптека 2 — этот зал в игре</button>
   </div>
 
   <div class="hall-side">
@@ -6847,7 +6847,12 @@ function renderHallSlotsTab(root) {
   stage.style.width = view + 'px';
   stage.style.height = (HALL_WORLD_H * scale) + 'px';
 
-  let pharmacy = 1;
+  // ЗАЛ ПО УМОЛЧАНИЮ — ВТОРОЙ: именно его декорации рисует игра (SCENE_ART_N
+  // в src/constants.js). Редактор открывался на первом зале, и расстановка
+  // снималась по геометрии комнаты, которой на экране нет: прилавок у второй
+  // сдвинут примерно на +90 по x и −40 по y. Заказчик поймал это уже на
+  // готовой расстановке — «расставляли улучшения не в той аптеке».
+  let pharmacy = 2;
   /** Показывать ли штриховку занятых мест. По умолчанию — да: без неё и
       получалась «раскиданная» обстановка. */
   let showZones = true;
