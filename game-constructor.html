@@ -97,6 +97,7 @@ const TOP_TABS = [
   { key: 'taskgames', label: '🎮 Игры в заданиях', render: (root) => renderTaskGamesTab(root) },
   { key: 'begdx', label: '🎯 Смещение у миски', render: (root) => renderBegDxTab(root) },
   { key: 'studio', label: '🎛️ Анимация + звук', render: (root) => renderStudioTab(root) },
+  { key: 'walkrig', label: '🚶 Анимация покупателей', render: (root) => renderWalkRigTab(root) },
   { key: 'guide', label: '📖 Гайд', render: (root) => renderGuideTab(root) },
   { key: 'status', label: '📊 Статус проекта', render: (root) => renderStatusTab(root) },
   { key: 'feedback', label: '🐛 Обратная связь', render: (root) => renderFeedbackTab(root) },
@@ -3671,6 +3672,268 @@ function renderTaskGamesTab(root) {
 
 </script>
 <script>
+/* ============================================================
+   ВКЛАДКА «🚶 Анимация покупателей»
+   ------------------------------------------------------------
+   Заказчик: «давай ты создашь проект, в котором мы будем делать и править все
+   эти анимации, добавь его в конструктор по игре, чтобы там можно было делать
+   анимации рук и ног».
+
+   Зачем это отдельным инструментом, а не подбором чисел в коде: походку
+   невозможно проверить арифметикой. Ровно на этом уже обожглись — углы
+   сходились с формулой идеально, а на экране фигура разъезжалась. Здесь
+   параметр двигается ползунком, и результат видно в тот же миг, в реальном
+   размере и в цикле.
+
+   Что здесь настраивается:
+     · размах и темп шага, качание корпуса;
+     · для каждой ноги — точка бедра, угол покоя, «плоскость» стопы;
+     · РУКИ: автоматический разбор их не осилил (обе руки телесного цвета и по
+       цвету неразличимы — маска брала одну, вторая оставалась на теле). Поэтому
+       здесь руке можно вручную назначить любой из вырезанных кусков, задать
+       плечо и фазу — или отключить.
+
+   Итог кнопкой «Скопировать в код» превращается в готовый кусок LOOKS для
+   CustomerFigure.vue. Файлы деталей лежат в genref/<персонаж>-part-<деталь>.png.
+   ============================================================ */
+function renderWalkRigTab(root) {
+  root.className = 'tab-walkrig';
+
+  const CHARS = [
+    { key: 'walk',   name: 'Синяя футболка' },
+    { key: 'walk-2', name: 'Рыжая, зелёная футболка' },
+    { key: 'walk-3', name: 'Очки, жёлтая футболка' },
+    { key: 'walk-4', name: 'Борода, серая футболка' },
+    { key: 'walk-5', name: 'Русый, красная футболка' },
+    { key: 'walk-6', name: 'Очки и борода, хаки' },
+  ];
+
+  // Значения посчитаны по самому арту (по маскам деталей) и служат стартовой
+  // точкой: правим ползунками, а не переписываем заново.
+  const RIG = {
+    'walk':   { canvas:[591,900], hipNear:[175,482], hipFar:[258,488], ankleNear:[6,789],   ankleFar:[365,820], restNear:-23.7, restFar:14.9 },
+    'walk-2': { canvas:[594,900], hipNear:[172,481], hipFar:[259,489], ankleNear:[8,779],   ankleFar:[363,820], restNear:-23.6, restFar:14.9 },
+    'walk-3': { canvas:[590,900], hipNear:[266,485], hipFar:[182,494], ankleNear:[435,785], ankleFar:[88,823],  restNear:24.1,  restFar:-12.9 },
+    'walk-4': { canvas:[597,900], hipNear:[253,478], hipFar:[168,484], ankleNear:[419,787], ankleFar:[54,819],  restNear:23.4,  restFar:-15.3 },
+    'walk-5': { canvas:[589,900], hipNear:[245,484], hipFar:[161,491], ankleNear:[410,784], ankleFar:[57,819],  restNear:23.4,  restFar:-14.2 },
+    'walk-6': { canvas:[592,900], hipNear:[258,474], hipFar:[177,478], ankleNear:[426,770], ankleFar:[90,821],  restNear:23.3,  restFar:-11.3 },
+  };
+
+  const DEFAULTS = { cycle: 720, legSwing: 17, armSwing: 12, footFlat: 100, bob: 1.1, height: 420 };
+  const STORE = 'ozongame_walkrig_v1';
+
+  let cur = CHARS[0].key;
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(STORE) || '{}'); } catch { return {}; } })();
+  const state = {};
+  CHARS.forEach((c) => {
+    state[c.key] = Object.assign(
+      {}, DEFAULTS,
+      { hipNear: RIG[c.key].hipNear.slice(), hipFar: RIG[c.key].hipFar.slice(),
+        restNear: RIG[c.key].restNear, restFar: RIG[c.key].restFar,
+        armA: 'none', armB: 'none', armARest: 0, armBRest: 0, armShoulder: [Math.round(RIG[c.key].canvas[0] * 0.42), 310] },
+      saved[c.key] || {});
+  });
+  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch { /* приватный режим */ } };
+
+  root.innerHTML = `
+    <style>
+      .tab-walkrig .wr-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;padding:0 22px 30px;max-width:1260px;margin:0 auto;}
+      .tab-walkrig .wr-stage{background:#eaf3f5;border:2px solid #123;border-radius:12px;padding:10px;position:relative;flex:none;}
+      .tab-walkrig .wr-floor{position:absolute;left:10px;right:10px;bottom:22px;border-bottom:2px dashed rgba(0,0,0,.25);}
+      .tab-walkrig .wr-panel{flex:1;min-width:330px;}
+      .tab-walkrig .wr-row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px;}
+      .tab-walkrig .wr-row label{flex:0 0 168px;}
+      .tab-walkrig .wr-row input[type=range]{flex:1;}
+      .tab-walkrig .wr-val{flex:0 0 56px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+      .tab-walkrig h3{margin:16px 0 6px;font-size:14px;}
+      .tab-walkrig .wr-chars{display:flex;gap:6px;flex-wrap:wrap;padding:0 22px 12px;max-width:1260px;margin:0 auto;}
+      .tab-walkrig .wr-chars button{font:inherit;font-size:12px;font-weight:700;padding:7px 11px;border-radius:9px;border:2px solid #2a3a4a;background:#16202b;color:#cfe;cursor:pointer;}
+      .tab-walkrig .wr-chars button.on{background:#3fa9f5;border-color:#3fa9f5;color:#08131d;}
+      .tab-walkrig .wr-out{width:100%;height:150px;font:12px/1.45 ui-monospace,Menlo,monospace;}
+      .tab-walkrig .wr-btn{font:inherit;font-weight:700;padding:9px 14px;border-radius:9px;border:2px solid #3ecf93;background:#123;color:#8fe9c4;cursor:pointer;margin-right:8px;}
+      .tab-walkrig .wr-rig{position:absolute;transform-origin:top left;}
+      .tab-walkrig .wr-rig img{position:absolute;top:0;left:0;display:block;}
+      .tab-walkrig .wr-limb{position:absolute;top:0;left:0;width:100%;height:100%;}
+      @keyframes wr-swing{0%{transform:rotate(calc(var(--rest) + var(--swing)))}50%{transform:rotate(calc(var(--rest) - var(--swing)))}100%{transform:rotate(calc(var(--rest) + var(--swing)))}}
+      @keyframes wr-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--bob) * -1))}}
+    </style>
+    <p style="padding:0 22px;max-width:900px;">
+      Ходьба здесь не «перелистывается» кадрами, а собрана из вырезанных деталей: сустав
+      поворачивается, и браузер рисует все промежуточные положения сам. Ползунки меняют
+      анимацию вживую — так походку и проверяем, глазами, а не сверкой чисел.
+    </p>
+    <div class="wr-chars" id="wrChars"></div>
+    <div class="wr-wrap">
+      <div class="wr-stage" id="wrStage"><div class="wr-floor"></div></div>
+      <div class="wr-panel" id="wrPanel"></div>
+    </div>`;
+
+  const charsEl = root.querySelector('#wrChars');
+  const stageEl = root.querySelector('#wrStage');
+  const panelEl = root.querySelector('#wrPanel');
+
+  CHARS.forEach((c) => {
+    const b = document.createElement('button');
+    b.textContent = c.name;
+    b.onclick = () => { cur = c.key; draw(); };
+    b.dataset.key = c.key;
+    charsEl.appendChild(b);
+  });
+
+  /** Какие куски рук нашлись у персонажа — их и предлагаем назначить. */
+  const ARM_CHOICES = ['none', 'arm-1', 'arm-2'];
+
+  function stageScale(st) { return st.height / RIG[cur].canvas[1]; }
+
+  function buildFigure() {
+    const st = state[cur];
+    const r = RIG[cur];
+    const k = stageScale(st);
+    const base = `genref/${cur}-part-`;
+
+    const limb = (side) => {
+      const isNear = side === 'near';
+      const hip = isNear ? st.hipNear : st.hipFar;
+      const ankle = isNear ? r.ankleNear : r.ankleFar;
+      const rest = isNear ? st.restNear : st.restFar;
+      const delay = isNear ? '0ms' : `${-st.cycle / 2}ms`;
+      const footDelay = isNear ? `${-st.cycle / 2}ms` : '0ms';
+      // стопа гасит поворот ноги на footFlat% — при 100% остаётся горизонтальной
+      const footRest = -rest * (st.footFlat / 100);
+      const footSwing = st.legSwing * (st.footFlat / 100);
+      return `
+        <div class="wr-limb" style="transform-origin:${hip[0]}px ${hip[1]}px;--rest:${rest}deg;--swing:${st.legSwing}deg;
+             animation:wr-swing ${st.cycle}ms ease-in-out infinite;animation-delay:${delay};">
+          <img src="${base}${side}-leg.png" alt="">
+          ${ankle ? `<img src="${base}${side}-foot.png" alt="" style="transform-origin:${ankle[0]}px ${ankle[1]}px;
+             --rest:${footRest}deg;--swing:${footSwing}deg;
+             animation:wr-swing ${st.cycle}ms ease-in-out infinite;animation-delay:${footDelay};">` : ''}
+        </div>`;
+    };
+
+    const arm = (slot) => {
+      const pick = slot === 'A' ? st.armA : st.armB;
+      if (pick === 'none') return '';
+      const rest = slot === 'A' ? st.armARest : st.armBRest;
+      const delay = slot === 'A' ? `${-st.cycle / 2}ms` : '0ms';
+      return `<img src="${base}${pick}.png" alt="" style="transform-origin:${st.armShoulder[0]}px ${st.armShoulder[1]}px;
+        --rest:${rest}deg;--swing:${st.armSwing}deg;
+        animation:wr-swing ${st.cycle}ms ease-in-out infinite;animation-delay:${delay};">`;
+    };
+
+    stageEl.style.width = `${Math.round(r.canvas[0] * k) + 40}px`;
+    stageEl.style.height = `${Math.round(r.canvas[1] * k) + 40}px`;
+    return `
+      <div style="position:absolute;left:20px;top:10px;--bob:${st.bob}%;
+           animation:wr-bob ${st.cycle / 2}ms ease-in-out infinite;">
+        <div class="wr-rig" style="width:${r.canvas[0]}px;height:${r.canvas[1]}px;transform:scale(${k});">
+          ${limb('far')}
+          <img src="${base}body.png" alt="">
+          ${limb('near')}
+          ${arm('A')}
+          ${arm('B')}
+        </div>
+      </div>`;
+  }
+
+  function slider(label, key, min, max, step, unit, idx) {
+    const st = state[cur];
+    const val = idx === undefined ? st[key] : st[key][idx];
+    return `<div class="wr-row"><label>${label}</label>
+      <input type="range" min="${min}" max="${max}" step="${step}" value="${val}"
+             data-key="${key}" ${idx === undefined ? '' : `data-idx="${idx}"`}>
+      <span class="wr-val">${val}${unit}</span></div>`;
+  }
+
+  function draw() {
+    const st = state[cur];
+    [...charsEl.children].forEach((b) => b.classList.toggle('on', b.dataset.key === cur));
+    stageEl.innerHTML = '<div class="wr-floor"></div>' + buildFigure();
+    panelEl.innerHTML = `
+      <h3>Шаг</h3>
+      ${slider('Размах ног', 'legSwing', 0, 40, 1, '°')}
+      ${slider('Длительность цикла', 'cycle', 300, 1600, 20, ' мс')}
+      ${slider('Качание корпуса', 'bob', 0, 4, 0.1, ' %')}
+      ${slider('Плоскость стопы', 'footFlat', 0, 100, 5, ' %')}
+      ${slider('Рост на сцене', 'height', 160, 700, 10, ' px')}
+      <h3>Ближняя нога</h3>
+      ${slider('Угол покоя', 'restNear', -45, 45, 0.5, '°')}
+      ${slider('Бедро X', 'hipNear', 0, RIG[cur].canvas[0], 1, ' px', 0)}
+      ${slider('Бедро Y', 'hipNear', 300, 700, 1, ' px', 1)}
+      <h3>Дальняя нога</h3>
+      ${slider('Угол покоя', 'restFar', -45, 45, 0.5, '°')}
+      ${slider('Бедро X', 'hipFar', 0, RIG[cur].canvas[0], 1, ' px', 0)}
+      ${slider('Бедро Y', 'hipFar', 300, 700, 1, ' px', 1)}
+      <h3>Руки</h3>
+      <p style="font-size:12.5px;opacity:.85;margin:2px 0 8px;">
+        Автоматический разбор рук не осилил: обе руки телесного цвета и по цвету неразличимы.
+        Выберите вручную, какой вырезанный кусок какой рукой считать — или оставьте «нет»,
+        тогда руки останутся частью корпуса и просто не будут двигаться.
+      </p>
+      <div class="wr-row"><label>Передняя рука</label>
+        <select data-sel="armA">${ARM_CHOICES.map((v) => `<option ${state[cur].armA === v ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+      <div class="wr-row"><label>Задняя рука</label>
+        <select data-sel="armB">${ARM_CHOICES.map((v) => `<option ${state[cur].armB === v ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+      ${slider('Размах рук', 'armSwing', 0, 40, 1, '°')}
+      ${slider('Плечо X', 'armShoulder', 0, RIG[cur].canvas[0], 1, ' px', 0)}
+      ${slider('Плечо Y', 'armShoulder', 150, 500, 1, ' px', 1)}
+      ${slider('Угол покоя передней', 'armARest', -60, 60, 1, '°')}
+      ${slider('Угол покоя задней', 'armBRest', -60, 60, 1, '°')}
+      <h3>Готовые значения</h3>
+      <button class="wr-btn" id="wrCopy">Скопировать в код</button>
+      <button class="wr-btn" id="wrReset" style="border-color:#ff7a72;color:#ffb3ad;">Сбросить персонажа</button>
+      <textarea class="wr-out" id="wrOut" readonly></textarea>`;
+
+    panelEl.querySelectorAll('input[type=range]').forEach((inp) => {
+      inp.oninput = () => {
+        const v = parseFloat(inp.value);
+        const key = inp.dataset.key;
+        if (inp.dataset.idx === undefined) state[cur][key] = v;
+        else state[cur][key][+inp.dataset.idx] = v;
+        save();
+        draw();
+      };
+    });
+    panelEl.querySelectorAll('select[data-sel]').forEach((sel) => {
+      sel.onchange = () => { state[cur][sel.dataset.sel] = sel.value; save(); draw(); };
+    });
+    panelEl.querySelector('#wrCopy').onclick = () => {
+      const t = panelEl.querySelector('#wrOut');
+      t.value = exportSnippet();
+      t.select();
+      try { document.execCommand('copy'); } catch { /* не критично, текст и так виден */ }
+    };
+    panelEl.querySelector('#wrReset').onclick = () => {
+      const r = RIG[cur];
+      state[cur] = Object.assign({}, DEFAULTS, {
+        hipNear: r.hipNear.slice(), hipFar: r.hipFar.slice(),
+        restNear: r.restNear, restFar: r.restFar,
+        armA: 'none', armB: 'none', armARest: 0, armBRest: 0,
+        armShoulder: [Math.round(r.canvas[0] * 0.42), 310],
+      });
+      save(); draw();
+    };
+  }
+
+  function exportSnippet() {
+    const lines = CHARS.map((c, i) => {
+      const st = state[c.key];
+      const r = RIG[c.key];
+      const n = i + 1;
+      return `  { body: w${n}body, nearLeg: w${n}near, nearFoot: w${n}nearF, farLeg: w${n}far, farFoot: w${n}farF, canvas: [${r.canvas}],\n`
+        + `    hipNear: [${st.hipNear.map(Math.round)}], hipFar: [${st.hipFar.map(Math.round)}], `
+        + `ankleNear: [${r.ankleNear}], ankleFar: [${r.ankleFar}], `
+        + `restNear: ${st.restNear}, restFar: ${st.restFar} },`;
+    });
+    const st0 = state[CHARS[0].key];
+    return `// LOOKS для CustomerFigure.vue\nconst LOOKS = [\n${lines.join('\n')}\n]\n\n`
+      + `const LEG_SWING = ${st0.legSwing}\nconst CYCLE_MS = ${st0.cycle}\n`
+      + `// качание корпуса ${st0.bob}%, плоскость стопы ${st0.footFlat}%`;
+  }
+
+  draw();
+}
+
 function renderBegDxTab(root) {
   root.classList.add('tab-begdx');
   const STYLE = `
