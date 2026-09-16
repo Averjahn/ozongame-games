@@ -18,20 +18,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/offline-J9xoWmEb.js"></script>
+    <script type="module" crossorigin src="./assets/offline-ubK3LT9Q.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/_plugin-vue_export-helper-CFOH26J7.js">
     <link rel="modulepreload" crossorigin href="./assets/miss-DM-rUcph.js">
-    <link rel="modulepreload" crossorigin href="./assets/gameAnalytics-BHqr_hH9.js">
+    <link rel="modulepreload" crossorigin href="./assets/gameAnalytics-59rkNNKK.js">
     <link rel="modulepreload" crossorigin href="./assets/purr-BLB2FPTs.js">
     <link rel="stylesheet" crossorigin href="./assets/gameAnalytics-CS3qedIj.css">
-    <link rel="stylesheet" crossorigin href="./assets/offline-B10OECY9.css">
+    <link rel="stylesheet" crossorigin href="./assets/offline-Bk8kP1h-.css">
   </head>
   <body>
     <!-- Сброс прогресса оставлен для тестировщиков (данные живут только в
          localStorage этого браузера, начать заново иначе нельзя), но без
          кричащего баннера «ТЕСТОВАЯ СБОРКА» — просто маленькая иконка в углу,
          не бросается в глаза и не выглядит как тестовый экран. -->
-    <button id="resetProgressBtn" title="Сбросить прогресс и начать заново" style="position:fixed;top:8px;right:8px;z-index:99999;font:600 16px/1 Comfortaa,sans-serif;background:rgba(255,255,255,.85);color:#5a3d00;border:1px solid rgba(90,61,0,.25);border-radius:50%;width:30px;height:30px;cursor:pointer;">🔄</button>
+    <!-- Кнопка сброса ушла из правого верхнего угла: там крестик выхода из
+         игры и крестик разделов, и на телефоне она их накрывала — тап по
+         «закрыть» сбрасывал прогресс. Ниже верхней панели аптеки справа свободно на
+         всех экранах (зал, карта, игра), а монеты и крестики остаются чистыми. -->
+    <button id="resetProgressBtn" title="Сбросить прогресс и начать заново" style="position:fixed;top:calc(env(safe-area-inset-top, 0px) + 96px);right:8px;z-index:99999;opacity:.6;font:600 16px/1 Comfortaa,sans-serif;background:rgba(255,255,255,.85);color:#5a3d00;border:1px solid rgba(90,61,0,.25);border-radius:50%;width:30px;height:30px;cursor:pointer;">🔄</button>
     <div id="app"></div>
     <script>
       // Сброс тестового прогресса «с нуля» — как будто новый пользователь.
