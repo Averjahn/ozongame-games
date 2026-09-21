@@ -6926,7 +6926,23 @@ function renderCityMapTab(root) {
    ============================================================ */
 const HALL_WORLD_W = 1200;
 const HALL_WORLD_H = 810;
-const HALL_OVERHANG = 320;          // сколько видно за кадром мира с каждой стороны
+/**
+ * ШИРОКИЙ ЗАЛ. Заказчик: «добавь в конструктор возможность располагать
+ * предметы улучшения по всей аптеке, чтобы использовать пространство, которое
+ * появилось при прокрутке».
+ *
+ * Зал в игре теперь 3120×810 (см. src/components/Pharmacy/hallCamera.js): тот
+ * же кадр, продолженный зеркальными секциями, по которому ездит камера.
+ * В координатах мира он занимает x от −960 до +2160, а прежнее окно 0…1200 —
+ * это просто кадр, который игрок видит при заходе в аптеку.
+ *
+ * Раньше здесь фон 1920px СЖИМАЛСЯ в 1200 — то есть в редакторе комната была
+ * уже, чем в игре, и снятые координаты слегка врали. Теперь широкий кадр
+ * рисуется один-в-один, как в игре.
+ */
+const HALL_ART_LEFT = -960;         // левый край широкого арта в координатах мира
+const HALL_ART_W = 3120;            // ширина широкого арта
+const HALL_OVERHANG = 0;            // «за кадром» больше нет — весь зал реальный
 const HALL_FLOOR_Y = 762;           // линия пола (та же, что у покупателей)
 const HALL_DEFAULT_H = 116;
 
@@ -7009,6 +7025,16 @@ function renderHallSlotsTab(root) {
     .tab-hall .hall-floor{position:absolute;left:0;right:0;border-top:1px dashed rgba(95,168,236,.9);pointer-events:none;}
     .tab-hall .hall-zone{position:absolute;pointer-events:none;border:1px dashed rgba(255,122,114,.75);
       background:repeating-linear-gradient(45deg,rgba(255,122,114,.13) 0 6px,transparent 6px 12px);border-radius:3px;}
+    .tab-hall .hall-scroll{overflow-x:auto;overflow-y:hidden;margin:0 auto 14px;}
+    .tab-hall .hall-scroll .hall-stage{margin:0;}
+    .tab-hall .hall-zoom{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);}
+    .tab-hall .hall-zoom button{font-size:12px;padding:5px 9px;}
+    .tab-hall .hall-zoom button.active{background:#FCBE2E;border-color:#f0ad1c;color:#6b5211;font-weight:700;}
+    .tab-hall .hall-frame{position:absolute;top:0;bottom:0;border:2px dashed rgba(95,168,236,.9);
+      border-radius:4px;pointer-events:none;box-shadow:0 0 0 9999px rgba(12,20,28,.28);}
+    .tab-hall .hall-frame-tag,.tab-hall .hall-wing-tag{position:absolute;top:4px;font:600 11px/1 system-ui,sans-serif;
+      color:#cfe3f6;background:rgba(12,20,28,.6);padding:3px 6px;border-radius:5px;pointer-events:none;white-space:nowrap;}
+    .tab-hall .hall-wing-tag{color:#ffd98a;}
     .tab-hall .hall-obj{position:absolute;cursor:grab;}
     .tab-hall .hall-obj.bad{outline:2px solid #ff7a72;outline-offset:2px;}
     .tab-hall .hall-obj.sel{outline:2px solid #FCBE2E;outline-offset:2px;}
@@ -7050,9 +7076,14 @@ function renderHallSlotsTab(root) {
     <b>src/constants/hallSlots.js</b>, и у всех игроков вещи встанут именно так.
   </p>
   <div class="hall-note">
-    💡 Серые поля по бокам — это <b>за кадром мира</b> (x меньше 0 или больше 1200).
-    Туда ставить МОЖНО и нужно: слой обстановки в игре не обрезается, и на широком
-    мониторе зал шире кадра — там как раз боковые стены. Синяя пунктирная линия — пол.
+    💡 Здесь <b>весь зал целиком, 3120 пикселей</b> — тот самый широкий кадр, по которому
+    в игре ездит камера. Голубая рамка — то, что игрок видит сразу при входе в аптеку
+    (мир 0…1200). Всё, что левее и правее неё, — <b>боковые крылья</b>: туда игрок
+    доезжает стрелками ‹ › или свайпом, и именно там появилось место под вещи, которого
+    раньше не было. Ставить в крылья можно и нужно — они не перекрыты ни меню, ни
+    фармацевтом. Розовой штриховкой отмечено занятое: меню, верхняя панель, фигура
+    фармацевта и прилавок — но <b>только внутри кадра при входе</b>, в крыльях
+    интерфейс ничего не закрывает. Синяя пунктирная линия — пол.
     Предметы «в зале» отмечены в списке справа галочкой; нажмите на строку, чтобы
     добавить вещь на сцену или убрать её.
   </div>
@@ -7066,7 +7097,12 @@ function renderHallSlotsTab(root) {
     <div>
       <div class="hall-ctl">
         <button id="hallCopy" class="primary">📋 Скопировать код</button>
-        <button id="hallAuto">Разложить вдоль стен</button>
+        <button id="hallAuto">Разложить по крыльям</button>
+        <span class="hall-zoom">масштаб:
+          <button id="hallZoomFit" class="active">весь зал</button>
+          <button id="hallZoom075">×2</button>
+          <button id="hallZoom1">×3</button>
+        </span>
         <button id="hallClear">Убрать всё со сцены</button>
         <button id="hallZones">Занятые места: вкл</button>
         <span id="hallHint" style="font-size:12px;color:var(--muted)"></span>
@@ -7103,12 +7139,32 @@ function renderHallSlotsTab(root) {
     </div>
   </div>`;
 
-  const STAGE_W = 1200 + HALL_OVERHANG * 2;
+  const STAGE_W = HALL_ART_W;
   const stage = root.querySelector('#hallStage');
-  const view = Math.min(1100, root.clientWidth || 1100);
-  const scale = view / STAGE_W;
-  stage.style.width = view + 'px';
-  stage.style.height = (HALL_WORLD_H * scale) + 'px';
+  const view = Math.min(1180, root.clientWidth || 1180);
+  /**
+   * МАСШТАБ РЕДАКТОРА. Весь зал 3120px в ширину экрана влезает только очень
+   * мелко (×0.38) — ставить вещи точно на такой картинке невозможно. Поэтому
+   * масштаб переключается, а сцена при увеличении прокручивается вбок, как и
+   * сам зал в игре.
+   */
+  const FIT_SCALE = view / STAGE_W;
+  let scale = FIT_SCALE;
+  function applyScale() {
+    stage.style.width = (STAGE_W * scale) + 'px';
+    stage.style.height = (HALL_WORLD_H * scale) + 'px';
+    const wrap = stage.parentElement;
+    if (wrap && wrap.classList.contains('hall-scroll')) wrap.style.maxWidth = view + 'px';
+  }
+  // сцену оборачиваем в прокручиваемый контейнер (в разметке его нет — он
+  // нужен только здесь, чтобы не трогать остальную вёрстку вкладки)
+  (function wrapStage() {
+    const wrap = document.createElement('div');
+    wrap.className = 'hall-scroll';
+    stage.parentElement.insertBefore(wrap, stage);
+    wrap.appendChild(stage);
+  })();
+  applyScale();
 
   // ЗАЛ ПО УМОЛЧАНИЮ — ВТОРОЙ: именно его декорации рисует игра (SCENE_ART_N
   // в src/constants.js). Редактор открывался на первом зале, и расстановка
@@ -7180,16 +7236,19 @@ function renderHallSlotsTab(root) {
     return HALL_ZONES.find((z) => x2 > z.x1 && z.x2 > x1 && y2 > z.y1 && z.y2 > y1) || null;
   }
 
-  const worldToStage = (x) => (x + HALL_OVERHANG) * scale;
-  const stageToWorld = (px) => px / scale - HALL_OVERHANG;
+  const worldToStage = (x) => (x - HALL_ART_LEFT) * scale;
+  const stageToWorld = (px) => px / scale + HALL_ART_LEFT;
 
   function drawStage() {
     stage.innerHTML = `
-      <div class="hall-overhang" style="left:0;width:${HALL_OVERHANG * scale}px"></div>
-      <div class="hall-overhang" style="right:0;width:${HALL_OVERHANG * scale}px"></div>
-      <img class="hall-bg" src="hall-editor-assets/rooms/roomAI${pharmacy}-empty.png"
-           style="left:${HALL_OVERHANG * scale}px;width:${1200 * scale}px">
+      <img class="hall-bg" src="hall-editor-assets/rooms/roomAI${pharmacy}-empty-wide.jpg"
+           style="left:0;width:${HALL_ART_W * scale}px">
       <div class="hall-floor" style="top:${HALL_FLOOR_Y * scale}px"></div>
+      <div class="hall-frame" style="left:${worldToStage(0)}px;width:${1200 * scale}px"
+           title="Кадр, который игрок видит сразу при входе в аптеку"></div>
+      <div class="hall-frame-tag" style="left:${worldToStage(0) + 6}px">кадр при входе</div>
+      <div class="hall-wing-tag" style="left:${worldToStage(HALL_ART_LEFT) + 6}px">← левое крыло (доехать камерой)</div>
+      <div class="hall-wing-tag" style="left:${worldToStage(1230)}px">правое крыло (доехать камерой) →</div>
       ${zonesHtml()}`;
     for (const key of Object.keys(P())) addNode(key);
     if (selected && !P()[selected]) selected = '';
@@ -7371,17 +7430,38 @@ function renderHallSlotsTab(root) {
     saveAll(); drawStage(); renderList();
   };
   root.querySelector('#hallAuto').onclick = () => {
+    // РАСКЛАДЫВАЕМ ПО КРЫЛЬЯМ, А НЕ ВДОЛЬ КАДРА.
+    // Раньше вещи выстраивались по краям видимого окна — то есть ровно там,
+    // где их закрывают меню и фармацевт. Теперь стартовая раскладка уводит их
+    // в боковые крылья широкого зала: там пусто, и оттуда уже удобно
+    // расставлять по местам руками.
     const keys = HALL_UPGRADES[pharmacy].map(([f]) => 'upg:' + f);
+    const STEP = 150;
     keys.forEach((k, i) => {
       const left = i % 2 === 0;
-      const step = Math.floor(i / 2) * 100;
+      const step = Math.floor(i / 2) * STEP;
       P()[k] = {
-        x: left ? -HALL_OVERHANG + 90 + step : 1200 + HALL_OVERHANG - 90 - step,
+        x: left ? HALL_ART_LEFT + 120 + step : HALL_ART_LEFT + HALL_ART_W - 120 - step,
         y: HALL_FLOOR_Y, h: HALL_DEFAULT_H, rot: 0, flip: false,
       };
     });
     saveAll(); drawStage(); renderList();
   };
+  function setZoom(k, btnId) {
+    scale = k;
+    applyScale();
+    ['hallZoomFit', 'hallZoom075', 'hallZoom1'].forEach((id) => {
+      root.querySelector('#' + id).classList.toggle('active', id === btnId);
+    });
+    drawStage();
+    // при увеличении показываем середину зала — там прилавок
+    const wrap = stage.parentElement;
+    if (wrap) wrap.scrollLeft = Math.max(0, worldToStage(600) - view / 2);
+  }
+  root.querySelector('#hallZoomFit').onclick = () => setZoom(FIT_SCALE, 'hallZoomFit');
+  root.querySelector('#hallZoom075').onclick = () => setZoom(FIT_SCALE * 2, 'hallZoom075');
+  root.querySelector('#hallZoom1').onclick = () => setZoom(FIT_SCALE * 3, 'hallZoom1');
+
   root.querySelector('#hallP1').onclick = () => {
     pharmacy = 1;
     root.querySelector('#hallP1').classList.add('active');
