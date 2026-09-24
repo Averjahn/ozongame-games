@@ -6973,6 +6973,154 @@ const HALL_UPGRADES = {
   ],
 };
 
+/**
+ * РАССТАНОВКА, КОТОРАЯ СЕЙЧАС В ИГРЕ (снимок src/constants/hallSlots.js).
+ *
+ * Заказчик: «расставь сам, но чтобы я в конструкторе мог их двигать». Без
+ * этого снимка конструктор открывался ПУСТЫМ — он помнит только то, что вы
+ * двигали в нём самом, и «подвинуть то, что стоит в игре» было невозможно:
+ * пришлось бы расставлять всё заново с нуля.
+ *
+ * Обновляется скриптом scripts/sync_constructor.py — руками не править.
+ */
+const HALL_SLOTS_IN_GAME = {
+  "upg:3_sofa.svg": {
+    "x": -540,
+    "y": 762,
+    "h": 96
+  },
+  "sofa": {
+    "x": -540,
+    "y": 762,
+    "h": 96
+  },
+  "upg:6_childrensCorner.svg": {
+    "x": -350,
+    "y": 762,
+    "h": 78
+  },
+  "kids": {
+    "x": -350,
+    "y": 762,
+    "h": 78
+  },
+  "upg:10_coffeeMachine.svg": {
+    "x": -200,
+    "y": 762,
+    "h": 158
+  },
+  "coffee": {
+    "x": -200,
+    "y": 762,
+    "h": 158
+  },
+  "upg:1_flowers.svg": {
+    "x": -80,
+    "y": 762,
+    "h": 118
+  },
+  "flowers": {
+    "x": -80,
+    "y": 762,
+    "h": 118
+  },
+  "upg:3_phoneCharging.svg": {
+    "x": 980,
+    "y": 762,
+    "h": 128
+  },
+  "charging": {
+    "x": 980,
+    "y": 762,
+    "h": 128
+  },
+  "upg:1_tonometer.svg": {
+    "x": 1120,
+    "y": 762,
+    "h": 108
+  },
+  "upg:6_seasonalDisplay.svg": {
+    "x": 1330,
+    "y": 762,
+    "h": 148
+  },
+  "upg:10_assortmentExpansion.svg": {
+    "x": 1530,
+    "y": 762,
+    "h": 198
+  },
+  "upg:12_storageSystem.svg": {
+    "x": 1720,
+    "y": 762,
+    "h": 188
+  },
+  "upg:7_bonusCards.svg": {
+    "x": 1880,
+    "y": 762,
+    "h": 118
+  },
+  "upg:11_virtualConsultant.svg": {
+    "x": 2010,
+    "y": 762,
+    "h": 148
+  },
+  "upg:9_restRoom.svg": {
+    "x": 2130,
+    "y": 762,
+    "h": 203
+  },
+  "rest": {
+    "x": 2130,
+    "y": 762,
+    "h": 203
+  },
+  "upg:12_advertisingScreen.svg": {
+    "x": 1230,
+    "y": 762,
+    "h": 150
+  },
+  "display": {
+    "x": 1230,
+    "y": 762,
+    "h": 150
+  },
+  "upg:8_neonSign.svg": {
+    "x": -430,
+    "y": 323,
+    "h": 58
+  },
+  "sign": {
+    "x": -430,
+    "y": 323,
+    "h": 58
+  },
+  "upg:4_tv.svg": {
+    "x": 1430,
+    "y": 465,
+    "h": 70
+  },
+  "tv": {
+    "x": 1430,
+    "y": 465,
+    "h": 70
+  },
+  "upg:2_wifi.svg": {
+    "x": 1650,
+    "y": 389,
+    "h": 52
+  },
+  "wifi": {
+    "x": 1650,
+    "y": 389,
+    "h": 52
+  },
+  "upg:5_smartLighting.svg": {
+    "x": 980,
+    "y": 300,
+    "h": 92
+  }
+}
+
 /** Те же подмены иконок на предметы, что в игре (constants/furniture.js). */
 const HALL_PROP_FOR_ICON = {
   '2_wifi.svg': 'wifi.png',
@@ -7098,6 +7246,7 @@ function renderHallSlotsTab(root) {
       <div class="hall-ctl">
         <button id="hallCopy" class="primary">📋 Скопировать код</button>
         <button id="hallAuto">Разложить по крыльям</button>
+        <button id="hallFromGame">⬇️ Взять расстановку из игры</button>
         <span class="hall-zoom">масштаб:
           <button id="hallZoomFit" class="active">весь зал</button>
           <button id="hallZoom075">×2</button>
@@ -7458,6 +7607,15 @@ function renderHallSlotsTab(root) {
     const wrap = stage.parentElement;
     if (wrap) wrap.scrollLeft = Math.max(0, worldToStage(600) - view / 2);
   }
+  root.querySelector('#hallFromGame').onclick = () => {
+    // Копия, а не ссылка: двигать в конструкторе можно свободно, снимок из
+    // кода при этом остаётся эталоном и подхватывается кнопкой заново.
+    const src = HALL_SLOTS_IN_GAME;
+    const dst = P();
+    for (const k of Object.keys(dst)) delete dst[k];
+    for (const [k, v] of Object.entries(src)) dst[k] = { ...v };
+    saveAll(); drawStage(); renderList();
+  };
   root.querySelector('#hallZoomFit').onclick = () => setZoom(FIT_SCALE, 'hallZoomFit');
   root.querySelector('#hallZoom075').onclick = () => setZoom(FIT_SCALE * 2, 'hallZoom075');
   root.querySelector('#hallZoom1').onclick = () => setZoom(FIT_SCALE * 3, 'hallZoom1');
