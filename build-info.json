@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-pharmacy-editor-20261004-124524",
-  "built_at": "2026-10-04T12:45:24.540328+00:00",
+  "release": "ozongame-prop-palette-20261004-150749",
+  "built_at": "2026-10-04T15:07:49.142657+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -10,5 +10,5 @@
     "offline.html",
     "games-lab.html"
   ],
-  "feature": "Pharmacy placement and resizing editor with exact game-compatible JSON export"
+  "feature": "Distinct pharmacy upgrade material colors, shared by the game and layout editor"
 }
