@@ -1,11 +1,14 @@
 {
-  "release": "ozongame-test-20261004-101914",
-  "built_at": "2026-10-04T10:19:14.655862+00:00",
+  "release": "ozongame-pharmacy-editor-20261004-124524",
+  "built_at": "2026-10-04T12:45:24.540328+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
+    "pharmacy-layout.html",
+    "game-constructor.html?task=pharmacy",
     "dev.html",
     "offline.html",
     "games-lab.html"
-  ]
+  ],
+  "feature": "Pharmacy placement and resizing editor with exact game-compatible JSON export"
 }

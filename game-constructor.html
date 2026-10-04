@@ -66,7 +66,7 @@
   <h1 id="pageTitle">🧩 Конструктор игры</h1>
   <style>
     /* Режим «только расстановка»: прячем вкладки и служебные кнопки. */
-    body.focus-city #topTabs { display: none; }
+    body.focus-city #topTabs, body.focus-pharmacy #topTabs { display: none; }
     body.focus-city #mkModeR,
     body.focus-city #mkModeS,
     body.focus-city #mkDiff,
@@ -105,7 +105,7 @@ const TOP_TABS = [
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
   { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
   { key: 'citymapper', label: '🏗 Разметка города', render: (root) => renderCityMapperTab(root) },
-  { key: 'hallslots', label: '🏬 Обстановка аптеки', render: (root) => renderHallSlotsTab(root) },
+  { key: 'hallslots', label: '🏬 Улучшения аптеки', render: (root) => renderHallSlotsTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
   { key: 'newspaper', label: '📰 Газета', render: (root) => renderNewspaperTab(root) },
@@ -129,7 +129,9 @@ const FOCUS_CITY = new URLSearchParams(location.search).get('task') === 'city'
                                   // статические серверы срезают вместе с .html
 if (FOCUS_CITY) document.body.classList.add('focus-city');
 
-let activeTopKey = FOCUS_CITY ? 'citymapper' : TOP_TABS[0].key;
+const FOCUS_PHARMACY = ['pharmacy', 'hall', 'upgrades'].includes(new URLSearchParams(location.search).get('task')) || ['#hallslots', '#pharmacy'].includes(location.hash);
+if (FOCUS_PHARMACY) document.body.classList.add('focus-pharmacy');
+let activeTopKey = FOCUS_CITY ? 'citymapper' : FOCUS_PHARMACY ? 'hallslots' : TOP_TABS[0].key;
 
 TOP_TABS.forEach((t) => {
   const btn = document.createElement('button');
@@ -141,6 +143,7 @@ TOP_TABS.forEach((t) => {
 });
 function renderTopTabs() { [...topTabsEl.children].forEach((b) => b.classList.toggle('active', b.dataset.key === activeTopKey)); }
 function mountActive() {
+  if (FOCUS_PHARMACY) document.getElementById('pageTitle').textContent = 'Расстановка улучшений аптеки';
   if (FOCUS_CITY) {
     const h = document.getElementById('pageTitle');
     if (h) h.textContent = '🏗 Расстановка домов и дворов';
@@ -7151,6 +7154,21 @@ const HALL_NAME_BY_KEY = Object.fromEntries(
 );
 
 function renderHallSlotsTab(root) {
+  const url = new URL('./pharmacy-layout.html', location.href);
+  url.searchParams.set('embedded', '1');
+  const version = new URLSearchParams(location.search).get('v');
+  if (version) url.searchParams.set('v', version);
+  root.className = 'tab-hall-editor';
+  const frame = document.createElement('iframe');
+  frame.src = url.href;
+  frame.title = 'Расстановка улучшений аптеки';
+  frame.allow = 'clipboard-write';
+  frame.style.cssText = 'width:100%;height:1250px;border:0;display:block';
+  root.appendChild(frame);
+}
+
+// Previous editor is kept for old saved drafts; the active tool uses the game's modules.
+function renderLegacyHallSlotsTab(root) {
   root.className = 'tab-hall';
   root.innerHTML = `
   <style>
