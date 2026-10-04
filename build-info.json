@@ -1,0 +1,11 @@
+{
+  "release": "ozongame-test-20261004-101914",
+  "built_at": "2026-10-04T10:19:14.655862+00:00",
+  "source_commit": "86a7e87",
+  "includes_uncommitted_changes": true,
+  "entries": [
+    "dev.html",
+    "offline.html",
+    "games-lab.html"
+  ]
+}
