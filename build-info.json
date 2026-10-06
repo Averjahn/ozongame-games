@@ -1,14 +1,18 @@
 {
-  "release": "ozongame-prop-palette-20261004-150749",
-  "built_at": "2026-10-04T15:07:49.142657+00:00",
+  "release": "ozongame-fixes-20261007-021644",
+  "built_at": "2026-10-06T23:16:44.692020+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
-    "pharmacy-layout.html",
-    "game-constructor.html?task=pharmacy",
-    "dev.html",
     "offline.html",
+    "dev.html",
+    "pharmacy-layout.html",
     "games-lab.html"
   ],
-  "feature": "Distinct pharmacy upgrade material colors, shared by the game and layout editor"
+  "feature": "Quest recovery, exact reward guards, cat carrier, synchronized hall pan, updated help, daily game rotation and regenerated seamless pharmacy backgrounds",
+  "server_changes_deployed": false,
+  "server_changes_pending": [
+    "Go reward transactions and migration 121",
+    "ozongame-stats daily streak growth after day 7"
+  ]
 }
