@@ -1,15 +1,13 @@
 {
-  "release": "ozongame-vps-20261007-151131",
-  "built_at": "2026-10-07T15:11:32.528939+00:00",
+  "release": "ozongame-layout-20261007-181430",
+  "built_at": "2026-10-07T18:14:30.946240+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
-    "offline.html",
     "dev.html",
-    "pharmacy-layout.html",
-    "games-lab.html"
+    "pharmacy-layout.html"
   ],
-  "feature": "Independent VPS game API and copied player progress; real wallet in dev.html",
+  "feature": "Calibrated products, cat-interactive cabinet goods and desktop/mobile pharmacy upgrades",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
