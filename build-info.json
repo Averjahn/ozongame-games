@@ -1,13 +1,13 @@
 {
-  "release": "ozongame-menu-purchases-20261008-020505",
-  "built_at": "2026-10-08T02:05:05.963025+00:00",
+  "release": "ozongame-carrier-20261008-094953",
+  "built_at": "2026-10-08T09:49:53.327824+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
     "dev.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove My purchases button from pharmacy menu",
+  "feature": "Character-style cat carrier with animated hand attachment and shared chase art",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
