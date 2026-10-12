@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-city-20261012-150923",
-  "built_at": "2026-10-12T15:09:23.695461+00:00",
+  "release": "ozongame-menu-fit-20261012-152050",
+  "built_at": "2026-10-12T15:20:50.746261+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Latest shared city layout: automatically archive outdated personal plans, synchronize constructor network buildings, version map art, refresh dev and lab entries",
+  "feature": "Responsive city return action: contained coin badge, compact notification dot, current shared city and customer motion pilot retained",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-12T15:09:23.695461+00:00",
+  "source_snapshot_utc": "2026-10-12T15:20:50.746261+00:00",
   "imported_player_profiles": 920
 }
