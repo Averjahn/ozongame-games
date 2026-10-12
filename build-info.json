@@ -1,13 +1,13 @@
 {
-  "release": "ozongame-carrier-20261008-094953",
-  "built_at": "2026-10-08T09:49:53.327824+00:00",
+  "release": "ozongame-motion-20261012-084014",
+  "built_at": "2026-10-12T08:40:14.939956+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
     "dev.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Character-style cat carrier with animated hand attachment and shared chase art",
+  "feature": "One customer pilot: phase-matched stop, idle, first step, bag pickup and isolated animation preview",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
