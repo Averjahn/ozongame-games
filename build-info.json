@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-menu-fit-20261012-152731",
-  "built_at": "2026-10-12T15:27:31.422937+00:00",
+  "release": "ozongame-animation-20261013-020406",
+  "built_at": "2026-10-13T02:04:06.377612+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Responsive city return action: contained coin badge, compact notification dot, current shared city and customer motion pilot retained",
+  "feature": "Regenerated 1024px whole-body pilot walk/stop/start; dedicated thief cradles actual game cat breed in hall, theft and chase",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-12T15:27:31.422937+00:00",
+  "source_snapshot_utc": "2026-10-13T02:04:06.377612+00:00",
   "imported_player_profiles": 920
 }
