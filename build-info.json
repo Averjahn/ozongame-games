@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-smooth-20261013-043737",
-  "built_at": "2026-10-13T04:37:37.503878+00:00",
+  "release": "ozongame-constructor-shortcut-20261013-045217",
+  "built_at": "2026-10-13T04:52:17.226479+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Dense customer walk32 stop20 start20; smooth thief run16 grab32; mobile decoded sprite memory bounded",
+  "feature": "QWE opens game constructor in a new tab; QWS retains developer settings",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-13T04:37:37.503878+00:00",
+  "source_snapshot_utc": "2026-10-13T04:52:17.226479+00:00",
   "imported_player_profiles": 920
 }
