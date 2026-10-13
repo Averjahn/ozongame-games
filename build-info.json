@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-factory-isolation-20261013-142524",
-  "built_at": "2026-10-13T14:25:24.664735+00:00",
+  "release": "ozongame-gait-20261013-153245",
+  "built_at": "2026-10-13T15:32:45.094820+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Pharmacist stock prices and supplies independent of factory; factory income and costs use owner purse",
+  "feature": "Two alternating-leg 48-frame customer walk, 1500ms cycle and stable materials; close food bowl gap and remove free food tutorial copy",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-13T14:25:24.664735+00:00",
+  "source_snapshot_utc": "2026-10-13T15:32:45.094820+00:00",
   "imported_player_profiles": 920
 }
