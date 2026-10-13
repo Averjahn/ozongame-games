@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-reference-walk-20261013-174432",
-  "built_at": "2026-10-13T17:44:32.139587+00:00",
+  "release": "ozongame-rig-comparison-20261013-201624",
+  "built_at": "2026-10-13T20:16:24.275173+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Rebuild pilot two-step gait with opposite near/far contact and passing poses, counter-motion of arms, 60 full frames at 40fps; canonical face prevents changing cheek blush throughout all phases",
+  "feature": "dev.html?animation=compare: A/B animation review, real Blender weighted Armature and planar IK vs continuous Canvas contours, shared drawing and target trajectories, walk/stop/idle/start, pause/frame stepping; review has no player API",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-13T17:44:32.139587+00:00",
+  "source_snapshot_utc": "2026-10-13T20:16:24.275173+00:00",
   "imported_player_profiles": 920
 }
