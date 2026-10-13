@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-constructor-shortcut-20261013-045217",
-  "built_at": "2026-10-13T04:52:17.226479+00:00",
+  "release": "ozongame-help-registration-20261013-051517",
+  "built_at": "2026-10-13T05:15:17.404350+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "QWE opens game constructor in a new tab; QWS retains developer settings",
+  "feature": "Illustrated help with shop-driven pharmacy levels; compact centered responsive registration steps",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-13T04:52:17.226479+00:00",
+  "source_snapshot_utc": "2026-10-13T05:15:17.404350+00:00",
   "imported_player_profiles": 920
 }
