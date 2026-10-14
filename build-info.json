@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-landing-20261014-045946",
-  "built_at": "2026-10-14T04:59:46.502101+00:00",
+  "release": "ozongame-contact-20261014-054516",
+  "built_at": "2026-10-14T05:45:16.583964+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Smooth body and sole contact envelopes; align the planted leg during late swing; straighten front waist contour; Canvas rig-v7 with approved human walk and unchanged textures",
+  "feature": "Straighten rear hip/thigh seam; smooth ankle, knee, lateral torso and sole roll at floor contact; paint every display frame at 120 Hz; Canvas rig-v8 with unchanged approved textures",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T04:59:46.502101+00:00",
+  "source_snapshot_utc": "2026-10-14T05:45:16.583964+00:00",
   "imported_player_profiles": 920
 }
