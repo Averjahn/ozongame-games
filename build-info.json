@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-contact-20261014-054516",
-  "built_at": "2026-10-14T05:45:16.583964+00:00",
+  "release": "ozongame-thief-cat-20261014-071739",
+  "built_at": "2026-10-14T07:17:39.892012+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Straighten rear hip/thigh seam; smooth ankle, knee, lateral torso and sole roll at floor contact; paint every display frame at 120 Hz; Canvas rig-v8 with unchanged approved textures",
+  "feature": "Continuous trouser contour beneath shirt throughout walking; buyer rig-v9. Separate thief-rig-v1 preview with approach/grab/carry, three current cat colors and generated illustrated dark cat; no account/API writes.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T05:45:16.583964+00:00",
+  "source_snapshot_utc": "2026-10-14T07:17:39.892012+00:00",
   "imported_player_profiles": 920
 }
