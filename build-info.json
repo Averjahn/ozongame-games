@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-cat-actions-20261014-100638",
-  "built_at": "2026-10-14T10:06:38.387693+00:00",
+  "release": "ozongame-layer-order-20261014-134522",
+  "built_at": "2026-10-14T13:45:22.872884+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Separate illustrated dark cat v2 comparison (animation=cat): all 18 current pharmacy pose variants and two drinking directions; four-legged gait, jump, grooming, blinking/meow, hissing, breathing in four retained lying poses. Pause/step/speed/sequence/phone controls; no account/API writes. Buyer rig-v9 and thief preview retained; original idle reference corrected to row-19.",
+  "feature": "Pharmacy layer ordering: front cabinet and fallen goods share the shelf stacking context below buyers; floor cats, bowls and escaping jumps stay above buyers. Shared camera transforms and window cat behind-counter behavior retained.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T10:06:38.387693+00:00",
+  "source_snapshot_utc": "2026-10-14T13:45:22.872884+00:00",
   "imported_player_profiles": 920
 }
