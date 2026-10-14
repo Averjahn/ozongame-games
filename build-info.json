@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-human-walk-20261014-041728",
-  "built_at": "2026-10-14T04:17:28.672660+00:00",
+  "release": "ozongame-landing-20261014-045946",
+  "built_at": "2026-10-14T04:59:46.502101+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Retarget CMU captured human walk to approved 2D character; natural knee swing and weight transfer; world-locked flat stance; captured opposing arm rhythm; Canvas rig-v6 with unchanged textures",
+  "feature": "Smooth body and sole contact envelopes; align the planted leg during late swing; straighten front waist contour; Canvas rig-v7 with approved human walk and unchanged textures",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T04:17:28.672660+00:00",
+  "source_snapshot_utc": "2026-10-14T04:59:46.502101+00:00",
   "imported_player_profiles": 920
 }
