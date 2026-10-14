@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-bag-grip-20261014-151054",
-  "built_at": "2026-10-14T15:10:54.644570+00:00",
+  "release": "ozongame-thief-follow-20261014-175432",
+  "built_at": "2026-10-14T17:54:32.213222+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Buyer shopping grip: fingers curl smoothly around the bag handle during pickup and remain clenched during departure; original open hand is masked only with a purchase, bag hangs upright behind fingers, wrist join matches the approved bitmap. No-purchase gait and body artwork retained. Shopping checkbox added to animation=compare; actual game preview in animation=customer.",
+  "feature": "Buyer-based thief rig: empty-handed opposing running arms, contact-triggered grab of the actual cat breed and age size, steady cradle while escaping. Shared animation studio, pharmacy and chase rig; pharmacy camera follows the thief on desktop and phone. Bag handle is fully occluded by the closed hand. Cached skinning preserves existing buyer geometry.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T15:10:54.644570+00:00",
+  "source_snapshot_utc": "2026-10-14T17:54:32.213222+00:00",
   "imported_player_profiles": 920
 }
