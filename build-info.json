@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-original-rig-20261014-221351",
-  "built_at": "2026-10-13T22:13:51.280917+00:00",
+  "release": "ozongame-limbs-v4-20261014-024130",
+  "built_at": "2026-10-14T02:41:30.405731+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Animate approved original bitmap with textured meshes in Blender and Canvas; root-weighted overlapping waist hides thigh cuts; preserve original face and arms; GPU shared-edge rasterization removes mesh seams; isolated dev comparison",
+  "feature": "Canvas-only customer in actual dev game; regenerated legs and complete rear arm; five shared static textures; smooth stop/start with CSS transition timestamps; no Blender frames or manifest downloads",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-13T22:13:51.280917+00:00",
+  "source_snapshot_utc": "2026-10-14T02:41:30.405731+00:00",
   "imported_player_profiles": 920
 }
