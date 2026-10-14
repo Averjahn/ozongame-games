@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-thief-follow-20261014-175432",
-  "built_at": "2026-10-14T17:54:32.213222+00:00",
+  "release": "ozongame-thief-look-20261014-204532",
+  "built_at": "2026-10-14T20:45:32.444078+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Buyer-based thief rig: empty-handed opposing running arms, contact-triggered grab of the actual cat breed and age size, steady cradle while escaping. Shared animation studio, pharmacy and chase rig; pharmacy camera follows the thief on desktop and phone. Bag handle is fully occluded by the closed hand. Cached skinning preserves existing buyer geometry.",
+  "feature": "Restore the original male thief appearance: short dark hair, charcoal jacket, blue trousers and original shoes. Bind the existing thief parts bitmap to the buyer-based running, grabbing and carrying motion. Cat transfer, camera follow and theft/chase timings are preserved. Same studio and shared pharmacy/chase renderer.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T17:54:32.213222+00:00",
+  "source_snapshot_utc": "2026-10-14T20:45:32.444078+00:00",
   "imported_player_profiles": 920
 }
