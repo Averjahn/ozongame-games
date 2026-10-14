@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-thief-cat-20261014-071739",
-  "built_at": "2026-10-14T07:17:39.892012+00:00",
+  "release": "ozongame-cat-actions-20261014-100638",
+  "built_at": "2026-10-14T10:06:38.387693+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Continuous trouser contour beneath shirt throughout walking; buyer rig-v9. Separate thief-rig-v1 preview with approach/grab/carry, three current cat colors and generated illustrated dark cat; no account/API writes.",
+  "feature": "Separate illustrated dark cat v2 comparison (animation=cat): all 18 current pharmacy pose variants and two drinking directions; four-legged gait, jump, grooming, blinking/meow, hissing, breathing in four retained lying poses. Pause/step/speed/sequence/phone controls; no account/API writes. Buyer rig-v9 and thief preview retained; original idle reference corrected to row-19.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T07:17:39.892012+00:00",
+  "source_snapshot_utc": "2026-10-14T10:06:38.387693+00:00",
   "imported_player_profiles": 920
 }
