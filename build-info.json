@@ -1,6 +1,6 @@
 {
-  "release": "visual-elements-20261015-161105",
-  "built_at": "2026-10-15T16:11:05.863342+00:00",
+  "release": "approved-upgrades-20261015-170826",
+  "built_at": "2026-10-15T17:08:26.430163+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Frameless quests with red close button. Visual editor at dev.html?editor=visuals: global and per-item layers, actual character rigs, individual products, editable and draggable shelf groups, hidden guides, undo/redo, autosave, versioned import/export.",
+  "feature": "Apply user-approved pharmacy upgrade positions and sizes; hide disabled and unplaced upgrades. Preserve shelf products, characters, cat, bowls, UI and purchase/level logic.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
