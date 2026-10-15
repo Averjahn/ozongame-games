@@ -1,6 +1,6 @@
 {
-  "release": "quest-frameless-20261015",
-  "built_at": "2026-10-15T15:31:02.441693+00:00",
+  "release": "visual-elements-20261015-161105",
+  "built_at": "2026-10-15T16:11:05.863342+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Frameless quests with red close button; embedded player fix retained",
+  "feature": "Frameless quests with red close button. Visual editor at dev.html?editor=visuals: global and per-item layers, actual character rigs, individual products, editable and draggable shelf groups, hidden guides, undo/redo, autosave, versioned import/export.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",

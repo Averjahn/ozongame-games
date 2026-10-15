@@ -105,7 +105,7 @@ const TOP_TABS = [
   { key: 'marblemap', label: '🗺️ Карта лабиринта', render: (root) => renderMarbleMapTab(root) },
   { key: 'citymap', label: '🌇 Город: сезоны и время', render: (root) => renderCityMapTab(root) },
   { key: 'citymapper', label: '🏗 Разметка города', render: (root) => renderCityMapperTab(root) },
-  { key: 'hallslots', label: '🏬 Улучшения аптеки', render: (root) => renderHallSlotsTab(root) },
+  { key: 'hallslots', label: '🏬 Визуальные элементы', render: (root) => renderHallSlotsTab(root) },
   { key: 'qareport', label: '🧪 Отчёт QA-отдела', render: (root) => renderQaReportTab(root) },
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
   { key: 'backend', label: '🗄️ Архитектура бэкенда', render: (root) => renderBackendArchTab(root) },
@@ -142,7 +142,7 @@ TOP_TABS.forEach((t) => {
 });
 function renderTopTabs() { [...topTabsEl.children].forEach((b) => b.classList.toggle('active', b.dataset.key === activeTopKey)); }
 function mountActive() {
-  if (FOCUS_PHARMACY) document.getElementById('pageTitle').textContent = 'Расстановка улучшений аптеки';
+  if (FOCUS_PHARMACY) document.getElementById('pageTitle').textContent = 'Настройка визуальных элементов';
   if (FOCUS_CITY) {
     const h = document.getElementById('pageTitle');
     if (h) h.textContent = '🏗 Расстановка домов и дворов';
@@ -7040,13 +7040,14 @@ const HALL_NAME_BY_KEY = Object.fromEntries(
 
 function renderHallSlotsTab(root) {
   const url = new URL('./pharmacy-layout.html', location.href);
+  url.searchParams.set('v', 'visual-elements-20261015');
   url.searchParams.set('embedded', '1');
   const version = new URLSearchParams(location.search).get('v');
   if (version) url.searchParams.set('v', version);
   root.className = 'tab-hall-editor';
   const frame = document.createElement('iframe');
   frame.src = url.href;
-  frame.title = 'Расстановка улучшений аптеки';
+  frame.title = 'Настройка визуальных элементов';
   frame.allow = 'clipboard-write';
   frame.style.cssText = 'width:100%;height:1250px;border:0;display:block';
   root.appendChild(frame);
