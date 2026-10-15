@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-thief-look-20261014-204532",
-  "built_at": "2026-10-14T20:45:32.444078+00:00",
+  "release": "ozongame-thief-arms-20261015-013352",
+  "built_at": "2026-10-15T01:33:52.079583+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore the original male thief appearance: short dark hair, charcoal jacket, blue trousers and original shoes. Bind the existing thief parts bitmap to the buyer-based running, grabbing and carrying motion. Cat transfer, camera follow and theft/chase timings are preserved. Same studio and shared pharmacy/chase renderer.",
+  "feature": "Thief proportions and expression: broader sleeves with continuous rounded elbow binding that preserves their volume, tapered cuffs and original hands. Neutral closed mouth in an imagegen-edited body texture; original limb textures retained. Running, cat contact, carrying and camera follow preserved.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-14T20:45:32.444078+00:00",
+  "source_snapshot_utc": "2026-10-15T01:33:52.079583+00:00",
   "imported_player_profiles": 920
 }
