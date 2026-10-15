@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-thief-cast-20261015-145032",
-  "built_at": "2026-10-15T14:50:32.709173+00:00",
+  "release": "ozongame-ui-and-cast-20261015-153102",
+  "built_at": "2026-10-15T15:31:02.441693+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Thief: flat jacket front, lightly bent approach arms (11-16 degrees), full-width knees with opaque rounded crouch joints, faster 0.7-second carry stride synchronized with world and preview travel. New characters comparison route animation=characters presents four generated customer portraits beside the approved buyer, with pharmacy/plain backgrounds, PNG downloads and retry. Original active buyer roster retained.",
+  "feature": "Bowl stations fit as food/water pairs with a visible gap at scene edges and after resizing; the pharmacy viewport clips scaled overflow without blank vertical scrolling. Embedded quests use the repaired public scenario player, cache-busted HTML and no cross-origin HEAD probes. Includes thief jacket/knee/arm fixes, faster escape and four new customer designs at animation=characters.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-15T14:50:32.709173+00:00",
+  "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920
 }
