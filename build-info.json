@@ -1,5 +1,5 @@
 {
-  "release": "ozongame-ui-and-cast-20261015-153102",
+  "release": "quest-frameless-20261015",
   "built_at": "2026-10-15T15:31:02.441693+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Bowl stations fit as food/water pairs with a visible gap at scene edges and after resizing; the pharmacy viewport clips scaled overflow without blank vertical scrolling. Embedded quests use the repaired public scenario player, cache-busted HTML and no cross-origin HEAD probes. Includes thief jacket/knee/arm fixes, faster escape and four new customer designs at animation=characters.",
+  "feature": "Frameless quests with red close button; embedded player fix retained",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
