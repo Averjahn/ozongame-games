@@ -1,6 +1,6 @@
 {
-  "release": "ozongame-thief-arms-20261015-013352",
-  "built_at": "2026-10-15T01:33:52.079583+00:00",
+  "release": "ozongame-thief-relaxed-20261015-060841",
+  "built_at": "2026-10-15T06:08:41.183747+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,11 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Thief proportions and expression: broader sleeves with continuous rounded elbow binding that preserves their volume, tapered cuffs and original hands. Neutral closed mouth in an imagegen-edited body texture; original limb textures retained. Running, cat contact, carrying and camera follow preserved.",
+  "feature": "Relaxed empty-handed thief approach: both arms swing alongside the body with only 2-7 degrees of elbow flexion. Grabbing and cat-cradling poses, neutral face, broader sleeves and following camera retained.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
-  "source_snapshot_utc": "2026-10-15T01:33:52.079583+00:00",
+  "source_snapshot_utc": "2026-10-15T06:08:41.183747+00:00",
   "imported_player_profiles": 920
 }
