@@ -1,6 +1,6 @@
 {
-  "release": "upgrade-alternatives-20261016-131508",
-  "built_at": "2026-10-16T13:15:08.191722+00:00",
+  "release": "uniform-badge-20261016-134210",
+  "built_at": "2026-10-16T13:42:10.696376+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Add eight illustrated upgrade replacement proposals and hall previews; restyle online order rack; add a text-free medicine poster inside unchanged advertising frame.",
+  "feature": "Attach a sharp green medical cross to the pharmacist uniform; edit placement and size in the visual constructor; preserve attachment across responsive layouts and camera pan.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
