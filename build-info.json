@@ -1,6 +1,6 @@
 {
-  "release": "products-layout-20261016-144515",
-  "built_at": "2026-10-16T14:45:15.081565+00:00",
+  "release": "dock-navigation-20261016-162307",
+  "built_at": "2026-10-16T16:23:07.628018+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Apply 138 authored products and 11 shelf definitions from the submitted visual layout; share stock between game and constructor; migrate only stock with draft backup while retaining upgrades, cat routes and scene layers.",
+  "feature": "Remove separate furniture shop, purchases and legacy furniture bonuses; render only backend-owned upgrades; switch hall arrows between left edge, pharmacist center and right edge on desktop and mobile.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
