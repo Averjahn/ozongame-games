@@ -1,6 +1,6 @@
 {
-  "release": "bowl-floor-area-20261016-111052",
-  "built_at": "2026-10-16T11:10:52.083967+00:00",
+  "release": "buyer-fist-20261016-111521",
+  "built_at": "2026-10-16T11:15:21.740229+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore pet layer geometry measurements through shared pharmacy wrapper; update scale after viewport changes; highlight exact bowl floor placement area.",
+  "feature": "Simplify buyer shopping hand to a rounded closed fist; remove individual finger protrusions and keep bag handle behind palm.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
