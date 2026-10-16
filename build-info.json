@@ -1,6 +1,6 @@
 {
-  "release": "approved-upgrades-20261015-170826",
-  "built_at": "2026-10-15T17:08:26.430163+00:00",
+  "release": "editor-approved-sync-20261016-085927",
+  "built_at": "2026-10-16T08:59:27.668475+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Apply user-approved pharmacy upgrade positions and sizes; hide disabled and unplaced upgrades. Preserve shelf products, characters, cat, bowls, UI and purchase/level logic.",
+  "feature": "Synchronize existing constructor drafts once with approved pharmacy upgrade placement; preserve products, shelves, layers and all subsequent local edits. Keep a backup of the original draft.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
