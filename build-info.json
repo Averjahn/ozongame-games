@@ -1,6 +1,6 @@
 {
-  "release": "editor-approved-sync-20261016-085927",
-  "built_at": "2026-10-16T08:59:27.668475+00:00",
+  "release": "editor-character-scale-20261016-090348",
+  "built_at": "2026-10-16T09:03:48.680851+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Synchronize existing constructor drafts once with approved pharmacy upgrade placement; preserve products, shelves, layers and all subsequent local edits. Keep a backup of the original draft.",
+  "feature": "Match panoramic constructor customer and thief height to the actual game: shared 680-unit scene height, unchanged body proportions and floor. Existing game mobile sizing and approved upgrade placements preserved.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
