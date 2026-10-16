@@ -1,6 +1,6 @@
 {
-  "release": "pharmacist-centered-20261016-102934",
-  "built_at": "2026-10-16T10:29:34.722361+00:00",
+  "release": "shelves-stocked-20261016-104617",
+  "built_at": "2026-10-16T10:46:17.913850+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Center pharmacy entrance camera on pharmacist on desktop and mobile; preserve calibrated positions and player pan on resize.",
+  "feature": "Fill empty wall shelf positions with stable varied stock; remove retired fixture clearances; preserve editor drafts while adding missing default products.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
