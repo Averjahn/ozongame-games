@@ -1,6 +1,6 @@
 {
-  "release": "pledge-cards-20261016-123536",
-  "built_at": "2026-10-16T12:35:36.469453+00:00",
+  "release": "cat-depth-20261016-124326",
+  "built_at": "2026-10-16T12:43:26.389905+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Replace pledge pharmacy dropdown with accessible selectable cards showing pharmacy value and loan limit; maintain valid selection and responsive layout.",
+  "feature": "Place elevated cats behind customers and floor cats in front; keep descent depth until landing; restrict ground walks to a horizontal baseline.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
