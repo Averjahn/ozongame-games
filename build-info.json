@@ -1,6 +1,6 @@
 {
-  "release": "ventilation-20261016-135718",
-  "built_at": "2026-10-16T13:57:18.151009+00:00",
+  "release": "products-layout-20261016-144515",
+  "built_at": "2026-10-16T14:45:15.081565+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Replace UV upgrade presentation with improved ventilation and generated wall grille; add confirmed constructor replacement preserving purchase identity and all existing placements.",
+  "feature": "Apply 138 authored products and 11 shelf definitions from the submitted visual layout; share stock between game and constructor; migrate only stock with draft backup while retaining upgrades, cat routes and scene layers.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
