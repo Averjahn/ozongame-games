@@ -1,6 +1,6 @@
 {
-  "release": "buyer-fist-20261016-111521",
-  "built_at": "2026-10-16T11:15:21.740229+00:00",
+  "release": "business-tabs-20261016-122626",
+  "built_at": "2026-10-16T12:26:26.868810+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Simplify buyer shopping hand to a rounded closed fist; remove individual finger protrusions and keep bag handle behind palm.",
+  "feature": "Redesign business navigation with clear selected states, section icons, separate debt badge, sticky header, responsive tabs and keyboard navigation.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
