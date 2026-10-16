@@ -1,6 +1,6 @@
 {
-  "release": "kitten-arrival-copy-20261016-110536",
-  "built_at": "2026-10-16T11:05:36.062178+00:00",
+  "release": "bowl-floor-area-20261016-111052",
+  "built_at": "2026-10-16T11:10:52.083967+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Update first kitten arrival copy with corrected Russian spelling and punctuation; verify original welcome illustration across screen sizes.",
+  "feature": "Restore pet layer geometry measurements through shared pharmacy wrapper; update scale after viewport changes; highlight exact bowl floor placement area.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
