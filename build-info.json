@@ -1,6 +1,6 @@
 {
-  "release": "cat-navigation-20261016-101424",
-  "built_at": "2026-10-16T10:14:24.473367+00:00",
+  "release": "quest-close-centered-20261016-102159",
+  "built_at": "2026-10-16T10:21:59.229135+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Add cat navigation tab: editable walk spans, resting perches, home placement, directed walk/jump routes, shelf-to-perch conversion, route preview using current cat animations, hidden guides and full configuration import/export. Preserve current game AI geometry and approved items until exported settings are applied.",
+  "feature": "Center quest close SVG icon independently of font metrics.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
