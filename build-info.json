@@ -1,6 +1,6 @@
 {
-  "release": "uniform-owned-20261016-164615",
-  "built_at": "2026-10-16T16:46:15.771771+00:00",
+  "release": "owned-upgrades-20261016-193548",
+  "built_at": "2026-10-16T19:35:48.379199+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Show purchased uniform badge for every pharmacist regardless of legacy hidden room slots; use submitted shared coat position and preserve unrelated constructor drafts during badge migration.",
+  "feature": "Restore purchased physical upgrades, synchronize approved room placements across game and constructors, and preserve newer personal editor changes.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
