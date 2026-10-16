@@ -1,6 +1,6 @@
 {
-  "release": "uniform-badge-20261016-134210",
-  "built_at": "2026-10-16T13:42:10.696376+00:00",
+  "release": "ventilation-20261016-135718",
+  "built_at": "2026-10-16T13:57:18.151009+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Attach a sharp green medical cross to the pharmacist uniform; edit placement and size in the visual constructor; preserve attachment across responsive layouts and camera pan.",
+  "feature": "Replace UV upgrade presentation with improved ventilation and generated wall grille; add confirmed constructor replacement preserving purchase identity and all existing placements.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
