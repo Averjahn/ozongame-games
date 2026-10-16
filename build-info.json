@@ -1,6 +1,6 @@
 {
-  "release": "business-tabs-20261016-122626",
-  "built_at": "2026-10-16T12:26:26.868810+00:00",
+  "release": "pledge-cards-20261016-123536",
+  "built_at": "2026-10-16T12:35:36.469453+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Redesign business navigation with clear selected states, section icons, separate debt badge, sticky header, responsive tabs and keyboard navigation.",
+  "feature": "Replace pledge pharmacy dropdown with accessible selectable cards showing pharmacy value and loan limit; maintain valid selection and responsive layout.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
