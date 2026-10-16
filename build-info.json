@@ -1,6 +1,6 @@
 {
-  "release": "dock-navigation-20261016-162307",
-  "built_at": "2026-10-16T16:23:07.628018+00:00",
+  "release": "uniform-owned-20261016-164615",
+  "built_at": "2026-10-16T16:46:15.771771+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove separate furniture shop, purchases and legacy furniture bonuses; render only backend-owned upgrades; switch hall arrows between left edge, pharmacist center and right edge on desktop and mobile.",
+  "feature": "Show purchased uniform badge for every pharmacist regardless of legacy hidden room slots; use submitted shared coat position and preserve unrelated constructor drafts during badge migration.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
