@@ -1,6 +1,6 @@
 {
-  "release": "cat-depth-20261016-124326",
-  "built_at": "2026-10-16T12:43:26.389905+00:00",
+  "release": "upgrade-alternatives-20261016-131508",
+  "built_at": "2026-10-16T13:15:08.191722+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Place elevated cats behind customers and floor cats in front; keep descent depth until landing; restrict ground walks to a horizontal baseline.",
+  "feature": "Add eight illustrated upgrade replacement proposals and hall previews; restyle online order rack; add a text-free medicine poster inside unchanged advertising frame.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
