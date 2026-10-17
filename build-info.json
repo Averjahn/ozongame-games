@@ -1,6 +1,6 @@
 {
-  "release": "owned-upgrades-20261016-193548",
-  "built_at": "2026-10-16T19:35:48.379199+00:00",
+  "release": "registration-20261017-003424",
+  "built_at": "2026-10-17T00:34:24.593061+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore purchased physical upgrades, synchronize approved room placements across game and constructors, and preserve newer personal editor changes.",
+  "feature": "Center the registration welcome screen, remove the name hint, show submit progress and retry errors, and prevent duplicate account creation on retries.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
