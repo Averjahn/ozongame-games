@@ -1,6 +1,6 @@
 {
-  "release": "coin-icons-20261017-040143",
-  "built_at": "2026-10-17T04:01:43.966918+00:00",
+  "release": "computer-preview-20261017-042433",
+  "built_at": "2026-10-17T04:24:33.000989+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Replace unsupported coin emoji with the shared in-game SVG icon in the return-to-city badge, city balance, pharmacy tills and collection controls.",
+  "feature": "Add a generated silver all-in-one computer proposal, replace the old monitor during editor preview at matching dimensions, preserve backend purchase identities and existing game placements.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
