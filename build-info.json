@@ -1,6 +1,6 @@
 {
-  "release": "counter-racks-20261017-022615",
-  "built_at": "2026-10-17T02:26:15.492554+00:00",
+  "release": "single-hall-20261017-035348",
+  "built_at": "2026-10-17T03:53:48.843199+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Render the three authored counter racks for the first pharmacy assortment purchase, preserve separate second pharmacy purchases and all authored coordinates.",
+  "feature": "Clarify that the game has one playable pharmacy and the comparison contains two historical upgrade catalogs; retain all existing placements and purchase bindings.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
