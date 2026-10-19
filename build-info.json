@@ -1,6 +1,6 @@
 {
-  "release": "computer-preview-20261017-042433",
-  "built_at": "2026-10-17T04:24:33.000989+00:00",
+  "release": "checklist-20261020-221642",
+  "built_at": "2026-10-19T22:16:42.625455+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,11 +14,16 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Add a generated silver all-in-one computer proposal, replace the old monitor during editor preview at matching dimensions, preserve backend purchase identities and existing game placements.",
+  "feature": "Fix quest completion and external webinar links; atomic mini-game rewards with collected bonuses and durable attempt retries; bowl collision avoidance, generated shopping fist, wrapped game instructions, and 1.5x counter flower at unchanged baseline.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
-  "imported_player_profiles": 920
+  "imported_player_profiles": 920,
+  "updated_entries": [
+    "dev.html",
+    "pharmacy-layout.html"
+  ],
+  "game_reward_migration": 122
 }
