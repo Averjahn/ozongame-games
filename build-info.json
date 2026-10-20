@@ -1,6 +1,6 @@
 {
-  "release": "checklist-20261020-221642",
-  "built_at": "2026-10-19T22:16:42.625455+00:00",
+  "release": "feminine-hands-20261020-012034",
+  "built_at": "2026-10-20T01:20:34.061382+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Fix quest completion and external webinar links; atomic mini-game rewards with collected bonuses and durable attempt retries; bowl collision avoidance, generated shopping fist, wrapped game instructions, and 1.5x counter flower at unchanged baseline.",
+  "feature": "Add two generated petite feminine shopping hands with animated comparison, keep reduced masculine fist exclusive to explicit male characters, preserve wrist attachment and handle occlusion.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
