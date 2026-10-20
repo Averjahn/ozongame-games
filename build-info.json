@@ -1,6 +1,6 @@
 {
-  "release": "business-copy-20261020-111824",
-  "built_at": "2026-10-20T11:18:24.159302+00:00",
+  "release": "estate-payment-fix-20261020-113931",
+  "built_at": "2026-10-20T11:39:31.986632+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove the obsolete introductory description from My Business and omit its empty embedded header.",
+  "feature": "Reject pharmacy purchases when network funds are insufficient; remove hidden personal-wallet fallback, validate canonical prices, and serialize acquisitions until payment confirmation.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
