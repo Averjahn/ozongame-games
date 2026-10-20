@@ -1,6 +1,6 @@
 {
-  "release": "feminine-hands-20261020-012034",
-  "built_at": "2026-10-20T01:20:34.061382+00:00",
+  "release": "no-reward-limits-20261020-105722",
+  "built_at": "2026-10-20T10:57:22.363287+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Add two generated petite feminine shopping hands with animated comparison, keep reduced masculine fist exclusive to explicit male characters, preserve wrist attachment and handle occlusion.",
+  "feature": "Remove game reward daily limits, score multiplier ceilings and collected-bonus caps; preserve atomic idempotent attempt claims and exact earned rewards.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
