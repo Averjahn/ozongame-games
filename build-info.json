@@ -1,6 +1,6 @@
 {
-  "release": "menu-layers-20261021-231428",
-  "built_at": "2026-10-20T23:14:28.150113+00:00",
+  "release": "sofa-edge-20261021-231931",
+  "built_at": "2026-10-20T23:19:31.686429+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep cat panels and expanded scene menus above pharmacy objects; keep floating cats below UI overlays.",
+  "feature": "Remove sofa cutout edge fringe with a shared alpha contour filter for game and visual editor; preserve asset, layout and tint.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,7 +22,8 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "pharmacy-layout.html"
   ],
   "game_reward_migration": 122
 }
