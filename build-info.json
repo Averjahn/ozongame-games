@@ -1,6 +1,6 @@
 {
-  "release": "first-staff-tutorial-20261020-121407",
-  "built_at": "2026-10-20T12:14:07.569619+00:00",
+  "release": "unified-wallet-20261020-143910",
+  "built_at": "2026-10-20T14:39:10.541274+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Require real staff in the first pharmacy after city unlock; guide pharmacist and manager hiring, apply normal payroll and prevent retroactive income before hiring.",
+  "feature": "Unify pharmacy and city balances through the server wallet, migrate legacy city coins exactly once, and require confirmed shared-balance payments for estate, staff, bank and factory.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
