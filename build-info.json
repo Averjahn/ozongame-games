@@ -1,6 +1,6 @@
 {
-  "release": "no-reward-limits-20261020-105722",
-  "built_at": "2026-10-20T10:57:22.363287+00:00",
+  "release": "business-copy-20261020-111824",
+  "built_at": "2026-10-20T11:18:24.159302+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove game reward daily limits, score multiplier ceilings and collected-bonus caps; preserve atomic idempotent attempt claims and exact earned rewards.",
+  "feature": "Remove the obsolete introductory description from My Business and omit its empty embedded header.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
