@@ -1,6 +1,6 @@
 {
-  "release": "unified-wallet-20261020-143910",
-  "built_at": "2026-10-20T14:39:10.541274+00:00",
+  "release": "hiring-numbers-20261021-230626",
+  "built_at": "2026-10-20T23:06:26.812920+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Unify pharmacy and city balances through the server wallet, migrate legacy city coins exactly once, and require confirmed shared-balance payments for estate, staff, bank and factory.",
+  "feature": "Show numeric daily income and salary values in hiring cards; remove subjective candidate verdicts.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,8 +22,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "pharmacy-layout.html"
+    "dev.html"
   ],
   "game_reward_migration": 122
 }
