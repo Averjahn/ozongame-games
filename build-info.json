@@ -1,6 +1,6 @@
 {
-  "release": "hiring-numbers-20261021-230626",
-  "built_at": "2026-10-20T23:06:26.812920+00:00",
+  "release": "night-tram-20261021-231015",
+  "built_at": "2026-10-20T23:10:15.367893+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Show numeric daily income and salary values in hiring cards; remove subjective candidate verdicts.",
+  "feature": "Disable city tram service and its animation at night; resume service during daytime.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
