@@ -1,6 +1,6 @@
 {
-  "release": "city-gate-20261021-145805",
-  "built_at": "2026-10-21T14:58:05.026810+00:00",
+  "release": "external-tabs-20261021-153551",
+  "built_at": "2026-10-21T15:35:51.252087+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "City requires five stars for both first pharmacy and pharmacist; saved unlock flags and navigation cannot bypass current levels; key event remains required for new unlocks.",
+  "feature": "External task and quest material links open directly in focused tabs, without material dialogs; deferred URL resolution reserves tab within click; task goal credit preserved.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
