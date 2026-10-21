@@ -1,6 +1,6 @@
 {
-  "release": "city-learning-20261021-100858",
-  "built_at": "2026-10-21T10:08:58.698398+00:00",
+  "release": "quest-opening-20261021-112229",
+  "built_at": "2026-10-21T11:22:29.889545+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Requirement-first city announcement, two five-star unlock conditions, 17-step contextual city tutorial with persisted progress, clickable warehouse and factory, and city hints hidden inside the pharmacy.",
+  "feature": "Credit quest task targets on launch from tasks or quest catalogue through confirmed target PUT requests; deduplicate completion and preserve manual task rewards.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
