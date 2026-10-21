@@ -1,6 +1,6 @@
 {
-  "release": "city-layout-20261021-122225",
-  "built_at": "2026-10-21T12:22:25.149343+00:00",
+  "release": "cat-menu-20261021-135258",
+  "built_at": "2026-10-21T13:52:58.748781+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "User-provided city houses, yards and service building layout; synchronized constructor baseline; configured pharmacy heights preserved.",
+  "feature": "Remove coin icon and balance from cat menu header.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
