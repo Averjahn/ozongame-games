@@ -1,6 +1,6 @@
 {
-  "release": "own-size-20261021-144326",
-  "built_at": "2026-10-21T14:43:26.809849+00:00",
+  "release": "city-gate-20261021-145805",
+  "built_at": "2026-10-21T14:58:05.026810+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Own pharmacy uses constructor catalog sprite height without an additional 25 percent enlargement; ground anchor and position preserved.",
+  "feature": "City requires five stars for both first pharmacy and pharmacist; saved unlock flags and navigation cannot bypass current levels; key event remains required for new unlocks.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
