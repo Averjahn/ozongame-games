@@ -1,6 +1,6 @@
 {
-  "release": "thief-stability-20261021-155401",
-  "built_at": "2026-10-21T15:54:01.089121+00:00",
+  "release": "bank-limit-20261021-184910",
+  "built_at": "2026-10-21T18:49:10.911505+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Separate thief gait sway from camera anchor, while retaining camera tracking of locomotion and intentional crouch during cat pickup.",
+  "feature": "Raise initial unsecured borrowing capacity to 2000 coins regardless of assets; larger existing asset-based limits remain; update bank explanation.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
