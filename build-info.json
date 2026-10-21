@@ -1,6 +1,6 @@
 {
-  "release": "cat-menu-20261021-135258",
-  "built_at": "2026-10-21T13:52:58.748781+00:00",
+  "release": "tutorial-placement-20261021-143036",
+  "built_at": "2026-10-21T14:30:36.938766+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove coin icon and balance from cat menu header.",
+  "feature": "City tutorial coachmarks avoid entire gameplay panels, reserve adaptive space when needed, simplify instructions and explain returning to pharmacy work.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
