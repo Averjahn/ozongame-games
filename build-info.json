@@ -1,6 +1,6 @@
 {
-  "release": "smooth-wrist-20261021-233844",
-  "built_at": "2026-10-20T23:38:44.119384+00:00",
+  "release": "city-learning-20261021-100858",
+  "built_at": "2026-10-21T10:08:58.698398+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Smooth shopping hand wrist silhouettes without widening and narrowing bumps; preserve palm, bag grip and animation.",
+  "feature": "Requirement-first city announcement, two five-star unlock conditions, 17-step contextual city tutorial with persisted progress, clickable warehouse and factory, and city hints hidden inside the pharmacy.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -23,7 +23,8 @@
   "imported_player_profiles": 920,
   "updated_entries": [
     "dev.html",
-    "pharmacy-layout.html"
+    "pharmacy-layout.html",
+    "game-constructor.html"
   ],
   "game_reward_migration": 122
 }
