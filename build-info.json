@@ -1,6 +1,6 @@
 {
-  "release": "quest-opening-20261021-112229",
-  "built_at": "2026-10-21T11:22:29.889545+00:00",
+  "release": "city-actions-20261021-120919",
+  "built_at": "2026-10-21T12:09:19.555277+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Credit quest task targets on launch from tasks or quest catalogue through confirmed target PUT requests; deduplicate completion and preserve manual task rewards.",
+  "feature": "Action-based city tutorial: native controls only, successful transactions advance paid steps, centered pulsing targets with pointers, automatic scroll to repair, contextual recovery and versioned progress.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
