@@ -1,6 +1,6 @@
 {
-  "release": "manager-copy-20261022-143024",
-  "built_at": "2026-10-22T14:30:24.672085+00:00",
+  "release": "generated-catalog-20261022-195829",
+  "built_at": "2026-10-22T19:58:29.537620+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Clarify city tutorial manager hiring instruction: hire the manager using the Hire button on their card.",
+  "feature": "Add all 14 generated upgrade options as independent editor placements; editable new-upgrade list and combined layout/catalog export; migrate legacy drafts without moving existing objects.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
