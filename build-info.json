@@ -1,6 +1,6 @@
 {
-  "release": "polish-20261022-141343",
-  "built_at": "2026-10-22T14:13:43.227746+00:00",
+  "release": "manager-copy-20261022-143024",
+  "built_at": "2026-10-22T14:30:24.672085+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "First-task kitten arrival, registration-only hall training, movement dismisses Frogger controls, five-star rank cap, corrected buyer proportions, no UI selection, correct building purchase condition, city earnings and goal guidance, account-preserving quiet local fallback.",
+  "feature": "Clarify city tutorial manager hiring instruction: hire the manager using the Hire button on their card.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
