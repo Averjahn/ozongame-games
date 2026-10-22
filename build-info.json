@@ -1,6 +1,6 @@
 {
-  "release": "cat-growth-20261023-214856",
-  "built_at": "2026-10-22T21:48:56.699224+00:00",
+  "release": "upgrade-replacements-20261023-215926",
+  "built_at": "2026-10-22T21:59:26.490995+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Slow cat growth fourfold during active play only; restore authored shelf medicine cascade and menu mischief; remove cat history UI and chapter notifications.",
+  "feature": "Explicit per-purchase old-to-new replacement planner with all generated proposals, cancellation and keep-original action; browser persistence and JSON export/import; no backend mutations.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
