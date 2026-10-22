@@ -1,6 +1,6 @@
 {
-  "release": "daily-coins-20261023-212936",
-  "built_at": "2026-10-22T21:29:36.474152+00:00",
+  "release": "cat-growth-20261023-214856",
+  "built_at": "2026-10-22T21:48:56.699224+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove paw reward and special pet-style tile from Game of the Day ladder; display actual coin reward on every day including the last.",
+  "feature": "Slow cat growth fourfold during active play only; restore authored shelf medicine cascade and menu mischief; remove cat history UI and chapter notifications.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
