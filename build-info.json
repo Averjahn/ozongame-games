@@ -1,6 +1,6 @@
 {
-  "release": "computer-replacement-20261023-221500",
-  "built_at": "2026-10-22T22:15:00.195969+00:00",
+  "release": "dev-shop-plan-20261023-231144",
+  "built_at": "2026-10-22T23:11:44.400172+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Render purchased and visibly placed computer replacements in the original monitor layer, suppress duplicate furniture rendering, preserve the original monitor before purchase; leave rollout purchase mapping and backend catalog unchanged.",
+  "feature": "Apply user-submitted upgrade titles, descriptions and candidate artwork in dev shop only; preserve server IDs, image_path, prices and purchase endpoints; computer purchase replaces original monitor; no backend catalog or production entry changes; additions remain planning-only.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
