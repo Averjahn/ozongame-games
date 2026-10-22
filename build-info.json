@@ -1,6 +1,6 @@
 {
-  "release": "bank-limit-20261021-184910",
-  "built_at": "2026-10-21T18:49:10.911505+00:00",
+  "release": "customers-20261022-123113",
+  "built_at": "2026-10-22T12:31:13.521849+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Raise initial unsecured borrowing capacity to 2000 coins regardless of assets; larger existing asset-based limits remain; update bank explanation.",
+  "feature": "Animate four new customer identities on the approved buyer rig with all visit phases, gender-specific shopping hands and balanced arrivals. Add animated character workshop.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
