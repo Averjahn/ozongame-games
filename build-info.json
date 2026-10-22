@@ -1,6 +1,6 @@
 {
-  "release": "thief-camera-20261022-124440",
-  "built_at": "2026-10-22T12:44:40.293498+00:00",
+  "release": "test-chase-20261022-125708",
+  "built_at": "2026-10-22T12:57:08.934199+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Synchronize thief world travel, canvas animation and camera following on the same display frame; preserve theft phases and regular buyer compositor movement.",
+  "feature": "Make thief testing tools play the full theft and automatically launch the playable chase after the thief exits the left screen edge; mount event layer in animation test mode; preserve story CTA and cancellation.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
