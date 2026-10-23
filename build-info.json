@@ -1,6 +1,6 @@
 {
-  "release": "animation-economy-20261023-150353",
-  "built_at": "2026-10-23T15:03:53.711748+00:00",
+  "release": "money-career-20261023-153605",
+  "built_at": "2026-10-23T15:36:05.591311+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Compact currency panels; concise activities and large shop income labels; one visible visitor/minute before improvements and one coin credit per sale; male trouser rig and matched cached grip materials; QWE animation editor with per-part controls and JSON export; lazy games/map and visibility-aware rendering; no backend/catalog changes",
+  "feature": "Currency badges below round portrait/emblem; restored six pharmacist job titles at highest confirmed balance thresholds 500/1000/1500/2000/2500; spending/reloads/stale progress do not downgrade; responsive menu offset follows header height; own dev progress service updated, dev2 catalog unchanged",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
