@@ -1,6 +1,6 @@
 {
-  "release": "money-concept-20261023-133044",
-  "built_at": "2026-10-23T13:30:44.789556+00:00",
+  "release": "panel-style-20261023-134518",
+  "built_at": "2026-10-23T13:45:18.856965+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Dev-only coin progression, generated crystal icon, optional content rewards, premium visual/income upgrades, 2500-earned-coin story gate and crystal repair acceleration; preserve existing progress and production catalog",
+  "feature": "Restore blue and magenta nameplates, circular avatar and pharmacy emblem, white frames and shadows; gold coin and violet crystal counters; responsive desktop and mobile header; no backend changes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
