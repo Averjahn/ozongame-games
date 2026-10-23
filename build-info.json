@@ -1,6 +1,6 @@
 {
-  "release": "customer-flow-20261023-165751",
-  "built_at": "2026-10-23T16:57:51.813969+00:00",
+  "release": "crystal-grid-20261023-170818",
+  "built_at": "2026-10-23T17:08:18.500500+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Show current customer flow under pharmacy name in mirrored career badge; display rounds to two decimals while actual arrivals use exact shared rate; no backend changes",
+  "feature": "Square crystal activity cards in adaptive two-column grid and prioritize top header above all pharmacy scene layers; no backend changes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
