@@ -1,6 +1,6 @@
 {
-  "release": "purchase-art-20261023-082637",
-  "built_at": "2026-10-23T08:26:37.944648+00:00",
+  "release": "money-concept-20261023-133044",
+  "built_at": "2026-10-23T13:30:44.789556+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Resolve shop and purchase confirmation artwork through one bundled asset resolver; pass planned visual key with purchase success; verify actual mocked purchase and every remaining tester1 item plus cooler, privacy and recycling on desktop/mobile; no backend changes.",
+  "feature": "Dev-only coin progression, generated crystal icon, optional content rewards, premium visual/income upgrades, 2500-earned-coin story gate and crystal repair acceleration; preserve existing progress and production catalog",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
