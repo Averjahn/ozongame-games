@@ -1,6 +1,6 @@
 {
-  "release": "character-contours-20261023-164322",
-  "built_at": "2026-10-23T16:43:22.872387+00:00",
+  "release": "customer-flow-20261023-165751",
+  "built_at": "2026-10-23T16:57:51.813969+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Flatten male customer and thief chest contours, preserve limb cross sections and smooth male hip attachment; replace detached fist sprites with wrist-matched native drawing and add independent fist editor controls; no backend changes",
+  "feature": "Show current customer flow under pharmacy name in mirrored career badge; display rounds to two decimals while actual arrivals use exact shared rate; no backend changes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
