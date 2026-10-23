@@ -1,6 +1,6 @@
 {
-  "release": "upgrade-connection-ids-20261023-081318",
-  "built_at": "2026-10-23T08:13:18.660895+00:00",
+  "release": "purchase-art-20261023-082637",
+  "built_at": "2026-10-23T08:26:37.944648+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Fix dev upgrade presentation to match stable image_path instead of comparing per-user connection ID to catalog ID; verified with tester1 GET responses and mocked purchase 28412; no user writes, backend catalog changes or production entry changes.",
+  "feature": "Resolve shop and purchase confirmation artwork through one bundled asset resolver; pass planned visual key with purchase success; verify actual mocked purchase and every remaining tester1 item plus cooler, privacy and recycling on desktop/mobile; no backend changes.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
