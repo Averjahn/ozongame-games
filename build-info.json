@@ -1,6 +1,6 @@
 {
-  "release": "money-career-20261023-154208",
-  "built_at": "2026-10-23T15:42:08.845045+00:00",
+  "release": "crystal-menu-20261023-154949",
+  "built_at": "2026-10-23T15:49:49.712801+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Currency badges below round portrait/emblem; restored six pharmacist job titles at highest confirmed balance thresholds 500/1000/1500/2000/2500; spending/reloads/stale progress do not downgrade; responsive menu offset follows header height; own dev progress service updated, dev2 catalog unchanged",
+  "feature": "Rename dev activities action and title to Earn crystals, use existing cartoon crystal artwork, update compact tooltip and accessible label; no backend changes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
