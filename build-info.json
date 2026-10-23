@@ -1,6 +1,6 @@
 {
-  "release": "panel-style-20261023-134900",
-  "built_at": "2026-10-23T13:49:00.914199+00:00",
+  "release": "crystal-cartoon-20261023-135551",
+  "built_at": "2026-10-23T13:55:51.228826+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore blue and magenta nameplates, circular avatar and pharmacy emblem, white frames and shadows; gold coin and violet crystal counters; responsive desktop and mobile header; no backend changes",
+  "feature": "Replace realistic crystal with generated cartoon currency icon featuring broad facets and a bold outline; shared component updates all currency displays; no backend changes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
