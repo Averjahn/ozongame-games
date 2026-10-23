@@ -1,6 +1,6 @@
 {
-  "release": "dev-shop-plan-20261023-231144",
-  "built_at": "2026-10-22T23:11:44.400172+00:00",
+  "release": "upgrade-connection-ids-20261023-081318",
+  "built_at": "2026-10-23T08:13:18.660895+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Apply user-submitted upgrade titles, descriptions and candidate artwork in dev shop only; preserve server IDs, image_path, prices and purchase endpoints; computer purchase replaces original monitor; no backend catalog or production entry changes; additions remain planning-only.",
+  "feature": "Fix dev upgrade presentation to match stable image_path instead of comparing per-user connection ID to catalog ID; verified with tester1 GET responses and mocked purchase 28412; no user writes, backend catalog changes or production entry changes.",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
