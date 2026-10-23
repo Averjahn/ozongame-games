@@ -1,6 +1,6 @@
 {
-  "release": "crystal-menu-20261023-154949",
-  "built_at": "2026-10-23T15:49:49.712801+00:00",
+  "release": "editor-parts-20261023-160813",
+  "built_at": "2026-10-23T16:08:13.452671+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Rename dev activities action and title to Earn crystals, use existing cartoon crystal artwork, update compact tooltip and accessible label; no backend changes",
+  "feature": "Add independent package arm and bag controls, simultaneous isolated mesh and whole character previews, compatible profile export; no backend changes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
