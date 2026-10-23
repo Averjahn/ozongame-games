@@ -1,6 +1,6 @@
 {
-  "release": "crystal-cartoon-20261023-135551",
-  "built_at": "2026-10-23T13:55:51.228826+00:00",
+  "release": "animation-economy-20261023-150353",
+  "built_at": "2026-10-23T15:03:53.711748+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Replace realistic crystal with generated cartoon currency icon featuring broad facets and a bold outline; shared component updates all currency displays; no backend changes",
+  "feature": "Compact currency panels; concise activities and large shop income labels; one visible visitor/minute before improvements and one coin credit per sale; male trouser rig and matched cached grip materials; QWE animation editor with per-part controls and JSON export; lazy games/map and visibility-aware rendering; no backend/catalog changes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -24,7 +24,8 @@
   "updated_entries": [
     "dev.html",
     "pharmacy-layout.html",
-    "game-constructor.html"
+    "game-constructor.html",
+    "animation-editor.html"
   ],
   "game_reward_migration": 122
 }
