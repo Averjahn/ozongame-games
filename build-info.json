@@ -1,6 +1,6 @@
 {
-  "release": "hall-onboarding-20261023-181231",
-  "built_at": "2026-10-23T18:12:31.902199+00:00",
+  "release": "tycoon-economy-20261023-205651",
+  "built_at": "2026-10-23T20:56:51.176632+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Guide native pharmacy controls through stock, shop, games and voluntary crystal content before first kitten arrival; persist unfinished tutorial; economy and daily reward numbers unchanged pending approval",
+  "feature": "Enable server-timed pharmacy cash, exponential ordinary upgrades, additive premium income, scaled collected game coins and daily ladder, crystal cooldown and daily limits; isolated dev economy only",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
