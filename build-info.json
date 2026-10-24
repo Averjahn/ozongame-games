@@ -1,6 +1,6 @@
 {
-  "release": "goal-hint-20261025-215656",
-  "built_at": "2026-10-24T21:56:56.776300+00:00",
+  "release": "stock-label-20261025-224720",
+  "built_at": "2026-10-24T22:47:20.900568+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Shorten city tutorial first step and strongly pulse the real first pharmacy button",
+  "feature": "Simplify pharmacy stock refill button label to quantity only",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
