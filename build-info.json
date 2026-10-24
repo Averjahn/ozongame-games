@@ -1,6 +1,6 @@
 {
-  "release": "tutorial-border-20261024-131434",
-  "built_at": "2026-10-24T13:14:34.859581+00:00",
+  "release": "registration-tutor-20261024-154241",
+  "built_at": "2026-10-24T15:42:41.736726+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Attach yellow tutorial outlines directly to controls and pulse them together; remove detached pharmacy tutorial ring",
+  "feature": "Initialize progress synchronization before registration tutorial; resume server-only incomplete tutorials and recover missing start markers without resetting actions",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
