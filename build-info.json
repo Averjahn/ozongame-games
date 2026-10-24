@@ -1,6 +1,6 @@
 {
-  "release": "staff-shifts-20261024-184039",
-  "built_at": "2026-10-24T18:40:39.713318+00:00",
+  "release": "simple-staff-20261024-202446",
+  "built_at": "2026-10-24T20:24:46.432486+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Fix restock tutorial overlap; cap staffing and add fatigue, alternating shifts and staff transfers; first pharmacy staffing income awaits dev service update",
+  "feature": "Simplify staffing: one manager, one to three pharmacists, permanent 100/130/160 percent team efficiency, no fatigue or shift simulation; first pharmacy service update pending",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
