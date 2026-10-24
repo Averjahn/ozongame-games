@@ -6701,7 +6701,7 @@ function renderCityMapTab(root) {
     </div>
   </div>`;
 
-  const url = (key) => `map-city/${key}.jpg?v=0cb31c26b4690f90`;
+  const url = (key) => `map-city/${key}.jpg?v=a5505932eff7b0a0`;
   const grid = root.querySelector('#cityGrid');
   const found = new Set();
 
@@ -7943,7 +7943,7 @@ function renderCityMapperTab(root) {
     <div>
       <div class="mk-view" id="mkView">
         <div class="mk-world" id="mkWorld">
-          <img class="bg" src="map-city/empty.jpg?v=0cb31c26b4690f90">
+          <img class="bg" src="map-city/empty.jpg?v=a5505932eff7b0a0">
           <svg class="mk-svg" viewBox="0 0 1920 810" width="1920" height="810"></svg>
         </div>
       </div>
@@ -8587,7 +8587,7 @@ function renderCityMapperTab(root) {
     root.querySelector('#mkMapI').classList.toggle('on', k === 'island');
     // фон обязан меняться вместе с данными: разметка острова поверх города
     // выглядела бы как случайный набор точек в поле
-    world.querySelector('img.bg').src = k === 'island' ? 'map-city/island.jpg?v=0cb31c26b4690f90' : 'map-city/empty.jpg?v=0cb31c26b4690f90';
+    world.querySelector('img.bg').src = k === 'island' ? 'map-city/island.jpg?v=a5505932eff7b0a0' : 'map-city/empty.jpg?v=a5505932eff7b0a0';
     drawHouses(); drawSvg(); side(); ctxBar(); renderOut();
   }
   /** Сбросить обе карты к тому, что я расставил и выложил в игру. */

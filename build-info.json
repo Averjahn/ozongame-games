@@ -1,6 +1,6 @@
 {
-  "release": "city-balance-20261024-011404",
-  "built_at": "2026-10-24T01:14:04.921053+00:00",
+  "release": "map-fringe-20261024-020015",
+  "built_at": "2026-10-24T02:00:15.421879+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Balance city purchases, positive net income and upgrades; show all 14 pharmacy goals; shared first-pharmacy cash and staff gate; scale games with network; add step-by-step tutorial editor with JSON export",
+  "feature": "Extend map background across all 12 season/time combinations without changing original map, buildings, yards or routes; fill entire viewport at whole-map zoom, drag and resize",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
