@@ -1,6 +1,6 @@
 {
-  "release": "crystal-text-20261024-124809",
-  "built_at": "2026-10-24T12:48:09.324278+00:00",
+  "release": "customer-first-20261024-130136",
+  "built_at": "2026-10-24T13:01:36.517569+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove crystal activity introduction and daily availability captions",
+  "feature": "Bring first customer immediately after tutorial or on completed-profile entry; preserve arrival deadline across games and scale flow with actual upgrade income bonuses",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
