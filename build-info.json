@@ -1,6 +1,6 @@
 {
-  "release": "point-popup-20261025-215102",
-  "built_at": "2026-10-24T21:51:02.205213+00:00",
+  "release": "goal-hint-20261025-215656",
+  "built_at": "2026-10-24T21:56:56.776300+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove manual staff transfers and dismissal; anchor pharmacy point cards to buildings; rename shelf jump game in catalog and tutorials",
+  "feature": "Shorten city tutorial first step and strongly pulse the real first pharmacy button",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
