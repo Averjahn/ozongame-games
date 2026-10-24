@@ -1,6 +1,6 @@
 {
-  "release": "map-fringe-20261024-020015",
-  "built_at": "2026-10-24T02:00:15.421879+00:00",
+  "release": "map-whole-20261024-105140",
+  "built_at": "2026-10-24T10:51:40.433094+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Extend map background across all 12 season/time combinations without changing original map, buildings, yards or routes; fill entire viewport at whole-map zoom, drag and resize",
+  "feature": "Replace joined map layers with one continuous regenerated background registered to existing building and route coordinates; all 12 season/time variants and matching constructor",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
