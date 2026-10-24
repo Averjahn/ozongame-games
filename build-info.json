@@ -1,6 +1,6 @@
 {
-  "release": "zuma-spirals-20261024-120845",
-  "built_at": "2026-10-24T12:08:45.510103+00:00",
+  "release": "crystal-grid-20261024-121719",
+  "built_at": "2026-10-24T12:17:19.911114+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Replace placeholder game rewards with earnings explanation; central Zuma launcher and eight surrounding spiral paths; Zuma on touch screens",
+  "feature": "Compact crystal activity cards in three desktop columns and three rows; responsive tablet/mobile layout",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
