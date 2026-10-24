@@ -1,6 +1,6 @@
 {
-  "release": "registration-tutor-20261024-154705",
-  "built_at": "2026-10-24T15:47:05.954492+00:00",
+  "release": "live-editor-20261024-162306",
+  "built_at": "2026-10-24T16:23:06.646323+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Initialize progress synchronization before registration tutorial; resume server-only incomplete tutorials and recover missing start markers without resetting actions",
+  "feature": "Add in-game tutorial editing with shared local drafts; route shelf tools to current hall and archive obsolete constructor tabs",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",

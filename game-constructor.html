@@ -88,17 +88,18 @@
    с независимыми таймерами/аудио-контекстами/RAF-циклами).
    ============================================================ */
 const TOP_TABS = [
+  { key: 'live', label: '✎ Редактирование в игре', render: renderLiveEditorHome },
   { key: 'tutorials', label: '💬 Обучение и подсказки', render: (root) => { root.innerHTML = '<h2>Обучение по шагам</h2><p>Подсказки аптеки, города, мини-игр и отдельных событий с предпросмотром и экспортом изменений.</p><a href="tutorial-editor.html" target="_blank" rel="noopener">Открыть редактор подсказок ↗</a><iframe title="Редактор обучения" src="tutorial-editor.html" style="width:100%;height:80vh;border:0;margin-top:16px"></iframe>'; } },
   { key: 'poses', label: '🐾 Позы и паки', render: (root) => renderPosesTab(root) },
   { key: 'layout', label: '📐 Расстановка', render: (root) => renderLayoutTab(root) },
   { key: 'zones', label: '🧭 Зоны прыжка', render: (root) => renderZonesTab(root) },
   { key: 'floorbed', label: '🛏️ Пол и лежанка', render: (root) => renderFloorBedTab(root) },
-  { key: 'shelfitems', label: '🛒 Полки-товары', render: (root) => renderShelfItemsTab(root) },
+  { key: 'shelfitems', label: '🛒 Товары на полках', render: (root) => renderHallSlotsTab(root) },
   { key: 'mobilepos', label: '📱 Мобильные позиции', render: (root) => renderMobilePosTab(root) },
   { key: 'taskgames', label: '🎮 Игры в заданиях', render: (root) => renderTaskGamesTab(root) },
   { key: 'begdx', label: '🎯 Смещение у миски', render: (root) => renderBegDxTab(root) },
   { key: 'studio', label: '🎛️ Анимация + звук', render: (root) => renderStudioTab(root) },
-  { key: 'walkrig', label: '🚶 Анимация покупателей', render: (root) => renderWalkRigTab(root) },
+  { key: 'walkrig', label: '🚶 Анимации персонажей', render: (root) => { root.innerHTML = '<h2>Мастерская анимаций</h2><a href="animation-editor.html" target="_blank" rel="noopener">Открыть актуальный редактор анимаций ↗</a>'; } },
   { key: 'guide', label: '📖 Гайд', render: (root) => renderGuideTab(root) },
   { key: 'status', label: '📊 Статус проекта', render: (root) => renderStatusTab(root) },
   { key: 'feedback', label: '🐛 Обратная связь', render: (root) => renderFeedbackTab(root) },
@@ -111,6 +112,13 @@ const TOP_TABS = [
   { key: 'balance', label: '⚖️ Баланс экономики', render: (root) => renderBalanceTab(root) },
   { key: 'backend', label: '🗄️ Архитектура бэкенда', render: (root) => renderBackendArchTab(root) },
 ];
+
+// Old geometry remains available by explicit archive mode, never mixed into current tools.
+const CURRENT_TOOLS = new Set(['live','hallslots','shelfitems','tutorials','walkrig','citymapper','citymap','marblemap']);
+const ARCHIVE_MODE = new URLSearchParams(location.search).get('archive') === '1';
+function renderLiveEditorHome(root) {
+ root.innerHTML = `<h2>Редактирование в настоящей игре</h2><p>Откройте тестовую игру со своим uid и нажмите Q+W+E или «Конструктор» внизу справа. Можно играть, выбирать подсказки на экране, менять текст и выгружать JSON.</p><p>Для своего аккаунта используйте ссылку с вашим uid. Параметр <code>editor=1</code> сразу раскрывает панель.</p><a href="dev.html?editor=1" target="_blank" rel="noopener">Открыть игру с редактором ↗</a><h3>Актуальные инструменты</h3><ul><li>Визуальные элементы и товары: текущий зал 3120 × 810, единая расстановка полок, отдельных упаковок и слоёв.</li><li>Анимации: отдельная мастерская с частями тела и кистью с пакетом.</li><li>Карта: текущая разметка, сезоны и время суток.</li><li>Обучение: тексты всех шагов, общий черновик с игровым редактором.</li></ul><p>Прежняя расстановка, старые зоны и мобильные позиции относятся к предыдущему залу. Они убраны из рабочего меню, сохранённые данные не удалены.</p><a href="?archive=1">Архив инструментов и прежних отчётов</a>`;
+}
 
 const topTabsEl = document.getElementById('topTabs');
 const tabRootEl = document.getElementById('tabRoot');
@@ -133,7 +141,7 @@ const FOCUS_PHARMACY = ['pharmacy', 'hall', 'upgrades'].includes(new URLSearchPa
 if (FOCUS_PHARMACY) document.body.classList.add('focus-pharmacy');
 let activeTopKey = FOCUS_CITY ? 'citymapper' : FOCUS_PHARMACY ? 'hallslots' : TOP_TABS[0].key;
 
-TOP_TABS.forEach((t) => {
+TOP_TABS.filter(t => ARCHIVE_MODE || CURRENT_TOOLS.has(t.key)).forEach((t) => {
   const btn = document.createElement('button');
   btn.textContent = t.label;
   btn.dataset.key = t.key;
