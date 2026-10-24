@@ -1,6 +1,6 @@
 {
-  "release": "tycoon-economy-20261023-210006",
-  "built_at": "2026-10-23T21:00:06.830579+00:00",
+  "release": "city-balance-20261024-011404",
+  "built_at": "2026-10-24T01:14:04.921053+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Enable server-timed pharmacy cash, exponential ordinary upgrades, additive premium income, scaled collected game coins and daily ladder, crystal cooldown and daily limits; isolated dev economy only",
+  "feature": "Balance city purchases, positive net income and upgrades; show all 14 pharmacy goals; shared first-pharmacy cash and staff gate; scale games with network; add step-by-step tutorial editor with JSON export",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -25,7 +25,8 @@
     "dev.html",
     "pharmacy-layout.html",
     "game-constructor.html",
-    "animation-editor.html"
+    "animation-editor.html",
+    "tutorial-editor.html"
   ],
   "game_reward_migration": 122
 }
