@@ -1,6 +1,6 @@
 {
-  "release": "city-point-tutorial-20261024-111244",
-  "built_at": "2026-10-24T11:12:44.588642+00:00",
+  "release": "tutorial-play-game-20261024-115108",
+  "built_at": "2026-10-24T11:51:08.557535+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Synchronize city tutorial with opened own pharmacy panels; recover hiring and repair context without skipping collection before the point card opens",
+  "feature": "Teach active earnings by playing any minigame before continuing pharmacy onboarding; preserve completed legacy tutorials",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
