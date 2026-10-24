@@ -1,6 +1,6 @@
 {
-  "release": "live-editor-20261024-162306",
-  "built_at": "2026-10-24T16:23:06.646323+00:00",
+  "release": "gameplay-polish-20261024-172556",
+  "built_at": "2026-10-24T17:25:56.249452+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Add in-game tutorial editing with shared local drafts; route shelf tools to current hall and archive obsolete constructor tabs",
+  "feature": "Add anchored hiring, content opening rewards, tutorial close confirmation, gentle Flappy, garden Zuma and coin flights on exit; distinct prices activate only with service pricing v2",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
