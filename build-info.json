@@ -1,6 +1,6 @@
 {
-  "release": "tutorial-pulse-20261024-124152",
-  "built_at": "2026-10-24T12:41:52.965564+00:00",
+  "release": "crystal-text-20261024-124809",
+  "built_at": "2026-10-24T12:48:09.324278+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Pulse real tutorial controls with subtle scale animation and remove the effect on step change or dismissal",
+  "feature": "Remove crystal activity introduction and daily availability captions",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
