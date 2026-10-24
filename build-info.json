@@ -1,6 +1,6 @@
 {
-  "release": "hint-building-gap-20261025-232301",
-  "built_at": "2026-10-24T23:23:01.218751+00:00",
+  "release": "map-collect-20261025-233745",
+  "built_at": "2026-10-24T23:37:45.547972+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep city tutorial hints clear of the full pharmacy building and preserve clickable hiring plate on small screens",
+  "feature": "Teach direct coin collection over the pharmacy before opening its management card; preserve existing tutorial progress",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
