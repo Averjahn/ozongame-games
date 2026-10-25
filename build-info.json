@@ -1,6 +1,6 @@
 {
-  "release": "goal-locate-20261025-000527",
-  "built_at": "2026-10-25T00:05:27.599117+00:00",
+  "release": "map-shop-style-20261025-001803",
+  "built_at": "2026-10-25T00:18:03.647725+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Pulse the exact pharmacy map building when locating it from the top goal menu; preserve sprite transforms and seasonal tint",
+  "feature": "Restyle pharmacy purchase and repair popup to match city dialogs; responsive measured placement, coin prices and unobstructed close controls",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
