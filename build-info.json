@@ -1,6 +1,6 @@
 {
-  "release": "map-collect-20261025-233745",
-  "built_at": "2026-10-24T23:37:45.547972+00:00",
+  "release": "goal-locate-20261025-000527",
+  "built_at": "2026-10-25T00:05:27.599117+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Teach direct coin collection over the pharmacy before opening its management card; preserve existing tutorial progress",
+  "feature": "Pulse the exact pharmacy map building when locating it from the top goal menu; preserve sprite transforms and seasonal tint",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
