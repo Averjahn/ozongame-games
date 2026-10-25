@@ -1,6 +1,6 @@
 {
-  "release": "crystal-retry-20261026",
-  "built_at": "2026-10-25T22:11:15.405016+00:00",
+  "release": "crystals-title-20261026",
+  "built_at": "2026-10-25T22:38:53.954720+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Visible per-material reward errors, durable retry without reopening content, no preflight reward delay; map repair sprites, collect-all and focus brightness",
+  "feature": "Tutorial and city preview title simplified to Кристаллы",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
@@ -28,9 +28,6 @@
   "imported_player_profiles": 920,
   "updated_entries": [
     "dev.html",
-    "pharmacy-layout.html",
-    "game-constructor.html",
-    "animation-editor.html",
     "tutorial-editor.html"
   ],
   "game_reward_migration": 122
