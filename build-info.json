@@ -1,6 +1,6 @@
 {
-  "release": "crystals-title-20261026",
-  "built_at": "2026-10-25T22:38:53.954720+00:00",
+  "release": "content-open-20261026",
+  "built_at": "2026-10-25T22:44:39.727557+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Tutorial and city preview title simplified to Кристаллы",
+  "feature": "Credit content on Open; remove separate reward action and pending reward messages",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
@@ -27,8 +27,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "tutorial-editor.html"
+    "dev.html"
   ],
   "game_reward_migration": 122
 }
