@@ -1,6 +1,6 @@
 {
-  "release": "crystals-description-short-20261026",
-  "built_at": "2026-10-26T02:47:52.493214+00:00",
+  "release": "game-session-receipt-20261026",
+  "built_at": "2026-10-26T03:08:40.915388+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove optional-progression sentence from crystals tutorial description",
+  "feature": "Combined confirmed minigame and daily rewards across retries; no zero receipt; close after settlement",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
@@ -27,8 +27,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "tutorial-editor.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "browser-indexeddb",
