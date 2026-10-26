@@ -1,6 +1,6 @@
 {
-  "release": "crystals-tutorial-copy-20261026",
-  "built_at": "2026-10-26T02:43:37.577704+00:00",
+  "release": "crystals-description-short-20261026",
+  "built_at": "2026-10-26T02:47:52.493214+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove voluntary qualifier from crystal materials tutorial",
+  "feature": "Remove optional-progression sentence from crystals tutorial description",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
