@@ -1,6 +1,6 @@
 {
-  "release": "tutorial-editor-all-texts-20261026",
-  "built_at": "2026-10-26T02:24:09.182894+00:00",
+  "release": "crystals-tutorial-copy-20261026",
+  "built_at": "2026-10-26T02:43:37.577704+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Complete tutorial text editor: ordered sections, full text, inline editing, autosave, JSON changes and live game preview",
+  "feature": "Remove voluntary qualifier from crystal materials tutorial",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
@@ -28,8 +28,6 @@
   "imported_player_profiles": 920,
   "updated_entries": [
     "dev.html",
-    "pharmacy-layout.html",
-    "animation-editor.html",
     "tutorial-editor.html"
   ],
   "game_reward_migration": 122,
