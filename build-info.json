@@ -1,6 +1,6 @@
 {
-  "release": "game-session-receipt-20261026",
-  "built_at": "2026-10-26T03:08:40.915388+00:00",
+  "release": "chase-camera-respawn-20261026",
+  "built_at": "2026-10-26T03:23:51.898966+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Combined confirmed minigame and daily rewards across retries; no zero receipt; close after settlement",
+  "feature": "Chase camera follows player and restores visible checkpoints after car collisions; pharmacy ignores game keyboard input",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
