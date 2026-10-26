@@ -1,6 +1,6 @@
 {
-  "release": "bank-repayment-buttons-20261026",
-  "built_at": "2026-10-26T12:33:06.441544+00:00",
+  "release": "server-restored-20261026",
+  "built_at": "2026-10-26T13:56:52.694368+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,15 +14,10 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Show only full loan repayment when wallet covers debt; partial repayment for insufficient balance",
-  "server_changes_deployed": false,
-  "server_changes_pending": [
-    "tycoon.mjs",
-    "tycoon-economy.mjs",
-    "staffing.mjs",
-    "cityEconomy.mjs"
-  ],
-  "backend_origin": null,
+  "feature": "Restore test VPS persistence with current economy, immediate content crystals and cross-browser city, bank and cat progress; browser fallback disabled",
+  "server_changes_deployed": true,
+  "server_changes_pending": [],
+  "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
@@ -30,6 +25,6 @@
     "dev.html"
   ],
   "game_reward_migration": 122,
-  "runtime_storage": "browser-indexeddb",
-  "server_required": false
+  "runtime_storage": "server",
+  "server_required": true
 }
