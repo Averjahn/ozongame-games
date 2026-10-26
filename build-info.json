@@ -1,6 +1,6 @@
 {
-  "release": "anchored-pharmacies-20261026",
-  "built_at": "2026-10-26T00:52:54.836882+00:00",
+  "release": "browser-economy-20261026",
+  "built_at": "2026-10-26T01:25:18.323303+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Pharmacy management and repair anchored beside buildings; remove legacy repair sheet; stock button pending states",
+  "feature": "Browser-persistent shared economy: warehouse tutorial, crystals, timers and offline income work without VPS",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
@@ -22,12 +22,14 @@
     "staffing.mjs",
     "cityEconomy.mjs"
   ],
-  "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
+  "backend_origin": null,
   "production_switched": false,
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
     "dev.html"
   ],
-  "game_reward_migration": 122
+  "game_reward_migration": 122,
+  "runtime_storage": "browser-indexeddb",
+  "server_required": false
 }
