@@ -1,6 +1,6 @@
 {
-  "release": "browser-economy-20261026",
-  "built_at": "2026-10-26T01:25:18.323303+00:00",
+  "release": "shop-tutorial-text-20261026",
+  "built_at": "2026-10-26T02:05:18.207450+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Browser-persistent shared economy: warehouse tutorial, crystals, timers and offline income work without VPS",
+  "feature": "Shop tutorial description: Улучшения повышают доход аптеки.",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
@@ -27,7 +27,8 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "tutorial-editor.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "browser-indexeddb",
