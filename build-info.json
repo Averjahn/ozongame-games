@@ -1,6 +1,6 @@
 {
-  "release": "tutorial-pointer-edge-20261026",
-  "built_at": "2026-10-26T03:34:27.384290+00:00",
+  "release": "bank-repayment-buttons-20261026",
+  "built_at": "2026-10-26T12:33:06.441544+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Tutorial connector ends at the highlighted button edge and follows its pulse",
+  "feature": "Show only full loan repayment when wallet covers debt; partial repayment for insufficient balance",
   "server_changes_deployed": false,
   "server_changes_pending": [
     "tycoon.mjs",
