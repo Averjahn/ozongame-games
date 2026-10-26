@@ -1,6 +1,6 @@
 {
-  "release": "generated-shopping-hand-20261026",
-  "built_at": "2026-10-26T15:24:39.747054+00:00",
+  "release": "repair-early-city-saves-20261026",
+  "built_at": "2026-10-26T15:50:46.706729+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore approved generated shopping hands with wrist fitting, skin tint and animation editor controls",
+  "feature": "Use confirmed server earnings for city access; repair stale early keys on login without resetting purchases or other progress",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,8 +22,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "animation-editor.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
