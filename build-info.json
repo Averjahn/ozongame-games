@@ -1,6 +1,6 @@
 {
-  "release": "server-restored-20261026",
-  "built_at": "2026-10-26T13:56:52.694368+00:00",
+  "release": "city-gate-2500-20261026",
+  "built_at": "2026-10-26T15:01:47.493500+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore test VPS persistence with current economy, immediate content crystals and cross-browser city, bank and cat progress; browser fallback disabled",
+  "feature": "New registration always enters pharmacy; city requires 2500 earned coins and keys; stale city flags cannot bypass the earnings goal",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
