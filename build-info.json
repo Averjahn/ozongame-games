@@ -1,6 +1,6 @@
 {
-  "release": "repair-early-city-saves-20261026",
-  "built_at": "2026-10-26T15:50:46.706729+00:00",
+  "release": "sync-city-pharmacy-icons-20261027",
+  "built_at": "2026-10-27T10:30:18.124850+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Use confirmed server earnings for city access; repair stale early keys on login without resetting purchases or other progress",
+  "feature": "Synchronize city goal pharmacy thumbnails with map repair state, decorations and building orientation",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
