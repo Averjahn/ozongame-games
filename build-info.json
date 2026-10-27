@@ -1,6 +1,6 @@
 {
-  "release": "sync-city-pharmacy-icons-20261027",
-  "built_at": "2026-10-27T10:30:18.124850+00:00",
+  "release": "factory-instant-crystals-20261027",
+  "built_at": "2026-10-27T10:53:50.013112+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Synchronize city goal pharmacy thumbnails with map repair state, decorations and building orientation",
+  "feature": "Instant factory construction completion for 30 crystals with atomic server debit; remove coin-based half-time crews and boosts",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
