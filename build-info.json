@@ -1,6 +1,6 @@
 {
-  "release": "customer-speech-hud-clearance-20261028",
-  "built_at": "2026-10-28T17:06:46.304177+00:00",
+  "release": "cat-flower-safe-shelf-20261028",
+  "built_at": "2026-10-28T17:21:41.511333+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep customer speech fully visible beside the character below the HUD on short and zoomed views, without orphaned tails",
+  "feature": "Reserve purchased flower space from cat shelf landings and lower current shelf feet by nine pixels",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,7 +22,8 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "pharmacy-layout.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
