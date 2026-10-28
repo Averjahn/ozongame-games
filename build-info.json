@@ -1,6 +1,6 @@
 {
-  "release": "career-readable-milestones-20261028",
-  "built_at": "2026-10-28T10:01:41.835496+00:00",
+  "release": "career-bubble-tail-20261028",
+  "built_at": "2026-10-28T10:20:33.474720+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Increase career milestone labels size, weight and brightness with dark contrast shadow",
+  "feature": "Enlarge and join career bubble tail to match the supplied chat bubble reference",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
