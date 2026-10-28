@@ -1,6 +1,6 @@
 {
-  "release": "interface-first-tutorial-20261028",
-  "built_at": "2026-10-28T05:12:46.106605+00:00",
+  "release": "tutorial-explanation-next-20261028",
+  "built_at": "2026-10-28T05:47:10.665701+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Explain coins, crystals, career, income, cash, games, shop and content before stock; simplify stock modal and place coin till left of crystals",
+  "feature": "Advance passive interface explanations with a Next button; keep actual gameplay actions on their own controls",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
