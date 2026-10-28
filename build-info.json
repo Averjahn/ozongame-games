@@ -1,6 +1,6 @@
 {
-  "release": "mobile-people-cat-care-20261028",
-  "built_at": "2026-10-28T20:11:53.954035+00:00",
+  "release": "mobile-item-proportions-20261028",
+  "built_at": "2026-10-28T20:41:17.313429+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Align portrait customer heads with the pharmacist, share cat and bowl ground, and keep mobile care panels clear of pets and bowls",
+  "feature": "Match mobile furniture, medicine and monitor proportions to the pharmacist; separate floor furniture and shelf packs; restore replacement visuals",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
