@@ -1,6 +1,6 @@
 {
-  "release": "career-promotion-popup-20261028",
-  "built_at": "2026-10-28T18:03:32.140221+00:00",
+  "release": "menu-pulse-unclipped-20261028",
+  "built_at": "2026-10-28T19:56:34.265417+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore existing promotion congratulations for earnings-based career ranks after the reward animation, once per new rank",
+  "feature": "Allow doubled tutorial menu buttons to paint and receive clicks beyond the menu scroll clip while preserving list layout and scrolling",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
