@@ -1,6 +1,6 @@
 {
-  "release": "shop-stock-alerts-city-callouts-20261028",
-  "built_at": "2026-10-28T08:28:46.468913+00:00",
+  "release": "career-money-progress-20261028",
+  "built_at": "2026-10-28T08:49:29.717138+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Localize shop coin shortage; notify only about confirmed empty stock; place city callouts left and route connectors outside text",
+  "feature": "Add yellow career money progress with 500-2500 milestones, persistent record fill, next promotion shortfall and mobile layout",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,7 +22,8 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "tutorial-editor.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
