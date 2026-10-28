@@ -1,6 +1,6 @@
 {
-  "release": "career-total-earnings-20261028",
-  "built_at": "2026-10-28T17:33:05.307734+00:00",
+  "release": "fallen-medicine-pulse-20261028",
+  "built_at": "2026-10-28T17:38:33.173199+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Use confirmed cumulative earnings for career rank, progress bar, and city goal consistently",
+  "feature": "Pulse fallen medicines to 1.5x until picked up and invite new players to onboarding",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,8 +22,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "tutorial-editor.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
