@@ -1,6 +1,6 @@
 {
-  "release": "tutorial-close-double-pulse-20261028",
-  "built_at": "2026-10-28T16:32:08.794149+00:00",
+  "release": "paid-balanced-restock-20261028",
+  "built_at": "2026-10-28T16:48:28.991615+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Pulse the whole targeted close button from 1x to 2x in hall and city tutorials with stable natural placement",
+  "feature": "Charge authoritative per-category stock pack prices with at least 60 percent starting trading margin, atomic debits and tutorial recovery",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
