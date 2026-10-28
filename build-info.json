@@ -1,6 +1,6 @@
 {
-  "release": "separate-career-progress-20261028",
-  "built_at": "2026-10-28T09:19:59.576055+00:00",
+  "release": "career-position-bubble-20261028",
+  "built_at": "2026-10-28T09:59:46.834546+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Place career progress below the role badge without a white container and hide completed career caption",
+  "feature": "Position career title as a chat bubble pointing at current yellow progress, with responsive bounds",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
