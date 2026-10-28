@@ -1,6 +1,6 @@
 {
-  "release": "career-bubble-corner-20261028",
-  "built_at": "2026-10-28T11:20:37.015281+00:00",
+  "release": "fixed-wallet-position-20261028",
+  "built_at": "2026-10-28T11:41:32.097414+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove rounded corner at the joined career bubble tail on progress endpoints",
+  "feature": "Keep coin balance anchored directly below the avatar independent of career panel height",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
