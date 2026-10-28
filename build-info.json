@@ -1,6 +1,6 @@
 {
-  "release": "cat-flower-safe-shelf-20261028",
-  "built_at": "2026-10-28T17:21:41.511333+00:00",
+  "release": "cat-animation-resume-20261028",
+  "built_at": "2026-10-28T17:27:51.056212+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Reserve purchased flower space from cat shelf landings and lower current shelf feet by nine pixels",
+  "feature": "Preserve cat sprite proportions, walk during separation, and restore animations after tab suspension",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,8 +22,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "pharmacy-layout.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
