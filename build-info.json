@@ -1,6 +1,6 @@
 {
-  "release": "trainee-corner-no-caption-20261028",
-  "built_at": "2026-10-28T11:43:14.375060+00:00",
+  "release": "pharmacist-down-nine-20261028",
+  "built_at": "2026-10-28T11:45:58.775123+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Square the trainee bubble lower-left corner and remove the next promotion caption",
+  "feature": "Move the counter pharmacist down nine pixels, including the attached uniform on desktop and mobile",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
