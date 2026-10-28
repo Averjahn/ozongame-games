@@ -1,6 +1,6 @@
 {
-  "release": "career-tail-always-corner-20261028",
-  "built_at": "2026-10-28T16:56:44.966735+00:00",
+  "release": "customer-speech-hud-clearance-20261028",
+  "built_at": "2026-10-28T17:06:46.304177+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep the career tail in a fixed bubble corner and move the bubble so its tip matches the current progress",
+  "feature": "Keep customer speech fully visible beside the character below the HUD on short and zoomed views, without orphaned tails",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
