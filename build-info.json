@@ -1,6 +1,6 @@
 {
-  "release": "pharmacy-cash-flight-stable-tutorial-20261028",
-  "built_at": "2026-10-28T05:55:21.444835+00:00",
+  "release": "shop-stock-alerts-city-callouts-20261028",
+  "built_at": "2026-10-28T08:28:46.468913+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Animate collected pharmacy coins from the till to the wallet counter; keep tutorial cards stationary during target pulsing and hover",
+  "feature": "Localize shop coin shortage; notify only about confirmed empty stock; place city callouts left and route connectors outside text",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
