@@ -1,6 +1,6 @@
 {
-  "release": "persistent-cash-capacity-20261028",
-  "built_at": "2026-10-28T09:16:44.964518+00:00",
+  "release": "separate-career-progress-20261028",
+  "built_at": "2026-10-28T09:19:59.576055+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Preserve unlocked till capacity across city transitions and migrate overflowing saves without losing earned coins",
+  "feature": "Place career progress below the role badge without a white container and hide completed career caption",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
