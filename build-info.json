@@ -1,6 +1,6 @@
 {
-  "release": "global-sound-20261029",
-  "built_at": "2026-10-28T21:22:09.716894+00:00",
+  "release": "account-reload-20261029",
+  "built_at": "2026-10-28T21:44:45.940416+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Restore pharmacy music and original cat sounds with a round persistent global sound toggle",
+  "feature": "Keep existing UID accounts out of registration on hard reload and show a retry when profile lookup fails",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
