@@ -1,6 +1,6 @@
 {
-  "release": "tutorial-double-attention-20261028",
-  "built_at": "2026-10-28T17:48:05.399690+00:00",
+  "release": "career-coin-flight-sync-20261028",
+  "built_at": "2026-10-28T17:59:50.254167+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Double all pharmacy and city onboarding target pulses while keeping coachmarks stable",
+  "feature": "Synchronize earned-coin career progress and promotions with the coin flight and animated wallet counter",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
