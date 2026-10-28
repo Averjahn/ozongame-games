@@ -1,6 +1,6 @@
 {
-  "release": "mobile-item-proportions-20261028",
-  "built_at": "2026-10-28T20:41:17.313429+00:00",
+  "release": "career-pointer-highlight-20261028",
+  "built_at": "2026-10-28T20:47:21.771536+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Match mobile furniture, medicine and monitor proportions to the pharmacist; separate floor furniture and shelf packs; restore replacement visuals",
+  "feature": "Pulse the career bubble and its corner pointer together with a shared silhouette outline",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,8 +22,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "pharmacy-layout.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
