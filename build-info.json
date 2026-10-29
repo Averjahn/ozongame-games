@@ -1,6 +1,6 @@
 {
-  "release": "production-lines-only-20261029",
-  "built_at": "2026-10-29T16:57:25.725031+00:00",
+  "release": "modal-pulse-unclipped-20261029",
+  "built_at": "2026-10-29T17:25:36.055328+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Buy production lines directly without factory purchase or construction; city goal requires pharmacies and launching production",
+  "feature": "Let highlighted modal controls pulse beyond card and scroll boundaries while preserving layout and original actions",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -27,5 +27,5 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "production-lines-only-20261029"
+  "runtime_release": "modal-pulse-unclipped-20261029"
 }
