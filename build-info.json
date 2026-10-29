@@ -1,6 +1,6 @@
 {
-  "release": "starter-pharmacy-repair-labels-20261029",
-  "built_at": "2026-10-29T10:53:34.141934+00:00",
+  "release": "repair-before-upgrades-20261029",
+  "built_at": "2026-10-29T10:57:32.729766+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep the starter pharmacy repaired across old saves and clarify repair button labels",
+  "feature": "Disable improvement purchases until damaged pharmacies are repaired; preserve starter eligibility and existing copy",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
