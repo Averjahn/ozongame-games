@@ -1,6 +1,6 @@
 {
-  "release": "menu-shelf-jump-20261029",
-  "built_at": "2026-10-29T19:58:32.507912+00:00",
+  "release": "production-supply-paced-cats-20261029",
+  "built_at": "2026-10-29T20:42:26.212424+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Unclip fallen menu buttons with viewport-safe rotation and preserved scroll; animate cat shelf landing then menu impact",
+  "feature": "Purchased factory lines continuously replenish their stock category; cap kitten medicine and grown-cat menu events at three each with shared story cooldown and modal/game deferral",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -27,5 +27,5 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "menu-shelf-jump-20261029"
+  "runtime_release": "production-supply-paced-cats-20261029"
 }
