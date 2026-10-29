@@ -1,6 +1,6 @@
 {
-  "release": "staff-ability-labels-20261029",
-  "built_at": "2026-10-29T11:01:56.094291+00:00",
+  "release": "staff-team-balance-20261029",
+  "built_at": "2026-10-29T11:10:35.941533+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Show ability labels only for staff members who have an actual special ability",
+  "feature": "Restore staff team efficiency to 100/130/160 percent with recurring payroll and remove staffing explanation paragraphs",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
