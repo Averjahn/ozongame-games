@@ -1,6 +1,6 @@
 {
-  "release": "drunk-visitor-arrival-20261029",
-  "built_at": "2026-10-29T18:44:08.526531+00:00",
+  "release": "admin-menu-events-20261029",
+  "built_at": "2026-10-29T19:24:41.991121+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Animate drunk visitor arrival, idle dialogue and departure using empty-handed thief gait; pause and resume hall sales on server",
+  "feature": "Compact QWF event toolbar with fixed server grants and both visitors; first cat menu knock twenty seconds after growth with durable timing",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,11 +22,10 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "pharmacy-layout.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "drunk-visitor-arrival-20261029"
+  "runtime_release": "admin-menu-events-20261029"
 }
