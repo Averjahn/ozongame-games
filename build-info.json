@@ -1,6 +1,6 @@
 {
-  "release": "city-constructor-sync-20261029",
-  "built_at": "2026-10-29T11:21:17.999113+00:00",
+  "release": "city-sound-toggle-20261029",
+  "built_at": "2026-10-29T11:36:22.978248+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Sync city constructor geometry and building depth to the current game; select hidden pharmacies and preserve exports and drafts",
+  "feature": "Add the shared persistent sound toggle to the city bottom-right controls",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,10 +22,10 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "game-constructor.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "staff-team-balance-20261029"
+  "runtime_release": "city-sound-toggle-20261029"
 }
