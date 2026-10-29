@@ -1,6 +1,6 @@
 {
-  "release": "fixed-mini-game-coins-20261029",
-  "built_at": "2026-10-29T18:21:18.844385+00:00",
+  "release": "drunk-visitor-arrival-20261029",
+  "built_at": "2026-10-29T18:44:08.526531+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Use fixed 5 and 10 coin pickups in mini-games, matching labels and server credit; retain cat petting fix",
+  "feature": "Animate drunk visitor arrival, idle dialogue and departure using empty-handed thief gait; pause and resume hall sales on server",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,10 +22,11 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "pharmacy-layout.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "fixed-mini-game-coins-20261029"
+  "runtime_release": "drunk-visitor-arrival-20261029"
 }
