@@ -1,6 +1,6 @@
 {
-  "release": "factory-lines-20261029",
-  "built_at": "2026-10-29T16:30:32.685858+00:00",
+  "release": "factory-lines-prices-20261029",
+  "built_at": "2026-10-29T16:43:44.187894+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Six fixed-price factory lines with category-specific coin/crystal costs and increasing income; horizontal cards",
+  "feature": "Factory crystal line prices: patches 20, analgin 40, allergy remedies 60",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -27,5 +27,5 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "factory-lines-20261029"
+  "runtime_release": "factory-lines-prices-20261029"
 }
