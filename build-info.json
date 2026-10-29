@@ -1,6 +1,6 @@
 {
-  "release": "cat-pet-perch-20261029",
-  "built_at": "2026-10-29T18:06:45.209226+00:00",
+  "release": "fixed-mini-game-coins-20261029",
+  "built_at": "2026-10-29T18:21:18.844385+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep perched cats at their resting height and pose after affection; retain animated overpet descent",
+  "feature": "Use fixed 5 and 10 coin pickups in mini-games, matching labels and server credit; retain cat petting fix",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -27,5 +27,5 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "cat-pet-perch-20261029"
+  "runtime_release": "fixed-mini-game-coins-20261029"
 }
