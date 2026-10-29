@@ -1,6 +1,6 @@
 {
-  "release": "compact-coins-20261029",
-  "built_at": "2026-10-29T15:56:46.514545+00:00",
+  "release": "factory-lines-20261029",
+  "built_at": "2026-10-29T16:30:32.685858+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Compact monetary labels in wallets, tills, prices and rewards; keep exact arithmetic and balances",
+  "feature": "Six fixed-price factory lines with category-specific coin/crystal costs and increasing income; horizontal cards",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -27,5 +27,5 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "compact-coins-20261029"
+  "runtime_release": "factory-lines-20261029"
 }
