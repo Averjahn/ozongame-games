@@ -1,6 +1,6 @@
 {
-  "release": "city-gentle-synced-pulse-20261029",
-  "built_at": "2026-10-29T00:28:51.840934+00:00",
+  "release": "regular-payroll-balanced-staff-20261029",
+  "built_at": "2026-10-29T01:26:10.471900+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Use gentle 1.05x city pulses synchronized with pharmacy glow while preserving 2x pharmacy interior tutorials",
+  "feature": "Accrue pharmacy payroll after the prepaid eight hours, scale salaries with earning potential, preserve legacy progress and show actual net income",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
