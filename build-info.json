@@ -1,6 +1,6 @@
 {
-  "release": "city-economy-events-20261029-r2",
-  "built_at": "2026-10-29T15:21:02.966869+00:00",
+  "release": "city-economy-events-20261029-r3",
+  "built_at": "2026-10-29T15:33:28.297395+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -22,10 +22,11 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "pharmacy-layout.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "city-economy-events-20261029-r2"
+  "runtime_release": "city-economy-events-20261029-r3"
 }
