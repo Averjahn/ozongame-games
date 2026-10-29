@@ -1,6 +1,6 @@
 {
-  "release": "additive-staff-countertop-coffee-20261029",
-  "built_at": "2026-10-29T01:48:27.195420+00:00",
+  "release": "approved-pharmacy-visuals-20261029",
+  "built_at": "2026-10-29T10:47:08.757689+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Add independent pharmacist earning contributions and place the regenerated compact coffee machine on the counter",
+  "feature": "Apply approved pharmacy visual export and cat geometry while preserving pharmacist placement",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
