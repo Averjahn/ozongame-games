@@ -1,6 +1,6 @@
 {
-  "release": "approved-pharmacy-visuals-20261029",
-  "built_at": "2026-10-29T10:47:08.757689+00:00",
+  "release": "starter-pharmacy-repair-labels-20261029",
+  "built_at": "2026-10-29T10:53:34.141934+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Apply approved pharmacy visual export and cat geometry while preserving pharmacist placement",
+  "feature": "Keep the starter pharmacy repaired across old saves and clarify repair button labels",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,8 +22,7 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "pharmacy-layout.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
