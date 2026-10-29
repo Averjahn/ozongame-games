@@ -1,6 +1,6 @@
 {
-  "release": "regular-payroll-balanced-staff-20261029",
-  "built_at": "2026-10-29T01:26:10.471900+00:00",
+  "release": "additive-staff-countertop-coffee-20261029",
+  "built_at": "2026-10-29T01:48:27.195420+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Accrue pharmacy payroll after the prepaid eight hours, scale salaries with earning potential, preserve legacy progress and show actual net income",
+  "feature": "Add independent pharmacist earning contributions and place the regenerated compact coffee machine on the counter",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,7 +22,8 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "pharmacy-layout.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
