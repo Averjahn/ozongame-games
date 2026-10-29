@@ -1,6 +1,6 @@
 {
-  "release": "city-economy-events-20261029-r3",
-  "built_at": "2026-10-29T15:33:28.297395+00:00",
+  "release": "compact-coins-20261029",
+  "built_at": "2026-10-29T15:56:46.514545+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Migrate pharmacy addresses, connect shared city stock to server income, rebalance factory lines and schedule one-time story events",
+  "feature": "Compact monetary labels in wallets, tills, prices and rewards; keep exact arithmetic and balances",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,11 +22,10 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html",
-    "pharmacy-layout.html"
+    "dev.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "city-economy-events-20261029-r3"
+  "runtime_release": "compact-coins-20261029"
 }
