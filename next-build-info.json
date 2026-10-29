@@ -1,0 +1,9 @@
+{
+  "release": "independent-migrated-20261030",
+  "built_at": "2026-10-29T22:44:57.803847+00:00",
+  "backend": "https://ozongame-dev.80-242-61-200.sslip.io/next",
+  "independent_profile_and_wallet": true,
+  "production_switched": false,
+  "test_entry_changed": false,
+  "imported_real_accounts": 724
+}
