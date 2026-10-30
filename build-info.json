@@ -1,6 +1,6 @@
 {
-  "release": "admin-million-grant-20261030",
-  "built_at": "2026-10-30T07:27:00.388306+00:00",
+  "release": "bed-camera-sync-20261030",
+  "built_at": "2026-10-30T07:36:01.973818+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Add one million coin grant to QWF event tools",
-  "server_changes_deployed": true,
+  "feature": "Synchronize cat bed with pharmacy camera during fast pans",
+  "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "admin-million-grant-20261030",
+  "runtime_release": "bed-camera-sync-20261030",
   "server_changes_required": false
 }
