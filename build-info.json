@@ -1,6 +1,6 @@
 {
-  "release": "economy-admin-20261030",
-  "built_at": "2026-10-30T04:17:41.868439+00:00",
+  "release": "cat-shop-label-20261030",
+  "built_at": "2026-10-30T04:31:47.339805+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Economy authoring admin with live scenario calculations, local drafts and validated JSON export",
+  "feature": "Remove pharmacy-level disclaimer from cat product labels",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "economy-admin-20261030",
+  "runtime_release": "cat-shop-label-20261030",
   "server_changes_required": false
 }
