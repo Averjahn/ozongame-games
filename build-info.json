@@ -1,6 +1,6 @@
 {
-  "release": "customer-purchase-income-20261030",
-  "built_at": "2026-10-30T12:59:54.732332+00:00",
+  "release": "customer-purchase-income-20261030-v2",
+  "built_at": "2026-10-30T13:10:38.234363+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "customer-purchase-income-20261030",
+  "runtime_release": "customer-purchase-income-20261030-v2",
   "server_changes_required": true
 }
