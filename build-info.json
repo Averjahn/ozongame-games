@@ -1,6 +1,6 @@
 {
-  "release": "tutorial-click-20261030",
-  "built_at": "2026-10-30T17:44:49.276082+00:00",
+  "release": "city-tour-short-20261030",
+  "built_at": "2026-10-30T20:27:26.467110+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Factory tutorial after five pharmacies; original animated click pointer in pharmacy and city",
+  "feature": "Remove final city introduction step; complete after closing bank; factory lesson remains gated to five pharmacies",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "tutorial-click-20261030",
+  "runtime_release": "city-tour-short-20261030",
   "server_changes_required": false
 }
