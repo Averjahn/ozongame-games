@@ -1,6 +1,6 @@
 {
-  "release": "customer-purchase-income-20261030-v2",
-  "built_at": "2026-10-30T13:10:38.235370+00:00",
+  "release": "customer-purchase-income-20261030-v3",
+  "built_at": "2026-10-30T13:21:13.419995+00:00",
   "backend": "https://ozongame-dev.80-242-61-200.sslip.io/next",
   "independent_profile_and_wallet": true,
   "production_switched": false,
