@@ -1,6 +1,6 @@
 {
-  "release": "modal-cash-sync-20261030",
-  "built_at": "2026-10-30T01:07:11.637484+00:00",
+  "release": "cat-bowl-approved-20261030",
+  "built_at": "2026-10-30T01:28:00.728479+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Flow layout for popup artwork and long content at every viewport; synchronized initial pharmacy cash capacity",
+  "feature": "Apply approved horizontal and vertical cat feeding offsets, scaled by scene and age; synchronize constructor defaults",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,5 +30,5 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "modal-cash-sync-20261030"
+  "runtime_release": "cat-bowl-approved-20261030"
 }

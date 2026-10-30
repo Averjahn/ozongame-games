@@ -4088,17 +4088,14 @@ function renderBegDxTab(root) {
 
   // уже применённые в игре значения BEG_DX (CatsLayer.vue) — базовая точка для режима
   // «Ест/пьёт»: там кот стартует ИМЕННО с этой позиции и от неё считается доп. смещение
-  const BEG_DX_APPLIED = {
-    food:  { begSitR: 67, begSitL: -65, begStandR: 80, begStandL: -73 },
-    drink: { begSitR: 63, begSitL: -62, begStandR: 71, begStandL: -74 },
-  };
-
+  const BOWL_CALIBRATION_APPLIED = {"beg":{"food":{"begSitR":67,"begSitL":-65,"begStandR":80,"begStandL":-73},"drink":{"begSitR":63,"begSitL":-62,"begStandR":71,"begStandL":-74}},"eat":{"food":{"begSitR":-12,"begSitL":10,"begStandR":-24,"begStandL":19},"drink":{"begSitR":-10,"begSitL":7,"begStandR":-20,"begStandL":23}},"vertical":{"beg":{"food":{"begSitR":0,"begSitL":0,"begStandR":0,"begStandL":0},"drink":{"begSitR":0,"begSitL":0,"begStandR":0,"begStandL":0}},"eat":{"food":{"begSitR":5,"begSitL":4,"begStandR":5,"begStandL":4},"drink":{"begSitR":4,"begSitL":4,"begStandR":4,"begStandL":5}}}};
+  const BEG_DX_APPLIED=BOWL_CALIBRATION_APPLIED.beg;
   const DY_KEY='ozongame_bowl_vertical_v1';
-  let vertical=loadFrom(DY_KEY,{beg:{},eat:{}}),dy=0;
+  let vertical=loadFrom(DY_KEY,BOWL_CALIBRATION_APPLIED.vertical),dy=0;
   const STORAGE_KEY_BEG = 'ozongame_beg_calibration_v1';
   const STORAGE_KEY_EAT = 'ozongame_eat_calibration_v1';
-  let stateBeg = loadFrom(STORAGE_KEY_BEG, {});
-  let stateEat = loadFrom(STORAGE_KEY_EAT, {});
+  let stateBeg = loadFrom(STORAGE_KEY_BEG, BOWL_CALIBRATION_APPLIED.beg);
+  let stateEat = loadFrom(STORAGE_KEY_EAT, BOWL_CALIBRATION_APPLIED.eat);
   let curPose = POSES[0].key;
   let curBowl = 'food';
   let curMode = 'beg'; // 'beg' | 'eat'
