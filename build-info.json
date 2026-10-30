@@ -1,6 +1,6 @@
 {
-  "release": "bank-manual-secured-loans-20261030",
-  "built_at": "2026-10-30T08:59:52.166557+00:00",
+  "release": "mobile-layout-courier-single-cat-20261030",
+  "built_at": "2026-10-30T09:51:05.292412+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Protect starting pharmacy, rebalance secured loans and remove automatic debt collection",
+  "feature": "Mobile upgrade layout constructor, courier ground depth and no second-cat arrival",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "bank-manual-secured-loans-20261030",
+  "runtime_release": "mobile-layout-courier-single-cat-20261030",
   "server_changes_required": false
 }

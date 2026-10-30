@@ -88,6 +88,7 @@
    с независимыми таймерами/аудио-контекстами/RAF-циклами).
    ============================================================ */
 const TOP_TABS = [
+  { key: 'mobilehall', label: '📱 Улучшения аптеки', render: root => { root.innerHTML='<h2>Мобильная расстановка улучшений</h2><iframe title="Мобильная расстановка улучшений" src="pharmacy-layout.html?tab=mobile&amp;embedded=1" allow="clipboard-write" style="width:100%;height:1100px;border:0"></iframe>'; } },
   { key: 'live', label: '✎ Редактирование в игре', render: renderLiveEditorHome },
   { key: 'shopselection', label: '🛍️ Состав магазина', render: root => { root.innerHTML='<h2>Улучшения в магазине аптеки</h2><p>Выберите нужные улучшения и скопируйте код выбора.</p><iframe title="Состав магазина" src="pharmacy-layout.html?tab=shop&embedded=1&v=shop-selection-20261030" style="width:100%;height:85vh;border:0"></iframe>'; } },
   { key: 'economy', label: '💰 Экономика', render: root => { root.innerHTML='<h2>Экономика аптеки и города</h2><p>Цены, доходность, персонал, склад, награды и производственные линии. Сохрани настройки и отправь код изменений.</p><a href="economy-admin.html" target="_blank" rel="noopener">Открыть редактор экономики ↗</a><iframe title="Экономика игры" src="economy-admin.html" style="width:100%;height:85vh;border:0;margin-top:16px"></iframe>'; } },
