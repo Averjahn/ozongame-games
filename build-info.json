@@ -1,6 +1,6 @@
 {
-  "release": "cash-mischief-20261030",
-  "built_at": "2026-10-29T21:45:16.441727+00:00",
+  "release": "pharmacy-polish-20261030",
+  "built_at": "2026-10-30T00:02:18.096403+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Cat mischief one minute after the last confirmed till collection, deferred seven seconds after an overdue busy period; current-version statistics and migration planning only",
+  "feature": "Fixed 20-coin game completion reward plus collected coins; tutorial foreground, upgrade copy, customer speech and cat animation fixes",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -22,10 +22,13 @@
   "source_snapshot_utc": "2026-10-15T15:31:02.441693+00:00",
   "imported_player_profiles": 920,
   "updated_entries": [
-    "dev.html"
+    "dev.html",
+    "tutorial-editor.html",
+    "animation-editor.html",
+    "pharmacy-layout.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "cash-mischief-20261030"
+  "runtime_release": "pharmacy-polish-20261030"
 }
