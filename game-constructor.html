@@ -114,7 +114,7 @@ const TOP_TABS = [
 ];
 
 // Old geometry remains available by explicit archive mode, never mixed into current tools.
-const CURRENT_TOOLS = new Set(['live','hallslots','shelfitems','tutorials','walkrig','citymapper','citymap','marblemap']);
+const CURRENT_TOOLS = new Set(['live','begdx','hallslots','shelfitems','tutorials','walkrig','citymapper','citymap','marblemap']);
 const ARCHIVE_MODE = new URLSearchParams(location.search).get('archive') === '1';
 function renderLiveEditorHome(root) {
  root.innerHTML = `<h2>Редактирование в настоящей игре</h2><p>Откройте тестовую игру со своим uid и нажмите Q+W+E или «Конструктор» внизу справа. Можно играть, выбирать подсказки на экране, менять текст и выгружать JSON.</p><p>Для своего аккаунта используйте ссылку с вашим uid. Параметр <code>editor=1</code> сразу раскрывает панель.</p><a href="dev.html?editor=1" target="_blank" rel="noopener">Открыть игру с редактором ↗</a><h3>Актуальные инструменты</h3><ul><li>Визуальные элементы и товары: текущий зал 3120 × 810, единая расстановка полок, отдельных упаковок и слоёв.</li><li>Анимации: отдельная мастерская с частями тела и кистью с пакетом.</li><li>Карта: текущая разметка, сезоны и время суток.</li><li>Обучение: тексты всех шагов, общий черновик с игровым редактором.</li></ul><p>Прежняя расстановка, старые зоны и мобильные позиции относятся к предыдущему залу. Они убраны из рабочего меню, сохранённые данные не удалены.</p><a href="?archive=1">Архив инструментов и прежних отчётов</a>`;
@@ -139,7 +139,7 @@ if (FOCUS_CITY) document.body.classList.add('focus-city');
 
 const FOCUS_PHARMACY = ['pharmacy', 'hall', 'upgrades'].includes(new URLSearchParams(location.search).get('task')) || ['#hallslots', '#pharmacy'].includes(location.hash);
 if (FOCUS_PHARMACY) document.body.classList.add('focus-pharmacy');
-let activeTopKey = FOCUS_CITY ? 'citymapper' : FOCUS_PHARMACY ? 'hallslots' : TOP_TABS[0].key;
+let activeTopKey = FOCUS_CITY ? 'citymapper' : FOCUS_PHARMACY ? 'hallslots' : location.hash === '#begdx' ? 'begdx' : TOP_TABS[0].key;
 
 TOP_TABS.filter(t => ARCHIVE_MODE || CURRENT_TOOLS.has(t.key)).forEach((t) => {
   const btn = document.createElement('button');
@@ -4015,15 +4015,14 @@ function renderBegDxTab(root) {
 <div class="wrap">
   <h1>🎯 Калибровка позы «кот просит / ест / пьёт»</h1>
   <p class="lead">
-    Перетащите кота (или используйте кнопки ⟵/⟶) так, чтобы он стоял РЯДОМ с миской, а не на ней —
-    в этом ракурсе кот уже смотрит в нужную сторону сам, картинку двигать не нужно, только положение.
+    Перетащите кота (или используйте стрелки), чтобы при просьбе о корме его лапа касалась края миски —
+    в этом ракурсе кот уже смотрит в нужную сторону сам, картинку двигать не нужно, только положение. Стрелки ↑/↓ меняют высоту кота относительно миски.
     Переберите все 4 позы (сидит вправо/влево, стоит вправо/влево), для каждой нажмите «Зафиксировать».
     В конце — кнопка «Скопировать результат», отправьте мне.
   </p>
   <p class="lead">
     <b>Два режима:</b> «Просит» — где кот стоит, пока выпрашивает еду/воду (уже применено в игре).
-    «Ест / пьёт» — кот остаётся в той же позе (отдельной анимации еды нет), но может слегка податься
-    ближе к миске в момент самого поедания — переключитесь на этот режим, если хотите подвинуть именно этот момент.
+    «Ест / пьёт» — настоящая анимация еды из игры. Подвиньте кота так, чтобы мордочка находилась у миски — переключитесь на этот режим, если хотите подвинуть именно этот момент.
     В режиме «Ест/пьёт» кот стартует с уже применённой позиции «Просит» — двигайте от неё.
   </p>
 
@@ -4041,7 +4040,7 @@ function renderBegDxTab(root) {
 
     <div class="stage" id="begdx-stage">
       <div class="floor-line" id="begdx-floorLine"></div>
-      <div class="bowl" id="begdx-bowl"><img id="begdx-bowlImg" src="cat-guide-img/bowl-empty.svg" alt="миска"></div>
+      <div class="bowl" id="begdx-bowl"><img id="begdx-bowlImg" src="beg-calibrate-assets/bowl-empty.svg" alt="миска"></div>
       <div class="bowl-center-mark" id="begdx-bowlMark"></div>
       <img class="cat" id="begdx-cat" src="" alt="кот" draggable="false">
       <div class="cat-feet-mark" id="begdx-catMark"></div>
@@ -4054,7 +4053,7 @@ function renderBegDxTab(root) {
         <button data-d="1">⟶</button>
         <button data-d="10">⟫</button>
       </div>
-      <div class="readout">dx = <b id="begdx-dxVal">0</b> px <span id="begdx-sideHint" style="color:var(--muted);font-weight:400"></span></div>
+      <div class="nudge-y"><button data-dy="-1">↑ 1 px</button><button data-dy="1">↓ 1 px</button></div><div class="readout"><span id="begdx-dyVal"></span> dx = <b id="begdx-dxVal">0</b> px <span id="begdx-sideHint" style="color:var(--muted);font-weight:400"></span></div>
       <button class="fix-btn" id="begdx-fixBtn">✅ Зафиксировать эту позу</button>
     </div>
     <p class="hint">
@@ -4094,6 +4093,8 @@ function renderBegDxTab(root) {
     drink: { begSitR: 63, begSitL: -62, begStandR: 71, begStandL: -74 },
   };
 
+  const DY_KEY='ozongame_bowl_vertical_v1';
+  let vertical=loadFrom(DY_KEY,{beg:{},eat:{}}),dy=0;
   const STORAGE_KEY_BEG = 'ozongame_beg_calibration_v1';
   const STORAGE_KEY_EAT = 'ozongame_eat_calibration_v1';
   let stateBeg = loadFrom(STORAGE_KEY_BEG, {});
@@ -4110,8 +4111,7 @@ function renderBegDxTab(root) {
   function saveEat() { try { localStorage.setItem(STORAGE_KEY_EAT, JSON.stringify(stateEat)); } catch {} }
   // базовая позиция (dx от центра миски), с которой кот СТАРТУЕТ в текущем режиме
   function baseDx() {
-    if (curMode === 'beg') return 0;
-    return BEG_DX_APPLIED[curBowl]?.[curPose] || 0; // режим «ест» стартует с уже применённой позы «просит»
+    return stateBeg[curBowl]?.[curPose] ?? BEG_DX_APPLIED[curBowl]?.[curPose] ?? 0; // режим «ест» стартует с уже применённой позы «просит»
   }
 
   const stageEl = root.querySelector('#begdx-stage');
@@ -4157,7 +4157,7 @@ function renderBegDxTab(root) {
       const btn = document.createElement('button');
       btn.className = 'pose-btn' + (p.key === curPose ? ' active' : '');
       btn.innerHTML = p.label + (st[curBowl] && st[curBowl][p.key] != null ? '<span class="done">✓</span>' : '');
-      btn.onclick = () => { curPose = p.key; renderAll(); };
+      btn.onclick = () => { curPose = p.key; loadCurrentDx(); renderAll(); };
       posesEl.appendChild(btn);
     });
   }
@@ -4169,7 +4169,7 @@ function renderBegDxTab(root) {
   }
 
   function renderBowl() {
-    bowlImgEl.src = curBowl === 'drink' ? 'cat-guide-img/bowl-drink-empty.svg' : 'cat-guide-img/bowl-empty.svg';
+    bowlImgEl.src = curBowl === 'drink' ? 'beg-calibrate-assets/bowl-drink-empty.svg' : 'beg-calibrate-assets/bowl-empty.svg';
     bowlEl.style.left = bowlCenterX() + 'px';
     bowlEl.style.top = (floorY - BOWL_H) + 'px';
     bowlEl.style.width = BOWL_W + 'px';
@@ -4179,23 +4179,25 @@ function renderBegDxTab(root) {
   }
 
   function renderCat() {
-    const pose = POSES.find((p) => p.key === curPose);
+    const begPose = POSES.find((p) => p.key === curPose);
+    const pose = curMode==='eat'?{row:curPose.endsWith('R')?58:59,w:40,h:32}:begPose;
     catEl.src = FP + 'row-' + String(pose.row).padStart(2, '0') + '.gif';
     const w = pose.w * LT_SCALE, h = pose.h * LT_SCALE;
     const cx = bowlCenterX() + dx;
     catEl.style.width = w + 'px';
     catEl.style.height = h + 'px';
     catEl.style.left = (cx - w / 2) + 'px';
-    catEl.style.top = (floorY - h) + 'px';
+    catEl.style.top = (floorY - h + dy) + 'px';
     catMarkEl.style.left = cx + 'px';
-    catMarkEl.style.top = floorY + 'px';
+    catMarkEl.style.top = (floorY+dy) + 'px';
+    root.querySelector('#begdx-dyVal').textContent='dy = '+dy+' px;';
     dxValEl.textContent = Math.round(dx);
     sideHintEl.textContent = dx < -4 ? '(кот левее миски)' : dx > 4 ? '(кот правее миски)' : '(кот прямо на миске — сдвиньте!)';
     sideHintEl.style.color = Math.abs(dx) < 4 ? '#e8635f' : 'var(--muted)';
   }
 
   function renderOut() {
-    outEl.textContent = JSON.stringify({ beg: stateBeg, eat: stateEat }, null, 2);
+    outEl.textContent = JSON.stringify({ beg: stateBeg, eat: stateEat, vertical }, null, 2);
   }
 
   function renderAll() {
@@ -4210,6 +4212,7 @@ function renderBegDxTab(root) {
   // ВАЖНО: в режиме «ест» сохранённое число — это ДЕЛЬТА поверх applied-beg (см. fixBtn),
   // поэтому при загрузке её нужно ПРИБАВИТЬ к базовой позиции, а не подставлять как абсолютную.
   function loadCurrentDx() {
+    dy=vertical[curMode]?.[curBowl]?.[curPose]||0;
     const saved = activeState()[curBowl] && activeState()[curBowl][curPose];
     if (typeof saved !== 'number') { dx = baseDx(); return; }
     dx = curMode === 'eat' ? baseDx() + saved : saved;
@@ -4239,7 +4242,10 @@ function renderBegDxTab(root) {
     btn.onclick = () => { dx += parseInt(btn.dataset.d, 10); renderCat(); };
   });
 
+  root.querySelectorAll('[data-dy]').forEach(btn=>btn.onclick=()=>{dy+=Number(btn.dataset.dy);renderCat()});
   root.querySelector('#begdx-fixBtn').onclick = () => {
+    vertical[curMode]??={};vertical[curMode][curBowl]??={};vertical[curMode][curBowl][curPose]=dy;
+    try{localStorage.setItem(DY_KEY,JSON.stringify(vertical))}catch{}
     const st = activeState();
     st[curBowl] = st[curBowl] || {};
     // для режима «ест» сохраняем ДОПОЛНИТЕЛЬНОЕ смещение поверх уже применённой позы «просит»
@@ -4250,11 +4256,11 @@ function renderBegDxTab(root) {
 
   root.querySelector('#begdx-resetBtn').onclick = () => {
     if (!confirm('Стереть всю калибровку (оба режима)?')) return;
-    stateBeg = {}; stateEat = {}; saveBeg(); saveEat(); dx = baseDx(); renderAll();
+    stateBeg = {}; stateEat = {}; vertical={beg:{},eat:{}};dy=0;try{localStorage.removeItem(DY_KEY)}catch{} saveBeg(); saveEat(); dx = baseDx(); renderAll();
   };
 
   root.querySelector('#begdx-copyBtn').onclick = async () => {
-    const text = JSON.stringify({ beg: stateBeg, eat: stateEat }, null, 2);
+    const text = JSON.stringify({ beg: stateBeg, eat: stateEat, vertical }, null, 2);
     try { await navigator.clipboard.writeText(text); alert('Скопировано! Отправьте этот JSON в чат.'); }
     catch { alert('Не удалось скопировать — выделите текст ниже вручную.'); }
   };
@@ -6950,8 +6956,8 @@ const HALL_SLOTS_IN_GAME = {
     "hidden": false
   },
   "upg:3_sofa.svg": {
-    "x": -165.99,
-    "y": 699.58,
+    "x": -171.54,
+    "y": 688.28,
     "h": 214.14,
     "rot": 0,
     "flip": false,
@@ -6959,8 +6965,8 @@ const HALL_SLOTS_IN_GAME = {
     "hidden": false
   },
   "sofa": {
-    "x": -165.99,
-    "y": 699.58,
+    "x": -171.54,
+    "y": 688.28,
     "h": 214.14,
     "rot": 0,
     "flip": false,
@@ -6984,7 +6990,7 @@ const HALL_SLOTS_IN_GAME = {
     "rot": 0,
     "flip": false,
     "z": 0,
-    "hidden": false
+    "hidden": true
   },
   "tv": {
     "x": -700,
@@ -6993,12 +6999,12 @@ const HALL_SLOTS_IN_GAME = {
     "rot": 0,
     "flip": false,
     "z": 0,
-    "hidden": false
+    "hidden": true
   },
   "upg:5_smartLighting.svg": {
-    "x": 882.6,
-    "y": 103.07,
-    "h": 72,
+    "x": 830.98,
+    "y": 99.92,
+    "h": 100.04,
     "rot": 0,
     "flip": false,
     "z": 0,
@@ -7095,22 +7101,24 @@ const HALL_SLOTS_IN_GAME = {
     "hidden": true
   },
   "upg:9_restRoom.svg": {
-    "x": 2130,
-    "y": 762,
-    "h": 203,
+    "x": -594.38,
+    "y": 685.82,
+    "h": 274.2,
     "rot": 0,
     "flip": false,
     "z": 0,
-    "hidden": true
+    "hidden": false,
+    "img": "candidate:cooler"
   },
   "rest": {
-    "x": 2130,
-    "y": 762,
-    "h": 203,
+    "x": -594.38,
+    "y": 685.82,
+    "h": 274.2,
     "rot": 0,
     "flip": false,
     "z": 0,
-    "hidden": true
+    "hidden": false,
+    "img": "candidate:cooler"
   },
   "upg:10_assortmentExpansion.svg": {
     "x": 906.99,
@@ -7122,31 +7130,31 @@ const HALL_SLOTS_IN_GAME = {
     "hidden": false
   },
   "upg:10_coffeeMachine.svg": {
-    "x": 902.88,
-    "y": 419.9,
-    "h": 186.29,
+    "x": 908.74,
+    "y": 436.17,
+    "h": 77.17,
     "rot": 0,
     "flip": false,
     "z": 0,
     "hidden": false
   },
   "coffee": {
-    "x": 902.88,
-    "y": 419.9,
-    "h": 186.29,
+    "x": 908.74,
+    "y": 436.17,
+    "h": 77.17,
     "rot": 0,
     "flip": false,
     "z": 0,
     "hidden": false
   },
   "upg:11_onlineOrdering.svg": {
-    "x": -770,
-    "y": 762,
+    "x": 1688.33,
+    "y": 651.43,
     "h": 210,
     "rot": 0,
     "flip": false,
     "z": 0,
-    "hidden": false
+    "hidden": true
   },
   "upg:11_virtualConsultant.svg": {
     "x": 184.88,
@@ -7182,12 +7190,155 @@ const HALL_SLOTS_IN_GAME = {
     "rot": 0,
     "flip": false,
     "z": 0,
-    "hidden": false
+    "hidden": true
+  },
+  "generated:ventilation": {
+    "x": 1450,
+    "y": 125,
+    "h": 55,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:ventilation"
+  },
+  "generated:privacy": {
+    "x": 1450,
+    "y": 762,
+    "h": 210,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:privacy"
+  },
+  "generated:sanitizer": {
+    "x": 1650,
+    "y": 762,
+    "h": 130,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:sanitizer"
+  },
+  "generated:cooler": {
+    "x": -600,
+    "y": 762,
+    "h": 180,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:cooler"
+  },
+  "generated:umbrella": {
+    "x": -720,
+    "y": 762,
+    "h": 110,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:umbrella"
+  },
+  "generated:recycling": {
+    "x": 1800,
+    "y": 762,
+    "h": 140,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:recycling"
+  },
+  "generated:lamp": {
+    "x": 380,
+    "y": 425,
+    "h": 70,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:lamp"
+  },
+  "generated:clock": {
+    "x": 942.36,
+    "y": 140.6,
+    "h": 70,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": false,
+    "img": "candidate:clock"
+  },
+  "generated:computer": {
+    "x": 812.19,
+    "y": 435,
+    "h": 150,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": false,
+    "w": 194.38,
+    "img": "candidate:computer"
+  },
+  "generated:mat": {
+    "x": 600,
+    "y": 795,
+    "h": 42,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:mat"
+  },
+  "generated:kids-chairs": {
+    "x": -380,
+    "y": 762,
+    "h": 170,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:kids-chairs"
+  },
+  "generated:online-rack": {
+    "x": 1250,
+    "y": 762,
+    "h": 220,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:online-rack"
+  },
+  "generated:ad-poster": {
+    "x": 1150,
+    "y": 330,
+    "h": 150,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:ad-poster"
+  },
+  "generated:uniform-cross": {
+    "x": 744.43,
+    "y": 277.72,
+    "h": 24.46,
+    "rot": 0,
+    "flip": false,
+    "z": 0,
+    "hidden": true,
+    "img": "candidate:uniform-cross",
+    "anchor": "pharmacist"
   }
 }
 
 /** Те же подмены иконок на предметы, что в игре (constants/furniture.js). */
 const HALL_PROP_FOR_ICON = {
+  '10_coffeeMachine.svg': 'coffeeMachine-countertop.png',
   '2_wifi.svg': 'wifi.png',
   '11_onlineOrdering.svg': 'onlineOrdering.png',
   '11_virtualConsultant.svg': 'virtualConsultant.png',
