@@ -1,6 +1,6 @@
 {
-  "release": "quest-backend-20261030",
-  "built_at": "2026-10-30T17:17:38.445861+00:00",
+  "release": "tutorial-click-20261030",
+  "built_at": "2026-10-30T17:44:49.276082+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Backend-only quest completion bound to player UID and opaque attempt; isolated Ozon scenario frontend",
-  "server_changes_deployed": true,
+  "feature": "Factory tutorial after five pharmacies; original animated click pointer in pharmacy and city",
+  "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "quest-backend-20261030",
-  "server_changes_required": true
+  "runtime_release": "tutorial-click-20261030",
+  "server_changes_required": false
 }
