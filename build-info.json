@@ -1,6 +1,6 @@
 {
-  "release": "shop-stock-bowl-calibration-20261030",
-  "built_at": "2026-10-30T06:58:41.910095+00:00",
+  "release": "admin-million-grant-20261030",
+  "built_at": "2026-10-30T07:27:00.388306+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Fixed upgrade prices, initial vitamins stock and calibrated bottom bowl zone",
+  "feature": "Add one million coin grant to QWF event tools",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "shop-stock-bowl-calibration-20261030",
+  "runtime_release": "admin-million-grant-20261030",
   "server_changes_required": false
 }
