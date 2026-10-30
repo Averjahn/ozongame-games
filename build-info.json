@@ -1,6 +1,6 @@
 {
-  "release": "quest-completion-comic-20261030",
-  "built_at": "2026-10-30T15:24:38.032758+00:00",
+  "release": "quest-bridge-20261030",
+  "built_at": "2026-10-30T16:31:12.420936+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Verified iframe completion rewards with server attempts; comic speech shifted left; white career pointer; quests above coin flights",
+  "feature": "Accept completion payloads from the verified scenario iframe; coherent player graph and cross-origin ancestor delivery",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "quest-completion-comic-20261030",
+  "runtime_release": "quest-bridge-20261030",
   "server_changes_required": true
 }
