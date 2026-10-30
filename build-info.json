@@ -1,6 +1,6 @@
 {
-  "release": "shop-scene-icons-20261030",
-  "built_at": "2026-10-30T03:58:23.916345+00:00",
+  "release": "economy-admin-20261030",
+  "built_at": "2026-10-30T04:17:41.868439+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Use exact authored scene images for shop upgrades and a generated pharmacist coat icon",
-  "server_changes_deployed": true,
+  "feature": "Economy authoring admin with live scenario calculations, local drafts and validated JSON export",
+  "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -23,12 +23,13 @@
   "imported_player_profiles": 920,
   "updated_entries": [
     "dev.html",
-    "tutorial-editor.html",
-    "animation-editor.html",
-    "pharmacy-layout.html"
+    "next.html",
+    "game-constructor.html",
+    "economy-admin.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "shop-scene-icons-20261030"
+  "runtime_release": "economy-admin-20261030",
+  "server_changes_required": false
 }
