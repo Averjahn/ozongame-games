@@ -1,6 +1,6 @@
 {
-  "release": "city-management-tabs-20261030",
-  "built_at": "2026-10-30T14:24:26.264703+00:00",
+  "release": "quest-completion-comic-20261030",
+  "built_at": "2026-10-30T15:24:38.032758+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Direct pharmacy management with repair, staff and upgrade tabs; standalone bank and production; unified white dialogs",
-  "server_changes_deployed": false,
+  "feature": "Verified iframe completion rewards with server attempts; comic speech shifted left; white career pointer; quests above coin flights",
+  "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "city-management-tabs-20261030",
-  "server_changes_required": false
+  "runtime_release": "quest-completion-comic-20261030",
+  "server_changes_required": true
 }
