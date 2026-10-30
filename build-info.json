@@ -1,6 +1,6 @@
 {
-  "release": "quest-bridge-20261030",
-  "built_at": "2026-10-30T16:31:12.420936+00:00",
+  "release": "quest-backend-20261030",
+  "built_at": "2026-10-30T17:17:38.445861+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Accept completion payloads from the verified scenario iframe; coherent player graph and cross-origin ancestor delivery",
+  "feature": "Backend-only quest completion bound to player UID and opaque attempt; isolated Ozon scenario frontend",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "quest-bridge-20261030",
+  "runtime_release": "quest-backend-20261030",
   "server_changes_required": true
 }
