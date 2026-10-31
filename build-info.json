@@ -1,6 +1,6 @@
 {
-  "release": "city-stock-flow-20261101",
-  "built_at": "2026-10-31T23:27:01.564110+00:00",
+  "release": "coin-layers-20261101",
+  "built_at": "2026-10-31T23:54:17.485613+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Scale city inventory sales with pharmacy revenue, balance procurement, preserve goods in full tills, and simplify pharmacy status feedback",
-  "server_changes_deployed": true,
+  "feature": "Keep customer payment and reward coin flights below games and dialogs",
+  "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "city-stock-flow-20261101",
-  "server_changes_required": true
+  "runtime_release": "coin-layers-20261101",
+  "server_changes_required": false
 }
