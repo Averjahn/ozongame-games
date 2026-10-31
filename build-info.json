@@ -1,6 +1,6 @@
 {
-  "release": "cat-menu-water-20261031",
-  "built_at": "2026-10-31T14:08:37.340844+00:00",
+  "release": "cat-bed-only-20261031",
+  "built_at": "2026-10-31T14:26:39.520986+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Use a fixed visible left-shelf takeoff for menu mischief, focus it after camera panning, and prevent drinking when thirst is satisfied",
+  "feature": "Use the purchased bed for all lying rest and sleep, apply purchases and relocations to current resting cats, and keep other perches seated",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "cat-menu-water-20261031",
+  "runtime_release": "cat-bed-only-20261031",
   "server_changes_required": false
 }
