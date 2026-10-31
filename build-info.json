@@ -1,6 +1,6 @@
 {
-  "release": "silent-thief-20261031",
-  "built_at": "2026-10-31T12:51:25.547218+00:00",
+  "release": "staff-candidates-20261031",
+  "built_at": "2026-10-31T13:08:28.837380+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove thief speech bubbles during approach, cat theft and departure; retain customer speech and drunk visitor dialogue",
+  "feature": "Show available city staff candidates first and allow up to three pharmacists outside the guided first hire",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "silent-thief-20261031",
+  "runtime_release": "staff-candidates-20261031",
   "server_changes_required": false
 }
