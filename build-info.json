@@ -1,6 +1,6 @@
 {
-  "release": "city-tutorial-sequence-20261031",
-  "built_at": "2026-10-30T22:43:51.417312+00:00",
+  "release": "empty-stock-visitors-20261031",
+  "built_at": "2026-10-31T10:33:28.632722+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Sequence city location cues before tutorial steps; keep pharmacy HUD visible; simplify pharmacy management footer",
+  "feature": "Retry screen context synchronization and resume unsuccessful customer visits after returning from city",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "city-tutorial-sequence-20261031",
+  "runtime_release": "empty-stock-visitors-20261031",
   "server_changes_required": false
 }
