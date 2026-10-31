@@ -1,6 +1,6 @@
 {
-  "release": "coin-layers-20261101",
-  "built_at": "2026-10-31T23:54:17.485613+00:00",
+  "release": "profile-panel-20261101",
+  "built_at": "2026-10-31T23:59:30.612312+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep customer payment and reward coin flights below games and dialogs",
+  "feature": "Remove the profile loading side panel while retaining account loading and retry handling",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "coin-layers-20261101",
+  "runtime_release": "profile-panel-20261101",
   "server_changes_required": false
 }
