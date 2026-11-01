@@ -1,6 +1,6 @@
 {
-  "release": "city-flow-bank-20261101",
-  "built_at": "2026-11-01T02:50:27.484973+00:00",
+  "release": "repair-status-20261101",
+  "built_at": "2026-11-01T02:58:38.925501+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Stable city lessons, full expansion budget and bank introduction, collateral cards, instant repair and single-page staff",
-  "server_changes_deployed": true,
+  "feature": "Show repair needed before the staffing warning on city pharmacy markers",
+  "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "city-flow-bank-20261101",
-  "server_changes_required": true
+  "runtime_release": "repair-status-20261101",
+  "server_changes_required": false
 }
