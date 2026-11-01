@@ -1,6 +1,6 @@
 {
-  "release": "cat-cleanup-motion-20261101",
-  "built_at": "2026-11-01T15:05:22.804102+00:00",
+  "release": "chase-roads-20261101",
+  "built_at": "2026-11-01T15:23:11.353870+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Keep cat simulation running behind its fallen-medicine notice while preserving external modal event gates",
+  "feature": "Four-lane one-way first and second roads, separated opposing flows on the third, stable vehicle gaps and extra chase time",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "cat-cleanup-motion-20261101",
+  "runtime_release": "chase-roads-20261101",
   "server_changes_required": false
 }
