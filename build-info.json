@@ -1,6 +1,6 @@
 {
-  "release": "remove-first-round-20261101",
-  "built_at": "2026-11-01T02:18:30.329540+00:00",
+  "release": "stock-pointer-upright-20261101",
+  "built_at": "2026-11-01T02:27:23.142970+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Remove the first-round-completed sentence even from saved constructor drafts",
+  "feature": "Keep the warehouse step hand upright while pointing to the stock button",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "remove-first-round-20261101",
+  "runtime_release": "stock-pointer-upright-20261101",
   "server_changes_required": false
 }
