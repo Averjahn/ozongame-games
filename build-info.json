@@ -1,6 +1,6 @@
 {
-  "release": "pharmacy-price-order-constructor-20261102",
-  "built_at": "2026-11-02T17:41:10.025264+00:00",
+  "release": "pharmacy-price-order-applied-20261103",
+  "built_at": "2026-11-02T21:33:42.218558+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Interactive city pharmacy price ranking from cheapest to most expensive with reorderable export",
+  "feature": "Approved city pharmacy price order applied by stable map ids; legacy economy drafts migrate by id",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -28,6 +28,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "pharmacy-price-order-constructor-20261102",
+  "runtime_release": "pharmacy-price-order-applied-20261103",
   "server_changes_required": false
 }
