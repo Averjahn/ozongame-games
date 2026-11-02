@@ -1,6 +1,6 @@
 {
-  "release": "shop-mix-20261102",
-  "built_at": "2026-11-02T05:16:48.481932+00:00",
+  "release": "sales-fix-20261102",
+  "built_at": "2026-11-02T16:47:29.855098+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Single city preview with actual buildings; alternating 7 cash-capacity and 7 visitor upgrades; crystals only attract visitors",
+  "feature": "Independent hall/city tills and capacities, full customer payments, no payroll debt, one-time restoration and wallet-only cheats",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "shop-mix-20261102",
+  "runtime_release": "sales-fix-20261102",
   "server_changes_required": false
 }
