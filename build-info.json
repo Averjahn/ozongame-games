@@ -1,6 +1,6 @@
 {
   "release": "pharmacy-price-order-applied-20261103",
-  "built_at": "2026-11-02T21:33:42.218558+00:00",
+  "built_at": "2026-11-02T21:34:14.062031+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -15,7 +15,7 @@
     "pharmacy-layout.html"
   ],
   "feature": "Approved city pharmacy price order applied by stable map ids; legacy economy drafts migrate by id",
-  "server_changes_deployed": false,
+  "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
