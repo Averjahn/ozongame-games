@@ -1,6 +1,6 @@
 {
-  "release": "city-expansion-20261102",
-  "built_at": "2026-11-01T23:15:24.266044+00:00",
+  "release": "three-customers-20261102",
+  "built_at": "2026-11-02T00:32:24.059968+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Journey statistics, skip-safe cat adoption, pointer capture, city crystals, split upgrades, five customers per minute and hidden courier Q+W+G",
+  "feature": "Set initial pharmacy flow to three customers per minute",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "city-expansion-20261102",
+  "runtime_release": "three-customers-20261102",
   "server_changes_required": false
 }
