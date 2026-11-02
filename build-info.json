@@ -1,6 +1,6 @@
 {
-  "release": "sales-fix-20261102",
-  "built_at": "2026-11-02T16:47:29.855098+00:00",
+  "release": "registration-centering-20261102",
+  "built_at": "2026-11-02T17:00:45.942473+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Independent hall/city tills and capacities, full customer payments, no payroll debt, one-time restoration and wallet-only cheats",
-  "server_changes_deployed": true,
+  "feature": "Compact vertically centred registration steps with safe scrolling on short screens",
+  "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -23,13 +23,11 @@
   "imported_player_profiles": 920,
   "updated_entries": [
     "dev.html",
-    "next.html",
-    "game-constructor.html",
-    "economy-admin.html"
+    "next.html"
   ],
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "sales-fix-20261102",
+  "runtime_release": "registration-centering-20261102",
   "server_changes_required": false
 }
