@@ -72,6 +72,15 @@
     body.focus-city #mkDiff,
     body.focus-city #mkFresh,
     body.focus-city #mkPrev { display: none; }
+    body.focus-prices #mkMapI,
+    body.focus-prices #mkModeH,
+    body.focus-prices #mkModeY,
+    body.focus-prices #mkModeR,
+    body.focus-prices #mkModeS,
+    body.focus-prices #mkDiff,
+    body.focus-prices #mkFresh,
+    body.focus-prices #mkPrev,
+    body.focus-prices label:has(#mkPharmacyPick) { display: none; }
     body.focus-city .mk-lead { display: none; }
     body.focus-city #mkFocusNote { display: block !important; }
   </style>
@@ -135,10 +144,14 @@ const tabRootEl = document.getElementById('tabRoot');
  * этому параметру остаётся ровно один инструмент, без вкладок и без наших
  * служебных кнопок (дороги, тротуары, сверка правок).
  */
+const FOCUS_PRICES = new URLSearchParams(location.search).get('task') === 'prices'
+  || location.hash === '#city-prices';
 const FOCUS_CITY = new URLSearchParams(location.search).get('task') === 'city'
+  || FOCUS_PRICES
   || location.hash === '#city';   // якорь надёжнее: query-строку некоторые
                                   // статические серверы срезают вместе с .html
 if (FOCUS_CITY) document.body.classList.add('focus-city');
+if (FOCUS_PRICES) document.body.classList.add('focus-prices');
 
 const FOCUS_PHARMACY = ['pharmacy', 'hall', 'upgrades'].includes(new URLSearchParams(location.search).get('task')) || ['#hallslots', '#pharmacy'].includes(location.hash);
 if (FOCUS_PHARMACY) document.body.classList.add('focus-pharmacy');
@@ -157,13 +170,13 @@ function mountActive() {
   if (FOCUS_PHARMACY) document.getElementById('pageTitle').textContent = 'Настройка визуальных элементов';
   if (FOCUS_CITY) {
     const h = document.getElementById('pageTitle');
-    if (h) h.textContent = '🏗 Расстановка домов и дворов';
+    if (h) h.textContent = FOCUS_PRICES ? '💊 Порядок стоимости аптек' : '🏗 Расстановка домов и дворов';
   }
   tabRootEl.innerHTML = '';
   tabRootEl.className = ''; // сброс scoping-класса (tab-guide/tab-layout/...), иначе он копится между переключениями и стили одной вкладки просачиваются в другую
   const t = TOP_TABS.find((x) => x.key === activeTopKey);
   t.render(tabRootEl);
-  if (FOCUS_CITY) setupTutorial();
+  if (FOCUS_CITY && !FOCUS_PRICES) setupTutorial();
 }
 
 /**
@@ -8030,6 +8043,13 @@ function renderCityMapperTab(root) {
     .tab-mk .mk-house img{display:block;height:100%;width:auto;pointer-events:none;}
     .tab-mk .mk-house.sel{outline:2px solid #FCBE2E;outline-offset:1px;}
     .tab-mk .mk-house.dim{opacity:.45;pointer-events:none;}
+    .tab-mk .mk-house.price-pick{cursor:pointer;filter:drop-shadow(0 0 5px rgba(252,190,46,.9));}
+    .tab-mk .mk-house.price-pick:hover{filter:drop-shadow(0 0 9px #fff) drop-shadow(0 0 7px #FCBE2E);}
+    .tab-mk .mk-price-rank{position:absolute;left:50%;top:-13px;transform:translateX(-50%);
+      min-width:30px;padding:3px 7px;border-radius:12px;background:#FCBE2E;color:#332500;
+      border:2px solid #fff;font:700 11px/1 Comfortaa,sans-serif;text-align:center;white-space:nowrap;
+      box-shadow:0 2px 8px rgba(0,0,0,.45);pointer-events:none;}
+    .tab-mk .mk-price-rank.empty{background:#33485c;color:#fff;border-color:#91a7ba;}
     .tab-mk .mk-yard{position:absolute;cursor:move;}
     .tab-mk .mk-yard img{display:block;height:100%;width:auto;pointer-events:none;}
     .tab-mk .mk-yard.sel{outline:2px solid #6FE06F;outline-offset:1px;}
@@ -8061,6 +8081,17 @@ function renderCityMapperTab(root) {
     .tab-mk .mk-lines li.on{background:rgba(252,190,46,.18);font-weight:700;}
     .tab-mk .mk-lines button{font-family:inherit;font-size:11px;padding:2px 6px;border-radius:5px;
       border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;}
+    .tab-mk .mk-price-list{list-style:none;margin:0;padding:0;}
+    .tab-mk .mk-price-list li{display:grid;grid-template-columns:30px 1fr auto;gap:6px;align-items:center;
+      padding:7px 8px;border-top:1px solid var(--line);font-size:11px;}
+    .tab-mk .mk-price-list .rank{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;
+      background:#FCBE2E;color:#3b2b00;font-weight:700;}
+    .tab-mk .mk-price-list .meta{display:flex;flex-direction:column;gap:3px;min-width:0;}
+    .tab-mk .mk-price-list .meta b{color:#fff;white-space:nowrap;}
+    .tab-mk .mk-price-list .meta span{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .tab-mk .mk-price-list .actions{display:flex;gap:2px;}
+    .tab-mk .mk-price-list button{font-family:inherit;font-size:11px;min-width:25px;padding:3px 5px;
+      border:1px solid var(--line);border-radius:5px;background:var(--bg2);color:var(--ink);cursor:pointer;}
     .tab-mk pre{background:#12202c;color:#d7e6f5;border-radius:10px;padding:10px;font-size:11px;
       overflow:auto;max-height:200px;margin:8px 0 0;}
   </style>
@@ -8103,6 +8134,7 @@ function renderCityMapperTab(root) {
     <span class="sep"></span>
     <button id="mkModeH" class="on">🏘 Дома</button>
     <button id="mkModeY">🌳 Дворы</button>
+    <button id="mkModeP">💊 Цены аптек</button>
     <button id="mkModeR">🚗 Дороги (машины)</button>
     <button id="mkModeS">🚶 Тротуары (пешеходы)</button>
     <span class="sep"></span>
@@ -8192,6 +8224,32 @@ function renderCityMapperTab(root) {
     }
   }
   useMap('city');
+  const game = CITY_SNAPSHOT.editor;
+  const underOwn = (h) => mapKey === 'city' && game
+    && Math.abs(h.x - game.own.x) < game.own.clear
+    && Math.abs(h.y - game.own.y) < game.own.clear;
+  const isPharmacy = (h) => /^ph-/.test(h.img) && !underOwn(h);
+  const spotId = (h) => 'map:' + Math.round(h.x) + ':' + Math.round(h.y);
+  const pharmacySpots = () => S.houses.filter(isPharmacy);
+  const priceForRank = (rank) => 100 * Math.ceil(3000 * 1.55 ** rank / 100);
+  const formatCoins = (value) => Math.round(value).toLocaleString('ru-RU') + ' монет';
+  function priceOrder() {
+    if (!Array.isArray(ALL.pharmacyPriceOrder)) ALL.pharmacyPriceOrder = [];
+    const valid = new Set(pharmacySpots().map(spotId));
+    ALL.pharmacyPriceOrder = [...new Set(ALL.pharmacyPriceOrder)].filter((id) => valid.has(id));
+    return ALL.pharmacyPriceOrder;
+  }
+  function currentGamePriceOrder() {
+    const difficulty = (h) => ({ park: 0, outskirts: 1, avenue: 2, square: 3 }[h.zone] ?? 2);
+    return pharmacySpots().slice().sort((a, b) => difficulty(a) - difficulty(b) || a.y - b.y || a.x - b.x).map(spotId);
+  }
+  function assignPriceRank(h) {
+    if (!isPharmacy(h)) return;
+    pushHistory();
+    const id = spotId(h), order = priceOrder(), old = order.indexOf(id);
+    if (old >= 0) order.splice(old, 1); else order.push(id);
+    save(); drawHouses(); side(); ctxBar(); renderOut();
+  }
   /** Эталон активной карты — с ним сравнивает разбор правок. */
   function baseline() {
     return mapKey === 'island' ? (CITY_SNAPSHOT.island || { houses: [], yards: [] }) : CITY_SNAPSHOT;
@@ -8320,6 +8378,7 @@ function renderCityMapperTab(root) {
       window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
       view.classList.remove('panning');
       if (dragging) return;                       // это была панорама, не клик
+      if (mode === 'prices') return;
       if (!objMode()) addPoint(toWorld(ev));
       else selectHouse(-1, null);                 // клик по пустому месту снимает выделение
     };
@@ -8342,8 +8401,6 @@ function renderCityMapperTab(root) {
   function drawHouses() {
     [...world.querySelectorAll('.mk-house, .mk-yard')].forEach((n) => n.remove());
     const frag = document.createDocumentFragment();
-    const game = CITY_SNAPSHOT.editor;
-    const underOwn = h => mapKey === 'city' && game && Math.abs(h.x-game.own.x)<game.own.clear && Math.abs(h.y-game.own.y)<game.own.clear;
     const picker=root.querySelector('#mkPharmacyPick');
     picker.disabled=mapKey!=='city'||mode!=='houses';
     picker.innerHTML='<option value="">Выберите аптеку</option>'+S.houses.map((h,i)=>({h,i})).filter(({h})=>/^ph-/.test(h.img)&&!underOwn(h)).map(({h,i})=>{const district=game?.pharmacies.find(p=>p.x===h.x&&p.y===h.y)?.district||h.zone||'';return '<option value="'+i+'">Аптека · '+district+' · ('+h.x+', '+h.y+')</option>'}).join('');
@@ -8414,13 +8471,19 @@ function renderCityMapperTab(root) {
       || (a[0].z || 0) - (b[0].z || 0) || a[0].y - b[0].y)
       .forEach(([h, i, isYard]) => {
         if(!isYard && underOwn(h))return;
-        const active = isYard ? mode === 'yards' : mode === 'houses';
+        const active = isYard ? mode === 'yards' : (mode === 'houses' || (mode === 'prices' && isPharmacy(h)));
         const el = document.createElement('div');
         el.className = (isYard ? 'mk-yard' : 'mk-house')
-          + (active && i === selHouse ? ' sel' : '') + (active ? '' : ' dim');
+          + (active && i === selHouse ? ' sel' : '') + (active ? '' : ' dim')
+          + (!isYard && mode === 'prices' && isPharmacy(h) ? ' price-pick' : '');
         if(!isYard)el.dataset.mkIndex=i;
         el.style.zIndex=isYard?5:100+Math.round(h.y)+(h.z||0);
         el.innerHTML = '<img src="' + folderOf(isYard) + '/' + h.img + '.png">';
+        if (!isYard && mode === 'prices' && isPharmacy(h)) {
+          const rank = priceOrder().indexOf(spotId(h));
+          el.innerHTML += '<span class="mk-price-rank' + (rank < 0 ? ' empty' : '') + '">'
+            + (rank < 0 ? '＋' : ((rank + 1) + ' · ' + formatCoins(priceForRank(rank)))) + '</span>';
+        }
         el.style.left = (h.x + OFFSET) + 'px';
         el.style.top = (h.y - h.h) + 'px';
         el.style.height = h.h + 'px';
@@ -8429,10 +8492,13 @@ function renderCityMapperTab(root) {
         // угла молча пропадала бы у всех отражённых домов
         const sxv = (isYard ? 1 : scaleXFor(h.img, h.sx)) * (h.flip ? -1 : 1);
         el.style.transform = 'translateX(-50%)'+(h.rot?' rotate('+h.rot+'deg)':'')+' scaleX(' + sxv + ')';
+        const priceBadge = el.querySelector('.mk-price-rank');
+        if (priceBadge) priceBadge.style.transform = 'translateX(-50%) scaleX(' + (1 / sxv) + ')';
         el.addEventListener('pointerdown', (e) => {
           if (!active) return;                 // неактивный слой не перехватывает клики
           if (e.button === 2 || e.button === 1 || spaceDown) { startPan(e); return; }
           e.stopPropagation(); e.preventDefault();
+          if (!isYard && mode === 'prices') { assignPriceRank(h); return; }
           // ВЫДЕЛЯЕМ БЕЗ ПЕРЕСБОРКИ DOM. Здесь раньше звался drawHouses(), а он
           // сносит и создаёт заново все .mk-house — перетаскиваемый узел тут же
           // выбрасывался из документа, и move писал стили в мёртвый элемент.
@@ -8580,7 +8646,33 @@ function renderCityMapperTab(root) {
   /* ── боковая панель ───────────────────────────────────────────────────── */
   function side() {
     const el = root.querySelector('#mkSide');
-    if (objMode()) {
+    if (mode === 'prices') {
+      const order = priceOrder();
+      const byId = new Map(pharmacySpots().map((h) => [spotId(h), h]));
+      el.innerHTML = '<h3>От дешёвой к дорогой · ' + order.length + ' / ' + byId.size + '</h3>'
+        + '<p class="mk-note" style="padding:8px;margin:0">Кликайте по аптекам на карте по очереди. Повторный клик убирает аптеку из порядка.</p>'
+        + '<ul class="mk-price-list">' + order.map((id, rank) => {
+          const h = byId.get(id); return '<li data-id="' + id + '">'
+            + '<span class="rank">' + (rank + 1) + '</span><span class="meta"><b>' + formatCoins(priceForRank(rank))
+            + '</b><span>' + (h?.zone || 'район не указан') + ' · ' + id + '</span></span>'
+            + '<span class="actions"><button data-up title="Выше">↑</button><button data-down title="Ниже">↓</button><button data-remove title="Убрать">✕</button></span></li>';
+        }).join('') + '</ul>';
+      el.querySelectorAll('.mk-price-list li').forEach((li) => {
+        const mutate = (kind) => {
+          const next = priceOrder().slice();
+          const i = next.indexOf(li.dataset.id); if (i < 0) return;
+          pushHistory();
+          if (kind === 'remove') next.splice(i, 1);
+          if (kind === 'up' && i > 0) [next[i - 1], next[i]] = [next[i], next[i - 1]];
+          if (kind === 'down' && i < next.length - 1) [next[i + 1], next[i]] = [next[i], next[i + 1]];
+          ALL.pharmacyPriceOrder = next;
+          save(); drawHouses(); side(); ctxBar(); renderOut();
+        };
+        li.querySelector('[data-up]').onclick = () => mutate('up');
+        li.querySelector('[data-down]').onclick = () => mutate('down');
+        li.querySelector('[data-remove]').onclick = () => mutate('remove');
+      });
+    } else if (objMode()) {
       const isYard = mode === 'yards';
       const listNames = isYard ? CITY_YARD_LIST : CITY_HOUSE_LIST;
       if (!CITY_KIT) CITY_KIT = kitLoad();
@@ -8655,7 +8747,19 @@ function renderCityMapperTab(root) {
   /* ── контекстная панель под режим ─────────────────────────────────────── */
   function ctxBar() {
     const bar = root.querySelector('#mkCtxBar');
-    if (objMode()) {
+    if (mode === 'prices') {
+      const count = priceOrder().length, total = pharmacySpots().length;
+      bar.innerHTML = '<button id="mkPriceClear">Начать порядок заново</button>'
+        + '<button id="mkPriceCurrent">Вернуть текущий порядок игры</button>'
+        + '<span class="mk-note">Назначено ' + count + ' из ' + total
+        + '. Первый клик — самая дешёвая аптека, последний — самая дорогая.</span>';
+      bar.querySelector('#mkPriceClear').onclick = () => {
+        pushHistory(); ALL.pharmacyPriceOrder = []; save(); drawHouses(); side(); ctxBar(); renderOut();
+      };
+      bar.querySelector('#mkPriceCurrent').onclick = () => {
+        pushHistory(); ALL.pharmacyPriceOrder = currentGamePriceOrder(); save(); drawHouses(); side(); ctxBar(); renderOut();
+      };
+    } else if (objMode()) {
       const isYard = mode === 'yards';
       const h = objs()[selHouse];
       bar.innerHTML = '<button id="mkBig">Крупнее</button><button id="mkSm">Мельче</button>'
@@ -8743,7 +8847,17 @@ function renderCityMapperTab(root) {
   /* ── вывод кода ───────────────────────────────────────────────────────── */
   function renderOut() {
     let txt;
-    if (objMode()) {
+    if (mode === 'prices') {
+      const order = priceOrder(), total = pharmacySpots().length;
+      txt = (order.length === total ? '' : '// ВНИМАНИЕ: назначено ' + order.length + ' из ' + total + ' аптек.\n')
+        + '// Порядок: от самой дешёвой аптеки к самой дорогой. Изображения зданий не меняются.\n'
+        + 'export const CITY_PHARMACY_PRICE_ORDER = [\n'
+        + order.map((id, rank) => {
+          const h = pharmacySpots().find((spot) => spotId(spot) === id);
+          return "  { id: '" + id + "', x: " + h.x + ', y: ' + h.y + ', rank: ' + rank
+            + ', price: ' + priceForRank(rank) + ' },';
+        }).join('\n') + '\n]';
+    } else if (objMode()) {
       const isYard = mode === 'yards';
       txt = 'export const ' + (isYard ? 'CITY_YARDS' : 'CITY_HOUSES') + ' = [\n' + objs().map((h) =>
         '  { img: \'' + h.img + '\', x: ' + h.x + ', y: ' + h.y + ', h: ' + h.h
@@ -8771,12 +8885,14 @@ function renderCityMapperTab(root) {
   }
 
   function setMode(m) {
+    if (m === 'prices' && mapKey !== 'city') setMap('city');
     mode = m; selHouse = -1; selLine = 0;
     root.querySelector('#mkModeH').classList.toggle('on', m === 'houses');
     root.querySelector('#mkModeY').classList.toggle('on', m === 'yards');
+    root.querySelector('#mkModeP').classList.toggle('on', m === 'prices');
     root.querySelector('#mkModeR').classList.toggle('on', m === 'roads');
     root.querySelector('#mkModeS').classList.toggle('on', m === 'sidewalks');
-    view.style.cursor = objMode() ? 'default' : 'crosshair';
+    view.style.cursor = (objMode() || m === 'prices') ? 'default' : 'crosshair';
     drawHouses(); drawSvg(); side(); ctxBar(); renderOut();
   }
   function setMap(k) {
@@ -8828,6 +8944,7 @@ function renderCityMapperTab(root) {
 
   root.querySelector('#mkModeH').onclick = () => setMode('houses');
   root.querySelector('#mkModeY').onclick = () => setMode('yards');
+  root.querySelector('#mkModeP').onclick = () => setMode('prices');
   root.querySelector('#mkModeR').onclick = () => setMode('roads');
   root.querySelector('#mkModeS').onclick = () => setMode('sidewalks');
   root.querySelector('#mkZoomIn').onclick = () => zoomAt(view.clientWidth / 2, view.clientHeight / 2, 1.3);
@@ -8971,7 +9088,14 @@ function renderCityMapperTab(root) {
   }
 
   const bg = world.querySelector('img.bg');
-  const boot = () => { save(); fit(); setMode('houses'); };
+  if (FOCUS_PRICES) {
+    root.querySelector('#mkFocusNote').innerHTML = '<b>Назначьте стоимость аптек от дешёвой к дорогой.</b><br>'
+      + 'Кликайте по жёлто подсвеченным аптекам на карте: первый клик назначает самую дешёвую, '
+      + 'каждый следующий — следующий уровень цены. Номер и цена появятся над зданием.<br><br>'
+      + 'Порядок справа можно менять стрелками или удалять отдельные точки. Повторный клик по аптеке '
+      + 'тоже убирает её из списка. Когда назначены все аптеки, нажмите <b>📋 Скопировать</b> и пришлите код.';
+  }
+  const boot = () => { save(); fit(); setMode(FOCUS_PRICES ? 'prices' : 'houses'); };
   if (bg.complete) boot(); else bg.onload = boot;
 }
 
