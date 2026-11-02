@@ -1,6 +1,6 @@
 {
-  "release": "moped-terrain-20261102",
-  "built_at": "2026-11-02T02:33:35.076575+00:00",
+  "release": "moped-navigation-20261102",
+  "built_at": "2026-11-02T02:43:05.221326+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Free terrain driving, grass slowdown, obstacles and river crashes with selected avatars",
+  "feature": "Offscreen destination arrows and simultaneous WASD and arrow-key controls",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "moped-terrain-20261102",
+  "runtime_release": "moped-navigation-20261102",
   "server_changes_required": false
 }
