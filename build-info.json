@@ -1,6 +1,6 @@
 {
-  "release": "pharmacy-price-order-applied-20261103",
-  "built_at": "2026-11-02T21:34:14.062031+00:00",
+  "release": "city-income-upgrades-20261103",
+  "built_at": "2026-11-02T22:06:08.173385+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Approved city pharmacy price order applied by stable map ids; legacy economy drafts migrate by id",
+  "feature": "City coin upgrades add fixed coins per minute without increasing till capacity; integer net profit and matching simulator",
   "server_changes_deployed": true,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -28,6 +28,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "pharmacy-price-order-applied-20261103",
+  "runtime_release": "city-income-upgrades-20261103",
   "server_changes_required": false
 }
