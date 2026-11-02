@@ -1,6 +1,6 @@
 {
-  "release": "moped-collision-fix-20261102",
-  "built_at": "2026-11-02T03:20:50.799232+00:00",
+  "release": "moped-visible-deliveries-20261102",
+  "built_at": "2026-11-02T03:49:03.561365+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Accurate ground footprints, bank sidewalk, curved bridge rails and unobstructed street network",
+  "feature": "Place delivery markers at visible, accessible road stops clear of foreground buildings",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "moped-collision-fix-20261102",
+  "runtime_release": "moped-visible-deliveries-20261102",
   "server_changes_required": false
 }
