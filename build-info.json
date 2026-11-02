@@ -1,6 +1,6 @@
 {
-  "release": "moped-splash-20261102",
-  "built_at": "2026-11-02T02:56:07.989071+00:00",
+  "release": "moped-collision-fix-20261102",
+  "built_at": "2026-11-02T03:20:50.799232+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,8 +14,8 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Vertical water splash; crash modal waits for the final splash animation to end",
-  "server_changes_deployed": true,
+  "feature": "Accurate ground footprints, bank sidewalk, curved bridge rails and unobstructed street network",
+  "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
   "production_switched": false,
@@ -30,6 +30,6 @@
   "game_reward_migration": 122,
   "runtime_storage": "server",
   "server_required": true,
-  "runtime_release": "moped-splash-20261102",
+  "runtime_release": "moped-collision-fix-20261102",
   "server_changes_required": false
 }
