@@ -1,6 +1,6 @@
 {
   "release": "browser-identity-20261106",
-  "built_at": "2026-11-06T14:36:06.631595+00:00",
+  "built_at": "2026-11-06T14:39:16.876648+00:00",
   "source_commit": "86a7e87",
   "includes_uncommitted_changes": true,
   "entries": [
@@ -14,7 +14,7 @@
     "cat-demo.html",
     "pharmacy-layout.html"
   ],
-  "feature": "Standalone browser identity with collision check, persistent UID and explicit integration links",
+  "feature": "Standalone browser accounts, server availability checks and correctly attributed app sessions",
   "server_changes_deployed": false,
   "server_changes_pending": [],
   "backend_origin": "https://ozongame-dev.80-242-61-200.sslip.io",
